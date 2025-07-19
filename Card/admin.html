@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - HSS Larnoo ID System</title>
+    <!-- Stylesheets and Libraries (same as before) -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* All CSS from the previous version goes here. It is unchanged. */
+        :root { --primary-color: #0d2c54; --secondary-color: #1a535c; --accent-color: #f7b801; --edit-color: #0077b6; --danger-color: #d90429; --light-color: #f4f7fe; --dark-color: #333333; --white-color: #ffffff; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--light-color); color: var(--dark-color); line-height: 1.6; }
+        .btn { font-weight: 600; transition: all 0.3s ease; padding: 12px 25px; border-radius: 8px; border: none; cursor: pointer; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background-color: var(--primary-color); color: var(--white-color); }
+        .btn-primary:hover { background-color: #123e7a; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .section-title { font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--primary-color); margin-top: 0; margin-bottom: 25px; border-bottom: 3px solid var(--accent-color); padding-bottom: 10px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; font-size: 15px; transition: border-color 0.3s, box-shadow 0.3s; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(13, 44, 84, 0.1); }
+        .page-container { padding: 40px 20px; }
+        #login-container { max-width: 400px; margin: 50px auto; padding: 30px; background: var(--white-color); border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        #admin-container { display: none; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .data-section { width: 100%; margin-top: 20px; background: var(--white-color); padding: 30px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); }
+        .data-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .search-container { display: flex; align-items: center; gap: 15px; }
+        #searchIcon { font-size: 24px; color: var(--primary-color); cursor: pointer; }
+        #searchInput { display: block; border: none; border-bottom: 2px solid #ccc; padding: 8px 5px; font-size: 16px; width: 250px; transition: all 0.3s; }
+        #searchInput:focus { outline: none; border-bottom-color: var(--primary-color); }
+        .table-container { overflow-x: auto; margin-top: 20px; }
+        #studentDataTable { width: 100%; border-collapse: collapse; font-size: 14px; white-space: nowrap; }
+        #studentDataTable th, #studentDataTable td { padding: 15px; text-align: left; vertical-align: middle; }
+        #studentDataTable thead { background-color: var(--primary-color); color: var(--white-color); font-family: 'Poppins', sans-serif; font-weight: 600; }
+        #studentDataTable th:first-child { border-radius: 8px 0 0 8px; }
+        #studentDataTable th:last-child { border-radius: 0 8px 8px 0; }
+        #studentDataTable tbody tr { border-bottom: 1px solid #e0e0e0; }
+        #studentDataTable tbody tr:last-child { border-bottom: none; }
+        #studentDataTable tbody tr:hover { background-color: #f5f8ff; }
+        .table-photo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 18px; transition: all 0.3s; padding: 5px; }
+        .delete-card-btn { color: #d90429; }
+        .action-btn:hover { transform: scale(1.2); }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <!-- Login Form -->
+        <div id="login-container">
+            <h1 class="section-title">Admin Login</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="adminEmail">Email</label>
+                    <input type="email" id="adminEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Password</label>
+                    <input type="password" id="adminPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="admin-container">
+            <div class="admin-header">
+                <h1 class="section-title" style="margin:0; border:none;">Admin Dashboard</h1>
+                <button id="logoutBtn" class="btn btn-primary" style="background-color: #6c757d;">Logout</button>
+            </div>
+            
+            <div class="data-section">
+                <div class="data-header">
+                    <h2 class="section-title" style="border:none; padding:0; margin:0;">Student Records</h2>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="Search records...">
+                        <i class="fa-solid fa-search" id="searchIcon"></i>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <p id="loading-indicator">Loading data...</p>
+                    <table id="studentDataTable">
+                        <thead>
+                            <tr>
+                                <th>Photo</th><th>Name</th><th>Parentage</th><th>Class</th><th>Roll No</th><th>Address</th><th>Phone</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgibN6D0v5LYueImGQw1oU7Kao4fZY1OA",
+            authDomain: "hss-id-card.firebaseapp.com",
+            projectId: "hss-id-card",
+            storageBucket: "hss-id-card.firebasestorage.app",
+            messagingSenderId: "22345350913",
+            appId: "1:22345350913:web:b07509eef5a3cfeec9e500",
+            measurementId: "G-MT8GW71R49"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // --- DOM ELEMENTS ---
+        const loginContainer = document.getElementById('login-container');
+        const adminContainer = document.getElementById('admin-container');
+        const loginForm = document.getElementById('loginForm');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const tableBody = document.querySelector('#studentDataTable tbody');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const searchInput = document.getElementById('searchInput');
+
+        let allStudents = []; // Cache for student data to make search faster
+
+        // --- FUNCTIONS ---
+        const fetchAndRenderData = async () => {
+            loadingIndicator.textContent = "Loading data...";
+            tableBody.innerHTML = '';
+            
+            // Query to get documents ordered by creation time
+            const q = query(collection(db, "students"), orderBy("createdAt", "desc"));
+            const querySnapshot = await getDocs(q);
+            
+            allStudents = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            renderTable(allStudents);
+            loadingIndicator.textContent = allStudents.length === 0 ? "No student records found." : "";
+        };
+
+        const renderTable = (dataToRender) => {
+            tableBody.innerHTML = '';
+            dataToRender.forEach(student => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                    <td><img src="${student.photo}" class="table-photo" alt="Photo"></td>
+                    <td>${student.name || ''}</td>
+                    <td>${student.parentage || ''}</td>
+                    <td>${student.class || ''}</td>
+                    <td>${student.roll || ''}</td>
+                    <td>${student.address || ''}</td>
+                    <td>${student.phone || ''}</td>
+                    <td>
+                        <button class="action-btn delete-card-btn" data-id="${student.id}" title="Delete Record">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                `;
+            });
+        };
+
+        // --- AUTHENTICATION ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                loginContainer.style.display = 'none';
+                adminContainer.style.display = 'block';
+                fetchAndRenderData();
+            } else {
+                // User is signed out
+                loginContainer.style.display = 'block';
+                adminContainer.style.display = 'none';
+            }
+        });
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .catch((error) => {
+                    alert(`Login failed: ${error.message}`);
+                });
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth).catch(error => console.error("Logout Error:", error));
+        });
+
+        // --- TABLE ACTIONS ---
+        tableBody.addEventListener('click', async (e) => {
+            const deleteBtn = e.target.closest('.delete-card-btn');
+            if (deleteBtn) {
+                const docId = deleteBtn.dataset.id;
+                if (confirm(`Are you sure you want to permanently delete this record?`)) {
+                    try {
+                        await deleteDoc(doc(db, "students", docId));
+                        alert("Record deleted successfully.");
+                        fetchAndRenderData(); // Re-fetch data to update the table
+                    } catch (error) {
+                        console.error("Error deleting document: ", error);
+                        alert("Failed to delete record.");
+                    }
+                }
+            }
+        });
+        
+        searchInput.addEventListener('keyup', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredData = allStudents.filter(s => 
+                Object.values(s).some(val => 
+                    String(val).toLowerCase().includes(searchTerm)
+                )
+            );
+            renderTable(filteredData);
+        });
+
+    </script>
+</body>
+</html>

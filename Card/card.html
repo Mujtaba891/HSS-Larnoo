@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Govt. HSS Larnoo - Professional ID Card System</title>
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- html2canvas Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        /*** Global Styles & Variables ***/
+        :root {
+            --primary-color: #0d2c54; /* Deep Blue */
+            --secondary-color: #1a535c; /* Teal */
+            --accent-color: #f7b801; /* Yellow */
+            --edit-color: #0077b6; /* Blue for edit */
+            --danger-color: #d90429; /* Red for delete */
+            --light-color: #f4f7fe;
+            --dark-color: #333333;
+            --white-color: #ffffff;
+            --card-width: 380px;
+            --card-aspect-ratio: 8.7 / 5.5;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .btn {
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #123e7a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn-secondary {
+             background-color: #6c757d;
+             color: var(--white-color);
+        }
+        .btn-secondary:hover { background-color: #5a6268; }
+
+        /*** Page Layout ***/
+        .page-header {
+            width: 100%;
+            max-width: 1540px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            width: 100%;
+        }
+
+        .form-section, .card-section {
+            flex: 1;
+            min-width: 350px;
+            max-width: 500px;
+            background: var(--white-color);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 25px;
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+
+        /*** Form Styles ***/
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif; font-size: 15px; transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(13, 44, 84, 0.1);
+        }
+        .form-buttons { display: flex; gap: 10px; }
+        #downloadBtn, #cancelEditBtn { display: none; }
+        #downloadBtn { margin-top: 20px; }
+        
+        /*** Professional ID Card Design ***/
+        #idCard {
+            width: var(--card-width);
+            aspect-ratio: var(--card-aspect-ratio);
+            font-family: 'Montserrat', sans-serif;
+            background: #eef2f9;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        #idCard::before, #idCard::after {
+            content: ''; position: absolute; border-radius: 50%; opacity: 0.08; z-index: 0;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        }
+        #idCard::before { width: 150%; height: 150%; bottom: -80%; right: -50%; }
+        #idCard::after { width: 120%; height: 120%; top: -60%; left: -40%; opacity: 0.1; }
+
+        .card-header, .card-body, .card-footer { position: relative; z-index: 1; }
+        .card-header {
+            display: flex; align-items: center; padding: 10px 15px;
+            background-color: rgba(255, 255, 255, 0.3); backdrop-filter: blur(5px);
+        }
+        .logo { width: 40px; height: 40px; margin-right: 12px; }
+        .school-title-group { color: var(--primary-color); line-height: 1.2; }
+        .school-title { font-size: 16px; font-weight: 700; font-family: 'Poppins', sans-serif; margin: 0; }
+        .school-subtitle { font-size: 12px; font-weight: 500; margin: 0; }
+        
+        .card-body { flex-grow: 1; display: flex; padding: 10px 15px; gap: 15px; }
+        #displayPhoto {
+            width: 90px; height: 110px; object-fit: cover; border: 3px solid var(--white-color);
+            border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); flex-shrink: 0;
+        }
+        .student-details { font-size: 11px; line-height: 1.45; }
+        #displayName {
+            font-family: 'Poppins', sans-serif; font-size: 17px; font-weight: 700;
+            color: var(--primary-color); margin: 0 0 4px 0;
+        }
+        .student-details p { margin: 0; }
+        .student-details .label { font-weight: 600; color: #555; }
+        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+
+        .card-footer {
+            background: var(--primary-color); color: var(--white-color); text-align: center;
+            padding: 6px; font-size: 9px; margin-top: auto; line-height: 1.3;
+        }
+        
+        /*** Data Storage & Search Section ***/
+        .data-section {
+            width: 100%; max-width: 1540px; margin-top: 50px; background: var(--white-color);
+            padding: 30px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); display: none;
+        }
+        .data-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .search-container { display: flex; align-items: center; gap: 15px; }
+        #searchIcon { font-size: 24px; color: var(--primary-color); cursor: pointer; }
+        #searchInput {
+            display: none; border: none; border-bottom: 2px solid #ccc; padding: 8px 5px;
+            font-size: 16px; width: 250px; transition: all 0.3s;
+        }
+        #searchInput:focus { outline: none; border-bottom-color: var(--primary-color); }
+        .table-container { overflow-x: auto; margin-top: 20px; }
+        #studentDataTable { width: 100%; border-collapse: collapse; font-size: 14px; white-space: nowrap; }
+        #studentDataTable th, #studentDataTable td { padding: 15px; text-align: left; vertical-align: middle; }
+        #studentDataTable thead { background-color: var(--primary-color); color: var(--white-color); font-family: 'Poppins', sans-serif; font-weight: 600; }
+        #studentDataTable th:first-child { border-radius: 8px 0 0 8px; }
+        #studentDataTable th:last-child { border-radius: 0 8px 8px 0; }
+        #studentDataTable tbody tr { border-bottom: 1px solid #e0e0e0; }
+        #studentDataTable tbody tr:last-child { border-bottom: none; }
+        #studentDataTable tbody tr:hover { background-color: #f5f8ff; }
+        .table-photo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 18px; transition: all 0.3s; padding: 5px; }
+        .view-card-btn { color: var(--secondary-color); }
+        .edit-card-btn { color: var(--edit-color); }
+        .delete-card-btn { color: var(--danger-color); }
+        .action-btn:hover { transform: scale(1.2); }
+
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+        <div class="page-header">
+             <h1 class="section-title" style="margin: 0; border: none;">ID Card System</h1>
+             <button id="adminBtn" class="btn btn-secondary"><i id="adminIcon" class="fa-solid fa-user-shield"></i> <span id="adminBtnText">Admin Panel</span></button>
+        </div>
+
+        <div class="main-content">
+            <!-- Input Form Section -->
+            <div class="form-section">
+                <h2 class="section-title">Student Details</h2>
+                <form id="studentForm">
+                    <div class="form-group"><label for="studentName">Full Name</label><input type="text" id="studentName" required></div>
+                    <div class="form-group"><label for="studentParentage">Parentage</label><input type="text" id="studentParentage"></div>
+                    <div class="form-group"><label for="studentClass">Class / Grade</label><input type="text" id="studentClass"></div>
+                    <div class="form-group"><label for="studentRoll">Roll Number</label><input type="text" id="studentRoll"></div>
+                    <div class="form-group"><label for="studentPhone">Phone Number</label><input type="tel" id="studentPhone"></div>
+                    <div class="form-group"><label for="studentAddress">Address</label><textarea id="studentAddress" rows="2"></textarea></div>
+                    <div class="form-group"><label for="studentPhoto">Upload Photo</label><input type="file" id="studentPhoto" accept="image/*"></div>
+                    <div class="form-buttons">
+                        <button type="submit" id="submitBtn" class="btn btn-primary"><i class="fa-solid fa-id-card"></i>Generate & Store</button>
+                        <button type="button" id="cancelEditBtn" class="btn btn-secondary"><i class="fa-solid fa-times"></i>Cancel Edit</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Generated Card Section -->
+            <div class="card-section">
+                <h2 class="section-title">Live Preview</h2>
+                <div id="idCard">
+                    <div class="card-header">
+                        <img src="../img/logo3.png" alt="School Logo" class="logo">
+                        <div class="school-title-group">
+                            <h2 class="school-title">GOVT HSS LARNOO</h2>
+                            <p class="school-subtitle">Student Identity Card</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <img id="displayPhoto" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Student Photo">
+                        <div class="student-details">
+                            <h3 id="displayName">Student Name</h3>
+                            <p><span class="label">Parentage:</span> <span id="displayParentage"></span></p>
+                                <p><span class="label">Phone:</span> <span id="displayPhone"></span></p>
+                             <div class="detail-grid">
+                                <p><span class="label">Roll No:</span> <span id="displayRoll"></span></p>
+                                <p><span class="label">ID:</span> <span id="displayId"></span></p>
+                             </div>
+                            <p><span class="label">Class:</span> <span id="displayClass"></span></p>
+                            <p><span class="label">Address:</span> <span id="displayAddress"></span></p>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <p>Email: workwithghsslarnoo.com | Ph: +91 70064 85144 | <br> Larnoo, Kokarnag, Anantnag, J&K, India </p>
+                    </div>
+                </div>
+                <button id="downloadBtn" class="btn btn-primary"><i class="fa-solid fa-download"></i>Download Card</button>
+            </div>
+        </div>
+
+        <!-- Data Storage Section -->
+        <div class="data-section" id="dataSection">
+            <div class="data-header">
+                <h2 class="section-title" style="border:none; padding:0; margin:0;">Stored Student Data</h2>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search students...">
+                    <i class="fa-solid fa-search" id="searchIcon"></i>
+                </div>
+            </div>
+            <div class="table-container">
+                <table id="studentDataTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Photo</th><th>Name</th><th>Parentage</th><th>Class</th><th>Roll No</th><th>Address</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- STATE MANAGEMENT ---
+            let studentDatabase = [];
+            let studentIdCounter = 2025001;
+            let reusableIds = [];
+            let currentPhotoBase64 = '';
+            let editMode = false;
+            let currentlyEditingId = null;
+
+            // --- DOM ELEMENTS ---
+            const adminBtn = document.getElementById('adminBtn');
+            const adminBtnText = document.getElementById('adminBtnText');
+            const adminIcon = document.getElementById('adminIcon');
+            const studentForm = document.getElementById('studentForm');
+            const studentPhotoInput = document.getElementById('studentPhoto');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const dataSection = document.getElementById('dataSection');
+            const tableBody = document.querySelector('#studentDataTable tbody');
+            const idCard = document.getElementById('idCard');
+            const searchIcon = document.getElementById('searchIcon');
+            const searchInput = document.getElementById('searchInput');
+            const submitBtn = document.getElementById('submitBtn');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+
+            const displayElements = {
+                photo: document.getElementById('displayPhoto'), name: document.getElementById('displayName'),
+                parentage: document.getElementById('displayParentage'), class: document.getElementById('displayClass'),
+                roll: document.getElementById('displayRoll'), phone: document.getElementById('displayPhone'),
+                address: document.getElementById('displayAddress'), id: document.getElementById('displayId'),
+            };
+            
+            const inputElements = {
+                name: document.getElementById('studentName'), parentage: document.getElementById('studentParentage'),
+                class: document.getElementById('studentClass'), roll: document.getElementById('studentRoll'),
+                phone: document.getElementById('studentPhone'), address: document.getElementById('studentAddress'),
+            };
+
+            // --- DATA PERSISTENCE FUNCTIONS ---
+            const saveData = () => {
+                localStorage.setItem('studentDatabase', JSON.stringify(studentDatabase));
+                localStorage.setItem('studentIdCounter', studentIdCounter);
+                localStorage.setItem('reusableIds', JSON.stringify(reusableIds));
+            };
+
+            const loadData = () => {
+                const db = localStorage.getItem('studentDatabase');
+                studentDatabase = db ? JSON.parse(db) : [];
+                const counter = localStorage.getItem('studentIdCounter');
+                studentIdCounter = counter ? parseInt(counter, 10) : 2025001;
+                const reused = localStorage.getItem('reusableIds');
+                reusableIds = reused ? JSON.parse(reused) : [];
+                if (studentDatabase.length > 0) renderTable(studentDatabase);
+            };
+
+            // --- CORE FUNCTIONS ---
+            const updateCardPreview = (data) => {
+                displayElements.photo.src = data.photo || "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+                displayElements.name.textContent = data.name || 'Student Name';
+                displayElements.parentage.textContent = data.parentage || 'N/A';
+                displayElements.class.textContent = data.class || 'XX';
+                displayElements.roll.textContent = data.roll || '0000';
+                displayElements.phone.textContent = data.phone || 'N/A';
+                displayElements.address.textContent = data.address || 'N/A';
+                displayElements.id.textContent = data.id || 'N/A';
+                if (data.id) {
+                    downloadBtn.style.display = 'inline-flex';
+                } else {
+                    downloadBtn.style.display = 'none';
+                }
+            };
+            
+            const renderTable = (dataToRender) => {
+                tableBody.innerHTML = '';
+                dataToRender.forEach(student => {
+                    const row = tableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${student.id}</td>
+                        <td><img src="${student.photo}" class="table-photo" alt="Photo"></td>
+                        <td>${student.name}</td>
+                        <td>${student.parentage}</td>
+                        <td>${student.class}</td>
+                        <td>${student.roll}</td>
+                        <td>${student.address}</td>
+                        <td>
+                            <button class="action-btn view-card-btn" data-id="${student.id}" title="View Card"><i class="fa-solid fa-eye"></i></button>
+                            <button class="action-btn edit-card-btn" data-id="${student.id}" title="Edit Card"><i class="fa-solid fa-pencil"></i></button>
+                            <button class="action-btn delete-card-btn" data-id="${student.id}" title="Delete Card"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    `;
+                });
+            };
+            
+            const enterEditMode = (student) => {
+                editMode = true;
+                currentlyEditingId = student.id;
+                for (const key in inputElements) { inputElements[key].value = student[key]; }
+                displayElements.photo.src = student.photo;
+                currentPhotoBase64 = student.photo;
+                submitBtn.innerHTML = '<i class="fa-solid fa-save"></i>Update Card';
+                cancelEditBtn.style.display = 'inline-flex';
+                studentPhotoInput.required = false;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+            
+            const exitEditMode = () => {
+                editMode = false;
+                currentlyEditingId = null;
+                submitBtn.innerHTML = '<i class="fa-solid fa-id-card"></i>Generate & Store';
+                cancelEditBtn.style.display = 'none';
+                studentPhotoInput.required = true;
+                studentForm.reset();
+                currentPhotoBase64 = '';
+            };
+
+            // --- EVENT LISTENERS ---
+            adminBtn.addEventListener('click', () => {
+                const isVisible = dataSection.style.display === 'block';
+                if (!isVisible) {
+                    dataSection.style.display = 'block';
+                    adminBtnText.textContent = 'Hide Panel';
+                    adminIcon.className = 'fa-solid fa-eye-slash';
+                    dataSection.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    dataSection.style.display = 'none';
+                    adminBtnText.textContent = 'Admin Panel';
+                    adminIcon.className = 'fa-solid fa-user-shield';
+                }
+            });
+
+            studentPhotoInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => { currentPhotoBase64 = e.target.result; displayElements.photo.src = currentPhotoBase64; };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            studentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (editMode) {
+                    const studentIndex = studentDatabase.findIndex(s => s.id === currentlyEditingId);
+                    if (studentIndex > -1) {
+                        const updatedStudent = { ...studentDatabase[studentIndex], photo: currentPhotoBase64 || studentDatabase[studentIndex].photo };
+                        for (const key in inputElements) { updatedStudent[key] = inputElements[key].value; }
+                        studentDatabase[studentIndex] = updatedStudent;
+                        updateCardPreview(updatedStudent);
+                    }
+                } else {
+                    if (!currentPhotoBase64) { alert('Please upload a photo for new students.'); return; }
+                    const newId = reusableIds.length > 0 ? reusableIds.shift() : studentIdCounter++;
+                    const studentData = { id: newId, photo: currentPhotoBase64 };
+                    for (const key in inputElements) { studentData[key] = inputElements[key].value; }
+                    studentDatabase.push(studentData);
+                    updateCardPreview(studentData);
+                }
+                renderTable(studentDatabase);
+                saveData();
+                exitEditMode();
+            });
+
+            cancelEditBtn.addEventListener('click', exitEditMode);
+
+            downloadBtn.addEventListener('click', () => {
+                const studentName = displayElements.name.textContent.replace(/\s+/g, '_');
+                html2canvas(idCard, { scale: 4, useCORS: true, backgroundColor: null }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `ID-Card_${studentName}_${displayElements.id.textContent}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                }).catch(err => console.error('Download Error:', err));
+            });
+            
+            tableBody.addEventListener('click', (e) => {
+                const targetButton = e.target.closest('.action-btn');
+                if (!targetButton) return;
+                const studentId = parseInt(targetButton.dataset.id, 10);
+                const student = studentDatabase.find(s => s.id === studentId);
+                if (!student) return;
+
+                if (targetButton.classList.contains('view-card-btn')) {
+                    updateCardPreview(student);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else if (targetButton.classList.contains('edit-card-btn')) {
+                    enterEditMode(student);
+                } else if (targetButton.classList.contains('delete-card-btn')) {
+                    if (confirm(`Are you sure you want to delete the record for ${student.name} (ID ${student.id})? This action cannot be undone.`)) {
+                        reusableIds.push(student.id);
+                        reusableIds.sort((a, b) => a - b);
+                        studentDatabase = studentDatabase.filter(s => s.id !== studentId);
+                        saveData();
+                        renderTable(studentDatabase);
+                    }
+                }
+            });
+
+            searchIcon.addEventListener('click', () => {
+                const isVisible = searchInput.style.display === 'block';
+                searchInput.style.display = isVisible ? 'none' : 'block';
+                if (!isVisible) searchInput.focus();
+            });
+
+            searchInput.addEventListener('keyup', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filteredData = studentDatabase.filter(s => Object.values(s).some(val => String(val).toLowerCase().includes(searchTerm)));
+                renderTable(filteredData);
+            });
+
+            // Initial Load
+            loadData();
+        });
+    </script>
+</body>
+</html>
