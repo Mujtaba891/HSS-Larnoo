@@ -1,109 +1,851 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HSS Larnoo ID System</title>
-    <!-- Styles and Libraries -->
-    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- QR Code Generation Library -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-    <!-- QR Code Scanning Library -->
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <style>
-        :root { --primary-color: #0d2c54; --secondary-color: #1a535c; --accent-color: #f7b801; --edit-color: #0077b6; --danger-color: #d90429; --light-color: #f4f7fe; --dark-color: #333333; --white-color: #ffffff; --card-width: 380px; --card-aspect-ratio: 8.7 / 5.5; }
-        body { font-family: 'Montserrat', sans-serif; background-color: var(--light-color); color: var(--dark-color); line-height: 1.6; margin: 0; }
-        .page-container { padding: 40px 20px; max-width: 1200px; margin: auto; }
-        .btn { font-weight: 600; transition: all 0.3s ease; padding: 12px 25px; border-radius: 8px; border: none; cursor: pointer; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-primary { background-color: var(--primary-color); color: var(--white-color); }
-        .btn-primary:hover:not(:disabled) { background-color: #123e7a; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .btn:disabled { background-color: #a9a9a9; cursor: not-allowed; }
-        .section-title { font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--primary-color); margin-top: 0; margin-bottom: 25px; border-bottom: 3px solid var(--accent-color); padding-bottom: 10px; }
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; font-size: 15px; transition: border-color 0.3s, box-shadow 0.3s; }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(13, 44, 84, 0.1); }
+    <meta charset="utf-8">
+    <title>Govt HSS Larnoo</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="GHSS Larnoo, Govt. HSS Larnoo, Govt HSS, " name="keywords">
+    <meta content="Govt. HSS Larnoo is located in the distric of J&K named Anantnag in Larnoo" name="description">
+    <link rel="Icon" href="/img/logo3.png">
 
-        /* SPA Navigation and Views */
-        #app-header { background-color: var(--white-color); padding: 15px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 10px;}
-        #app-header h1 { font-family: 'Poppins', sans-serif; color: var(--primary-color); font-size: 24px; margin: 0; }
-        #app-header nav { display: flex; flex-wrap: wrap; }
-        #app-header nav a { margin-left: 20px; text-decoration: none; color: var(--primary-color); font-weight: 600; cursor: pointer; padding: 5px 10px; border-radius: 5px; transition: background-color 0.3s; }
-        #app-header nav a:hover { background-color: #f0f0f0; }
-        #app-header nav a.active { color: var(--accent-color); font-weight: 700; }
-        .view { display: none; }
-        .view.active { display: block; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet"> 
 
-        /* Student View: Form & Card */
-        .main-content { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 40px; width: 100%; }
-        .form-section, .card-section { flex: 1; min-width: 350px; max-width: 500px; background: var(--white-color); padding: 30px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); }
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-        /* ID Card Styles */
-        #idCard { width: var(--card-width); aspect-ratio: var(--card-aspect-ratio); font-family: 'Montserrat', sans-serif; background: #eef2f9; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: flex; flex-direction: column; position: relative; overflow: hidden; margin: 0 auto; }
-        #idCard::before, #idCard::after { content: ''; position: absolute; border-radius: 50%; opacity: 0.08; z-index: 0; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); }
-        #idCard::before { width: 150%; height: 150%; bottom: -80%; right: -50%; }
-        #idCard::after { width: 120%; height: 120%; top: -60%; left: -40%; opacity: 0.1; }
-        .card-header, .card-body, .card-footer { position: relative; z-index: 1; }
-        .card-header { display: flex; align-items: center; padding: 10px 15px; background-color: rgba(255, 255, 255, 0.3); backdrop-filter: blur(5px); }
-        .logo { width: 40px; height: 40px; margin-right: 12px; }
-        .school-title-group { color: var(--primary-color); line-height: 1.2; }
-        .school-title { font-size: 16px; font-weight: 700; font-family: 'Poppins', sans-serif; margin: 0; }
-        .school-subtitle { font-size: 12px; font-weight: 500; margin: 0; }
-        .card-body { flex-grow: 1; display: flex; padding: 10px 15px; gap: 15px; align-items: center; }
-        .card-body .displayPhoto { width: 90px; height: 110px; object-fit: cover; border: 3px solid var(--white-color); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); flex-shrink: 0; background-color: #ddd; }
-        .student-details { font-size: 11px; line-height: 1.45; flex-grow: 1; }
-        .displayName { font-family: 'Poppins', sans-serif; font-size: 17px; font-weight: 700; color: var(--primary-color); margin: 0 0 4px 0; }
-        .student-details p { margin: 0; }
-        .student-details .label { font-weight: 600; color: #555; }
-        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
-        .card-qr-code { width: 65px; height: 65px; flex-shrink: 0; background: var(--white-color); padding: 4px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-right: 5px; }
-        .card-qr-code canvas, .card-qr-code img { width: 100% !important; height: 100% !important; }
-        .card-footer { background: var(--primary-color); color: var(--white-color); text-align: center; padding: 6px; font-size: 9px; margin-top: auto; line-height: 1.3; }
-        #studentDownloadBtn { display: none; margin-top: 20px; }
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
 
-        /* Admin View & Attendance View Common Styles */
-        .data-section { width: 100%; margin-top: 20px; background: var(--white-color); padding: 30px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); }
-        .data-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
-        .table-container { overflow-x: auto; margin-top: 20px; }
-        .data-table { width: 100%; border-collapse: collapse; font-size: 14px; white-space: nowrap; }
-        .data-table th, .data-table td { padding: 12px 15px; text-align: left; vertical-align: middle; }
-        .data-table thead { background-color: var(--primary-color); color: var(--white-color); font-family: 'Poppins', sans-serif; font-weight: 600; }
-        .data-table th:first-child { border-radius: 8px 0 0 8px; }
-        .data-table th:last-child { border-radius: 0 8px 8px 0; }
-        .data-table tbody tr { border-bottom: 1px solid #e0e0e0; }
-        .data-table tbody tr:last-child { border-bottom: none; }
-        .data-table tbody tr:hover { background-color: #f5f8ff; }
-        .table-photo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
-        .action-btn { background: none; border: none; cursor: pointer; font-size: 18px; transition: all 0.3s; padding: 5px; }
-        .view-card-btn { color: #17a2b8; } .edit-card-btn { color: #0077b6; } .delete-card-btn { color: #d90429; }
-        .action-btn:hover { transform: scale(1.2); }
-        #searchInput { display: block; border: 1px solid #ccc; border-radius: 8px; padding: 8px 12px; font-size: 16px; width: 250px; transition: all 0.3s; }
-        #searchInput:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(13, 44, 84, 0.1); }
-        #login-container { max-width: 400px; margin: 50px auto; padding: 30px; background: var(--white-color); border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); text-align: center; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 
-        /* Attendance View Styles */
-        #attendance-view .main-content { gap: 20px; flex-direction: column; align-items: center; }
-        #scanner-container { border: 2px dashed #ccc; width: 100%; max-width: 500px; padding: 10px; border-radius: 10px; background: #f9f9f9; }
-        #qr-reader { width: 100%; border-radius: 8px; }
-        #scan-result { margin-top: 15px; text-align: center; font-size: 1.1em; font-weight: bold; min-height: 50px; padding: 10px; border-radius: 8px; }
-        .result-success { color: #fff; background-color: var(--secondary-color); }
-        .result-error { color: #fff; background-color: var(--danger-color); }
-        .result-info { color: var(--dark-color); background-color: #e0e0e0; }
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
 
-        /* Modal Styles */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
-        .modal-content { background-color: #fefefe; margin: 3% auto; padding: 30px; border-radius: 12px; border: 1px solid #888; width: 90%; max-width: 550px; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
-        .close-btn { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .modal-actions { margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;}
-    </style>
+    
+
 </head>
+
 <body>
-    <h1> Alert This page is not available</h1>
-<p> click <a href="Card/index.html"> here</a> to access it </p>
+
+    <!-- Spinner Start --
+    <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status"></div>
+    </div>
+    <!-- Spinner End -->
+
+
+    <!-- Navbar start -->
+    <div class="container-fluid border-bottom bg-light wow fadeIn" data-wow-delay="0.1s">
+        <div class="container topbar bg-primary d-none d-lg-block py-2" style="border-radius: 0 40px">
+            <div class="d-flex justify-content-between">
+                <div class="top-info ps-2">
+                    <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="https://maps.app.goo.gl/U5pmjifhstCcZTyA8" class="text-white">Larnoo, Anantnag, Jammu and Kashmir - 192202</a></small>
+                    <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="mailto:workwithhsslarnoo@gmail.com" class="text-white">workwithhsslarnoo@gmail.com</a></small>
+                </div>
+                <div class="top-link pe-2">
+                    <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-facebook-f text-secondary"></i></a>
+                    <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-twitter text-secondary"></i></a>
+                    <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-instagram text-secondary"></i></a>
+                    <a href="" class="btn btn-light btn-sm-square rounded-circle me-0"><i class="fab fa-linkedin-in text-secondary"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="container px-0">
+            <nav class="navbar navbar-light navbar-expand-xl py-3">
+                <a href="index.html" class="navbar-brand"><h1 class="text-primary display-6"><img src="/img/logo3.png" alt=""></h1></a>
+                <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars text-primary"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav mx-auto">
+                        <a href="index.html" class="nav-item nav-link active">Home</a>
+                        <a href="about.html" class="nav-item nav-link">About</a>
+                        <a href="service.html" class="nav-item nav-link">Services</a>
+                        <a href="program.html" class="nav-item nav-link">Programs</a>
+                        <a href="event.html" class="nav-item nav-link">Events</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                            <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                                <a href="blog.html" class="dropdown-item">Our Blog</a>
+                                <a href="team.html" class="dropdown-item">Our Team</a>
+                                <a href="/Card/index.html" class="dropdown-item">ID Card</a>
+                                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                                <a href="404.html" class="dropdown-item">404 Page</a>
+                            </div>
+                        </div>
+                        <a href="contact.html" class="nav-item nav-link">Contact</a>
+                    </div>
+                    <div class="d-flex me-4">
+                        <div id="phone-tada" class="d-flex align-items-center justify-content-center">
+                            <a href="" class="position-relative wow tada" data-wow-delay=".9s" >
+                                <i class="fa fa-phone-alt text-primary fa-2x me-4"></i>
+                                <div class="position-absolute" style="top: -7px; left: 20px;">
+                                    <span><i class="fa fa-comment-dots text-secondary"></i></span>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="d-flex flex-column pe-3 border-end border-primary">
+                                <span class="text-primary">Have any questions?</span>
+                                <a href="tel:+917006485144"><span class="text-secondary">Free: +91 70064 85144</span></a>
+                                <a href="tel:+917780830369"><span class="text-secondary">Free: +91 77808 30369</span></a>
+                        </div>
+                    </div>
+                    <button class="btn-search btn btn-primary btn-md-square rounded-circle" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-white"></i></button>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+
+    <!-- Modal Search Start -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex align-items-center">
+                    <div class="input-group w-75 mx-auto d-flex">
+                        <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
+                        <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Search End -->
+
+
+    <!-- Hero Start -->
+    <div class="container-fluid py-5 hero-header wow fadeIn" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-7 col-md-12">
+                    <h1 class="mb-3 text-primary" >Govt. HSS Larnoo</h1>
+                    <h1 class="mb-5 display-1 text-white">The institute deals with Education, Skills & Practicals</h1>
+                    <a href="" class="btn btn-primary px-4 py-3 px-md-5  me-4 btn-border-radius">Get Started</a>
+                    <a href="about.html" class="btn btn-primary px-4 py-3 px-md-5 btn-border-radius">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Hero End -->
+
+
+    <!-- About Start -->
+    <div class="container-fluid py-5 about bg-light">
+        <div class="container py-5">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-5 wow fadeIn" data-wow-delay="0.1s">
+                    <div class="video border">
+                        <button type="button" class="btn btn-play" data-bs-toggle="modal" data-src="https://www.youtube.com/embed/DWRcNpR6Kdc" data-bs-target="#videoModal">
+                            <span></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-7 wow fadeIn" data-wow-delay="0.3s">
+                    <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">About Us</h4>
+                    <h1 class="text-dark mb-4 display-5">A Legacy of Educational Excellence Since 1935</h1>
+                    <p class="text-dark mb-4">Govt. HSS Larnoo, established in 1935, is a co-educational higher secondary school managed by the Department of Education. Located in the rural area of Larnoo in the Anantnag district of Jammu and Kashmir, the school provides education for students from grades 9 to 12. The medium of instruction is English, and the academic session starts in April. The school is committed to providing quality education and fostering the holistic development of its students.</p>
+                    <div class="row mb-4">
+                        <div class="col-lg-6">
+                            <h6 class="mb-3"><i class="fas fa-check-circle me-2"></i>Comprehensive Academics</h6>
+                            <h6 class="mb-3"><i class="fas fa-check-circle me-2 text-primary"></i>Vibrant Co-curricular Activities</h6>
+                            <h6 class="mb-3"><i class="fas fa-check-circle me-2 text-secondary"></i>Modern Learning Facilities</h6>
+                        </div>
+                        <div class="col-lg-6">
+                            <h6 class="mb-3"><i class="fas fa-check-circle me-2"></i>Supportive & Qualified Faculty</h6>
+                            <h6 class="mb-3"><i class="fas fa-check-circle me-2 text-primary"></i>Focus on Holistic Development</h6>
+                            <h6 class="mb-3"><i class="fas fa-check-circle me-2 text-secondary"></i>Engaging in National Competitions</h6>
+                        </div>
+                    </div>
+                    <a href="about.html" class="btn btn-primary px-5 py-3 btn-border-radius">More Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- About End -->
+
+
+    <!-- Modal Video -->
+    <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Youtube Video</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- 16:9 aspect ratio -->
+                    <div class="ratio ratio-16x9">
+                        <iframe class="embed-responsive-item" src="" id="video" allowfullscreen allowscriptaccess="always"
+                            allow="autoplay"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- About End -->
+
+
+    <!-- Service Start -->
+    <div class="container-fluid service py-5">
+        <div class="container py-5">
+            <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+                <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">Our Commitment</h4>
+                <h1 class="mb-5 display-3">A Foundation For Lifelong Success</h1>
+            </div>
+            <div class="row g-5">
+                <div class="col-md-6 col-lg-6 col-xl-3 wow fadeIn" data-wow-delay="0.1s">
+                    <div class="text-center border-primary border bg-white service-item">
+                        <div class="service-content d-flex align-items-center justify-content-center p-4">
+                            <div class="service-content-inner">
+                                <div class="p-4"><i class="fa-solid fa-book-open-reader fa-6x text-primary"></i></div>
+                                <a href="service.html" class="h4">Academic Excellence</a>
+                                <p class="my-3">We offer a rigorous academic curriculum in Arts and Science streams, fostering critical thinking and preparing students for higher education.</p>
+                                <a href="service.html" class="btn btn-primary text-white px-4 py-2 my-2 btn-border-radius">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-3 wow fadeIn" data-wow-delay="0.3s">
+                    <div class="text-center border-primary border bg-white service-item">
+                        <div class="service-content d-flex align-items-center justify-content-center p-4">
+                            <div class="service-content-inner">
+                                <div class="p-4"><i class="fa-solid fa-trophy fa-6x text-primary"></i></div>
+                                <a href="service.html#extracurricular" class="h4">Holistic Development</a>
+                                <p class="my-3">Beyond academics, we focus on character building through a rich array of sports, arts, and co-curricular activities.</p>
+                                <a href="service.html#extracurricular" class="btn btn-primary text-white px-4 py-2 my-2 btn-border-radius">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-3 wow fadeIn" data-wow-delay="0.5s">
+                    <div class="text-center border-primary border bg-white service-item">
+                        <div class="service-content d-flex align-items-center justify-content-center p-4">
+                            <div class="service-content-inner">
+                                <div class="p-4"><i class="fa-solid fa-chalkboard-teacher fa-6x text-primary"></i></div>
+                                <a href="team.html" class="h4">Expert & Caring Faculty</a>
+                                <p class="my-3">Our dedicated and experienced teachers are committed to mentoring every student towards achieving their full potential. The school has 16 male and 2 female teachers.</p>
+                                <a href="team.html" class="btn btn-primary text-white px-4 py-2 my-2 btn-border-radius">Meet Them</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-3 wow fadeIn" data-wow-delay="0.7s">
+                    <div class="text-center border-primary border bg-white service-item">
+                        <div class="service-content d-flex align-items-center justify-content-center p-4">
+                            <div class="service-content-inner">
+                                <div class="p-4"><i class="fa-solid fa-shield-halved fa-6x text-primary"></i></div>
+                                <a href="service.html#campus" class="h4">Modern & Safe Campus</a>
+                                <p class="my-3">We offer a secure and nurturing environment with modern facilities, including a library with over 1500 books and a functional ICT lab, to support learning.</p>
+                                <a href="service.html#campus" class="btn btn-primary text-white px-4 py-2 my-2 btn-border-radius">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <div class="d-inline-block text-center wow fadeIn" data-wow-delay="0.1s">
+                    <a href="service.html" class="btn btn-primary px-5 py-3 text-white btn-border-radius">View More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Service End -->
+
+
+    <!-- Programs Start -->
+        <div class="container-fluid program py-5">
+            <div class="container py-5">
+                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+                    <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">Our Programs</h4>
+                    <h1 class="mb-5 display-3">Igniting Minds, Shaping Futures</h1>
+                </div>
+                <div class="row g-5 justify-content-center">
+                    <div class="col-md-6 col-lg-6 col-xl-4 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="program-item rounded">
+                            <div class="program-img position-relative">
+                                <div class="overflow-hidden img-border-radius">
+                                    <img src="img/program-1.jpg" class="img-fluid w-100" alt="Academics at Govt. HSS Larnoo">
+                                </div>
+                                <div class="px-4 py-2 bg-primary text-white program-rate">Holistic Education</div>
+                            </div>
+                            <div class="program-text bg-white px-4 pb-3">
+                                <div class="program-text-inner">
+                                    <a href="#" class="h4">Comprehensive Academics</a>
+                                    <p class="mt-3 mb-0">Established in 1935, our school provides a rich academic environment for students from grades 9 to 12. [2] With English as the medium of instruction, we offer a rigorous state board curriculum to prepare students for a successful future. [2]</p>
+                                </div>
+                            </div>
+                            <div class="program-teacher d-flex align-items-center border-top border-primary bg-white px-4 py-3">
+                                <img src="img/teachers/principal.png" class="img-fluid rounded-circle p-2 border border-primary bg-white" alt="Head Teacher" style="width: 70px; height: 70px;" onerror="this.onerror=null; this.src='profile.png';">
+                                <div class="ms-3">
+                                    <h6 class="mb-0 text-primary">Abdul Rashid Wani</h6>
+                                    <small>Head Teacher</small>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between px-4 py-2 bg-primary rounded-bottom">
+                                <small class="text-white"><i class="fas fa-school me-1"></i> Grades 9-12</small>
+                                <small class="text-white"><i class="fas fa-chalkboard-teacher me-1"></i> Co-educational</small>
+                                <small class="text-white"><i class="fas fa-globe-asia me-1"></i> Rural Setting</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-4 wow fadeIn" data-wow-delay="0.3s">
+                        <div class="program-item rounded">
+                            <div class="program-img position-relative">
+                                <div class="overflow-hidden img-border-radius">
+                                    <img src="img/program-2.jpg" class="img-fluid w-100" alt="Extracurricular Activities">
+                                </div>
+                                <div class="px-4 py-2 bg-primary text-white program-rate">Beyond the Books</div>
+                            </div>
+                            <div class="program-text bg-white px-4 pb-3">
+                                <div class="program-text-inner">
+                                    <a href="#" class="h4">National Active Champions</a>
+                                    <p class="mt-3 mb-0">We are proud participants in the National Active Championship, which offers a wide range of co-curricular activities including arts, comedy, dance, music, poetry, and sports. [3, 4] Our students regularly engage in quizzes and fun contests to showcase their talents. [3]</p>
+                                </div>
+                            </div>
+                            <div class="program-teacher d-flex align-items-center border-top border-primary bg-white px-4 py-3">
+                                <img src="img/Teachers/activity-coordinator.png" class="img-fluid rounded-circle p-2 border border-primary bg-white" alt="Activity Coordinator" style="width: 70px; height: 70px;" onerror="this.onerror=null; this.src='profile.png';">
+                                <div class="ms-3">
+                                    <h6 class="mb-0 text-primary">Dedicated Staff</h6>
+                                    <small>Activity Coordinators</small>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between px-4 py-2 bg-primary rounded-bottom">
+                                <small class="text-white"><i class="fas fa-palette me-1"></i> Arts & Crafts</small>
+                                <small class="text-white"><i class="fas fa-trophy me-1"></i> Sports</small>
+                                <small class="text-white"><i class="fas fa-music me-1"></i> Performing Arts</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-4 wow fadeIn" data-wow-delay="0.5s">
+                        <div class="program-item rounded">
+                            <div class="program-img position-relative">
+                                <div class="overflow-hidden img-border-radius">
+                                    <img src="img/program-3.jpg" class="img-fluid w-100" alt="Learning Tools">
+                                </div>
+                                <div class="px-4 py-2 bg-primary text-white program-rate">Future Ready</div>
+                            </div>
+                            <div class="program-text bg-white px-4 pb-3">
+                                <div class="program-text-inner">
+                                    <a href="#" class="h4">Modern Learning Tools</a>
+                                    <p class="mt-3 mb-0">Our school is equipped with a library of over 1500 books and a ICT lab with 8 functional computers to support modern education. [2] We foster an environment of curiosity, preparing students for the challenges of tomorrow. [2]</p>
+                                </div>
+                            </div>
+                            <div class="program-teacher d-flex align-items-center border-top border-primary bg-white px-4 py-3">
+                                <img src="img/Teachers/Aarif-sir.jpg" class="img-fluid rounded-circle p-2 border border-primary bg-white" alt="Faculty" style="width: 70px; height: 70px;" onerror="this.onerror=null; this.src='profile.png';">
+                                <div class="ms-3">
+                                    <h6 class="mb-0 text-primary">Supportive Faculty</h6>
+                                    <small>Librarian & IT Staff</small>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between px-4 py-2 bg-primary rounded-bottom">
+                                <small class="text-white"><i class="fas fa-book-open me-1"></i> 1504 Books</small>
+                                <small class="text-white"><i class="fas fa-laptop-code me-1"></i> ICT Lab</small>
+                                <small class="text-white"><i class="fas fa-lightbulb me-1"></i> Innovation Hub</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Program End -->
+
+    <!-- Events Start -->
+        <div class="container-fluid events py-5 bg-light">
+            <div class="container py-5">
+                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+                    <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">Our Events</h4>
+                    <h1 class="mb-5 display-3">District-Wide School Events</h1>
+                </div>
+                <div class="row g-5 justify-content-center">
+                    <div class="col-md-6 col-lg-6 col-xl-4 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="events-item bg-primary rounded">
+                            <div class="events-inner position-relative">
+                                <div class="events-img overflow-hidden rounded-circle position-relative">
+                                    <img src="img/event-1.jpg" class="img-fluid w-100 rounded-circle" alt="Sports Events">
+                                    <div class="event-overlay">
+                                        <a href="img/event-1.jpg" data-lightbox="event-1"><i class="fas fa-search-plus text-white fa-2x"></i></a>
+                                    </div>
+                                </div>
+                                <div class="px-4 py-2 bg-secondary text-white text-center events-rate">Ongoing</div>
+                                <div class="d-flex justify-content-between px-4 py-2 bg-secondary">
+                                    <small class="text-white"><i class="fas fa-calendar me-1 text-primary"></i> Throughout the Year</small>
+                                    <small class="text-white"><i class="fas fa-map-marker-alt me-1 text-primary"></i> Anantnag District</small>
+                                </div>
+                            </div>
+                            <div class="events-text p-4 border border-primary bg-white border-top-0 rounded-bottom">
+                                <a href="#" class="h4">Inter-School Sports Competitions</a>
+                                <p class="mb-0 mt-3">The Department of Youth Services and Sports organizes a dynamic calendar of sports events including football, volleyball, kabaddi, and martial arts tournaments for various age groups across the district. [3, 4]</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-4 wow fadeIn" data-wow-delay="0.3s">
+                        <div class="events-item bg-primary rounded">
+                            <div class="events-inner position-relative">
+                                <div class="events-img overflow-hidden rounded-circle position-relative">
+                                    <img src="img/event-2.jpg" class="img-fluid w-100 rounded-circle" alt="Cultural Events">
+                                    <div class="event-overlay">
+                                        <a href="img/event-2.jpg" data-lightbox="event-2"><i class="fas fa-search-plus text-white fa-2x"></i></a>
+                                    </div>
+                                </div>
+                                <div class="px-4 py-2 bg-secondary text-white text-center events-rate">Annual</div>
+                                <div class="d-flex justify-content-between px-4 py-2 bg-secondary">
+                                    <small class="text-white"><i class="fas fa-calendar me-1 text-primary"></i> Various Dates</small>
+                                    <small class="text-white"><i class="fas fa-map-marker-alt me-1 text-primary"></i> Anantnag District</small>
+                                </div>
+                            </div>
+                            <div class="events-text p-4 border border-primary bg-white border-top-0 rounded-bottom">
+                                <a href="#" class="h4">Cultural & Educational Fests</a>
+                                <p class="mb-0 mt-3">Schools across Anantnag participate in various cultural and educational programs like the 'Shanti Yatra' to promote peace and harmony, and 'Fit India' runs to encourage a healthy lifestyle. [5, 14]</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-4 wow fadeIn" data-wow-delay="0.5s">
+                        <div class="events-item bg-primary rounded">
+                            <div class="events-inner position-relative">
+                                <div class="events-img overflow-hidden rounded-circle position-relative">
+                                    <img src="img/event-3.jpg" class="img-fluid w-100 rounded-circle" alt="Awareness Programs">
+                                    <div class="event-overlay">
+                                        <a href="img/event-3.jpg" data-lightbox="event-3"><i class="fas fa-search-plus text-white fa-2x"></i></a>
+                                    </div>
+                                </div>
+                                <div class="px-4 py-2 bg-secondary text-white text-center events-rate">Periodic</div>
+                                <div class="d-flex justify-content-between px-4 py-2 bg-secondary">
+                                    <small class="text-white"><i class="fas fa-calendar me-1 text-primary"></i> As Scheduled</small>
+                                    <small class="text-white"><i class="fas fa-map-marker-alt me-1 text-primary"></i> Anantnag District</small>
+                                </div>
+                            </div>
+                            <div class="events-text p-4 border border-primary bg-white border-top-0 rounded-bottom">
+                                <a href="#" class="h4">Awareness & Enrollment Drives</a>
+                                <p class="mb-0 mt-3">The Chief Education Officer organizes Mega Enrollment Drives and SVEEP programs to promote education and electoral participation, with active involvement from local schools. [2, 4]</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-inline-block text-center wow fadeIn" data-wow-delay="0.1s">
+                    <a href="event.html" class="btn btn-primary px-5 py-3 text-white btn-border-radius">View More</a>
+                </div>
+                </div>
+            </div>
+        </div>
+        <!-- Events End-->
+
+
+
+    <!-- Blog Start-->
+        <div class="container-fluid blog py-5">
+            <div class="container py-5">
+                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 600px;">
+                    <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">Latest News & Blog</h4>
+                    <h1 class="mb-5 display-3">Read Our Latest News & Blog</h1>
+                </div>
+                <div class="row g-5 justify-content-center">
+                    <div class="col-md-6 col-lg-6 col-xl-4 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="blog-item rounded-bottom">
+                            <div class="blog-img overflow-hidden position-relative img-border-radius">
+                                <img src="img/blog-1.jpg" class="img-fluid w-100" alt="Image">
+                            </div>
+                            <div class="d-flex justify-content-between px-4 py-3 bg-light border-bottom border-primary blog-date-comments">
+                                <small class="text-dark"><i class="fas fa-calendar me-1 text-dark"></i> 29 Nov 2023</small>
+                                <small class="text-dark"><i class="fas fa-comment-alt me-1 text-dark"></i> Comments (15)</small>
+                            </div>
+                            <div class="blog-content d-flex align-items-center px-4 py-3 bg-light">
+                                <div class="overflow-hidden rounded-circle rounded-top border border-primary">
+                                    <img src="img/program-teacher.jpg" class="img-fluid rounded-circle p-2 rounded-top" alt="Image" style="width: 70px; height: 70px; border-style: dotted; border-color: var(--bs-primary) !important;">
+                                </div>
+                                <div class="ms-3">
+                                    <h6 class="text-primary">Mary Mordern</h6>
+                                    <p class="text-muted">Baby Care</p>
+                                </div>
+                            </div>
+                            <div class="px-4 pb-4 bg-light rounded-bottom">
+                                <div class="blog-text-inner">
+                                    <a href="#" class="h4">How to pay attention to your child?</a>
+                                    <p class="mt-3 mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed purus</p>
+                                </div>
+                                <div class="text-center">
+                                    <a href="#" class="btn btn-primary text-white px-4 py-2 mb-3 btn-border-radius">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-4 wow fadeIn" data-wow-delay="0.3s">
+                        <div class="blog-item rounded-bottom">
+                            <div class="blog-img overflow-hidden position-relative img-border-radius">
+                                <img src="img/blog-2.jpg" class="img-fluid w-100" alt="Image">
+                            </div>
+                            <div class="d-flex justify-content-between px-4 py-3 bg-light border-bottom border-primary blog-date-comments">
+                                <small class="text-dark"><i class="fas fa-calendar me-1 text-dark"></i> 29 Nov 2023</small>
+                                <small class="text-dark"><i class="fas fa-comment-alt me-1 text-dark"></i> Comments (15)</small>
+                            </div>
+                            <div class="blog-content d-flex align-items-center px-4 py-3 bg-light">
+                                <div class="overflow-hidden rounded-circle rounded-top border border-primary">
+                                    <img src="img/program-teacher.jpg" class="img-fluid rounded-circle p-2 rounded-top" alt="" style="width: 70px; height: 70px; border-style: dotted; border-color: var(--bs-primary) !important;">
+                                </div>
+                                <div class="ms-3">
+                                    <h6 class="text-primary">Mary Mordern</h6>
+                                    <p class="text-muted">Baby Care</p>
+                                </div>
+                            </div>
+                            <div class="px-4 pb-4 bg-light rounded-bottom">
+                                <div class="blog-text-inner">
+                                    <a href="#" class="h4">Play outdoor sports with your child</a>
+                                    <p class="mt-3 mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed purus</p>
+                                </div>
+                                <div class="text-center">
+                                    <a href="#" class="btn btn-primary text-white px-4 py-2 mb-3 btn-border-radius">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-4 wow fadeIn" data-wow-delay="0.5s">
+                        <div class="blog-item rounded-bottom">
+                            <div class="blog-img overflow-hidden position-relative img-border-radius">
+                                <img src="img/blog-3.jpg" class="img-fluid w-100" alt="Image">
+                            </div>
+                            <div class="d-flex justify-content-between px-4 py-3 bg-light border-bottom border-primary blog-date-comments">
+                                <small class="text-dark"><i class="fas fa-calendar me-1 text-dark"></i> 29 Nov 2023</small>
+                                <small class="text-dark"><i class="fas fa-comment-alt me-1 text-dark"></i> Comments (15)</small>
+                            </div>
+                            <div class="blog-content d-flex align-items-center px-4 py-3 bg-light">
+                                <div class="overflow-hidden rounded-circle rounded-top border border-primary">
+                                    <img src="img/program-teacher.jpg" class="img-fluid rounded-circle p-2 rounded-top" alt="" style="width: 70px; height: 70px; border-style: dotted; border-color: var(--bs-primary) !important;">
+                                </div>
+                                <div class="ms-3">
+                                    <h6 class="text-primary">Mary Mordern</h6>
+                                    <p class="text-muted">Baby Care</p>
+                                </div>
+                            </div>
+                            <div class="px-4 pb-4 bg-light rounded-bottom">
+                                <div class="blog-text-inner">
+                                    <a href="#" class="h4">How to make time for your kids?</a>
+                                    <p class="mt-3 mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed purus</p>
+                                </div>
+                                <div class="text-center">
+                                    <a href="#" class="btn btn-primary text-white px-4 py-2 mb-3 btn-border-radius">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-inline-block text-center wow fadeIn" data-wow-delay="0.1s">
+                    <a href="blog.html" class="btn btn-primary px-5 py-3 text-white btn-border-radius">View More</a>
+                </div>
+                </div>
+            </div>
+        </div>
+        <!-- Blog End-->
+
+
+     <!-- Team Start-->
+        <div class="container-fluid team py-5">
+            <div class="container py-5">
+                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 600px;">
+                    <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">Our Team</h4>
+                    <h1 class="mb-5 display-3">Meet With Our Expert Teacher</h1>
+                </div>
+                <div class="row g-5 justify-content-center">
+                    <div class="col-md-6 col-lg-4 col-xl-3 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="team-item border border-primary img-border-radius overflow-hidden">
+                            <img src="img/team-1.jp" class="img-fluid w-100" alt="" onerror="this.onerror=null; this.src='profile.png';">
+                            <div class="team-icon d-flex align-items-center justify-content-center">
+                                <a class="share btn btn-primary btn-md-square text-white rounded-circle me-3" href=""><i class="fas fa-share-alt"></i></a>
+                                <a class="share-link btn btn-primary btn-md-square text-white rounded-circle me-3" href=""><i class="fab fa-facebook-f"></i></a>
+                                <a class="share-link btn btn-primary btn-md-square text-white rounded-circle me-3" href=""><i class="fab fa-twitter"></i></a>
+                                <a class="share-link btn btn-primary btn-md-square text-white rounded-circle" href=""><i class="fab fa-instagram"></i></a>
+                            </div>
+                            <div class="team-content text-center py-3">
+                                <h4 class="text-primary">Abdul Rsheed Wani</h4>
+                                <p class="text-muted mb-2">principal</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 col-xl-3 wow fadeIn" data-wow-delay="0.3s">
+                        <div class="team-item border border-primary img-border-radius overflow-hidden">
+                            <img src="img/team-2.jp" class="img-fluid w-100" alt="" onerror="this.onerror=null; this.src='profile.png';"">
+                            <div class="team-icon d-flex align-items-center justify-content-center">
+                                <a class="share btn btn-primary btn-md-square text-white rounded-circle me-3" href=""><i class="fas fa-share-alt"></i></a>
+                                <a class="share-link btn btn-primary btn-md-square text-white rounded-circle me-3" href=""><i class="fab fa-facebook-f"></i></a>
+                                <a class="share-link btn btn-primary btn-md-square text-white rounded-circle me-3" href=""><i class="fab fa-twitter"></i></a>
+                                <a class="share-link btn btn-primary btn-md-square text-white rounded-circle" href=""><i class="fab fa-instagram"></i></a>
+                            </div>
+                            <div class="team-content text-center py-3">
+                                <h4 class="text-primary">Fayaz Sir</h4>
+                                <p class="text-muted mb-2">Vice principal</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 col-xl-3 wow fadeIn" data-wow-delay="0.5s">
+                        <div class="team-item border border-primary img-border-radius overflow-hidden">
+                            <img src="img/team-3.jp" class="img-fluid w-100" alt="" onerror="this.onerror=null; this.src='profile.png';">
+                            <div class="team-icon d-flex align-items-center justify-content-center">
+                                <a class="share btn btn-primary btn-md-square text-white rounded-circle me-3" href=""><i class="fas fa-share-alt"></i></a>
+                                <a class="share-link btn btn-primary btn-md-square text-white rounded-circle me-3" href=""><i class="fab fa-facebook-f"></i></a>
+                                <a class="share-link btn btn-primary btn-md-square text-white rounded-circle me-3" href=""><i class="fab fa-twitter"></i></a>
+                                <a class="share-link btn btn-primary btn-md-square text-white rounded-circle" href=""><i class="fab fa-instagram"></i></a>
+                            </div>
+                            <div class="team-content text-center py-3">
+                                <h4 class="text-primary">Aejaz Malik</h4>
+                                <p class="text-muted mb-2">English Teacher</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 col-xl-3 wow fadeIn" data-wow-delay="0.7s">
+                        <div class="team-item border border-primary img-border-radius overflow-hidden" style="align-items: center; justify-content: center; padding: 60px;">
+                            <a href="team.html" class="btn btn-primary px-4 py-3 px-md-5 btn-border-radius" style="margin-top: 100px;">See More <i class="fas fa-arrow-right"></i> </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Team End-->
+
+
+    <!-- Testimonial Start -->
+        <div class="container-fluid testimonial py-5">
+            <div class="container py-5">
+                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+                    <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">Our Testimonials</h4>
+                    <h1 class="mb-5 display-3">Parents Say About Us</h1>
+                </div>
+                <div class="owl-carousel testimonial-carousel wow fadeIn" data-wow-delay="0.3s">
+                    <div class="testimonial-item img-border-radius bg-light border border-primary p-4">
+                        <div class="p-4 position-relative">
+                            <i class="fa fa-quote-right fa-2x text-primary position-absolute" style="top: 15px; right: 15px;"></i>
+                            <div class="d-flex align-items-center">
+                                <div class="border border-primary bg-white rounded-circle">
+                                    <img src="img/testimonial-2.jpg" class="rounded-circle p-2" style="width: 80px; height: 80px; border-style: dotted; border-color: var(--bs-primary);" alt="">
+                                </div>
+                                <div class="ms-4">
+                                    <h4 class="text-dark">Client Name</h4>
+                                    <p class="m-0 pb-3">Profession</p>
+                                    <div class="d-flex pe-5">
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border-top border-primary mt-4 pt-3">
+                                <p class="mb-0">Lorem Ipsum is simply dummy text of the printing Ipsum has been the industry's standard dummy text ever since the 1500s,
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-item img-border-radius bg-light border border-primary p-4">
+                        <div class="p-4 position-relative">
+                            <i class="fa fa-quote-right fa-2x text-primary position-absolute" style="top: 15px; right: 15px;"></i>
+                            <div class="d-flex align-items-center">
+                                <div class="border border-primary bg-white rounded-circle">
+                                    <img src="img/testimonial-2.jpg" class="rounded-circle p-2" style="width: 80px; height: 80px; border-style: dotted; border-color: var(--bs-primary);" alt="">
+                                </div>
+                                <div class="ms-4">
+                                    <h4 class="text-dark">Client Name</h4>
+                                    <p class="m-0 pb-3">Profession</p>
+                                    <div class="d-flex pe-5">
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border-top border-primary mt-4 pt-3">
+                                <p class="mb-0">Lorem Ipsum is simply dummy text of the printing Ipsum has been the industry's standard dummy text ever since the 1500s,
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-item img-border-radius bg-light border border-primary p-4">
+                        <div class="p-4 position-relative">
+                            <i class="fa fa-quote-right fa-2x text-primary position-absolute" style="top: 15px; right: 15px;"></i>
+                            <div class="d-flex align-items-center">
+                                <div class="border border-primary bg-white rounded-circle">
+                                    <img src="img/testimonial-2.jpg" class="rounded-circle p-2" style="width: 80px; height: 80px; border-style: dotted; border-color: var(--bs-primary);" alt="">
+                                </div>
+                                <div class="ms-4">
+                                    <h4 class="text-dark">Client Name</h4>
+                                    <p class="m-0 pb-3">Profession</p>
+                                    <div class="d-flex pe-5">
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border-top border-primary mt-4 pt-3">
+                                <p class="mb-0">Lorem Ipsum is simply dummy text of the printing Ipsum has been the industry's standard dummy text ever since the 1500s,
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-item img-border-radius bg-light border border-primary p-4">
+                        <div class="p-4 position-relative">
+                            <i class="fa fa-quote-right fa-2x text-primary position-absolute" style="top: 15px; right: 15px;"></i>
+                            <div class="d-flex align-items-center">
+                                <div class="border border-primary bg-white rounded-circle">
+                                    <img src="img/testimonial-2.jpg" class="rounded-circle p-2" style="width: 80px; height: 80px; border-style: dotted; border-color: var(--bs-primary);" alt="">
+                                </div>
+                                <div class="ms-4">
+                                    <h4 class="text-dark">Client Name</h4>
+                                    <p class="m-0 pb-3">Profession</p>
+                                    <div class="d-flex pe-5">
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                        <i class="fas fa-star text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border-top border-primary mt-4 pt-3">
+                                <p class="mb-0">Lorem Ipsum is simply dummy text of the printing Ipsum has been the industry's standard dummy text ever since the 1500s,
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Testimonial End -->
+
+
+    <!-- Footer Start -->
+    <div class="container-fluid footer py-5 wow fadeIn" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="footer-item">
+                        <div class="footer-logo">
+                        <img src="/img/logo3.png" alt="">
+                        <h2 class="fw-bold mb-3"><span class="text-primary mb-0">HSS </span><span class="text-secondary">Larnoo</span></h2>
+                    </div>
+                        <p class="mb-4">A Government Higher Secondary School dedicated to providing quality education in a rural setting.</p>
+                        <div class="border border-primary p-3 rounded bg-light">
+                            <h5 class="mb-3">Newsletter</h5>
+                            <div class="position-relative mx-auto border border-primary rounded" style="max-width: 400px;">
+                                <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
+                                <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2 text-white">SignUp</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="footer-item">
+                        <div class="d-flex flex-column p-4 ps-5 text-dark border border-primary" 
+                        style="border-radius: 50% 20% / 10% 40%;">
+                            <p>Monday: 9am to 4pm</p>
+                            <p>Tuesday: 9am to 4pm</p>
+                            <p>Wednesday: 9am to 4pm</p>
+                            <p>Thursday: 9am to 4pm</p>
+                            <p>Friday: 9am to 4pm</p>
+                            <p>Saturday: 9am to 4pm</p>
+                            <p class="mb-0">Sunday: Closed</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="footer-item">
+                        <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">LOCATION</h4>
+                        <div class="d-flex flex-column align-items-start">
+                            <a href="https://maps.app.goo.gl/U5pmjifhstCcZTyA8" target="_blank" class="text-body mb-4"><i class="fa fa-map-marker-alt text-primary me-2"></i>Larnoo, Anantnag, Jammu and Kashmir, 192202, India</a>
+                            <a href="tel:+916005643388" class="text-start rounded-0 text-body mb-4"><i class="fa fa-phone-alt text-primary me-2"></i> +91 60056 43388</a>
+                            <a href="mailto:workwithhsslarnoo@gmail.com" class="text-start rounded-0 text-body mb-4"><i class="fas fa-envelope text-primary me-2"></i> workwithhsslarnoo@gmail.com</a>
+                            <div class="text-start rounded-0 text-body mb-4"><i class="fa fa-clock text-primary me-2"></i> 24/7 Hours Service</div>
+                            <div class="footer-icon d-flex">
+                                <a class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" href=""><i class="fab fa-facebook-f"></i></a>
+                                <a class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" href=""><i class="fab fa-twitter"></i></a>
+                                <a href="#" class="btn btn-primary btn-sm-square me-3 rounded-circle text-white"><i class="fab fa-instagram"></i></a>
+                                <a href="#" class="btn btn-primary btn-sm-square rounded-circle text-white"><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="footer-item">
+                        <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">OUR GALLERY</h4>
+                        <div class="row g-3">
+                            <div class="col-4">
+                                <div class="footer-galary-img rounded-circle border border-primary">
+                                    <img src="img/galary-1.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                </div>
+                           </div>
+                           <div class="col-4">
+                                <div class="footer-galary-img rounded-circle border border-primary">
+                                    <img src="img/galary-2.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                </div>
+                           </div>
+                            <div class="col-4">
+                                <div class="footer-galary-img rounded-circle border border-primary">
+                                    <img src="img/galary-3.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                </div>
+                           </div>
+                            <div class="col-4">
+                                <div class="footer-galary-img rounded-circle border border-primary">
+                                    <img src="img/galary-4.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                </div>
+                           </div>
+                            <div class="col-4">
+                                <div class="footer-galary-img rounded-circle border border-primary">
+                                    <img src="img/galary-5.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                </div>
+                           </div>
+                            <div class="col-4">
+                                <div class="footer-galary-img rounded-circle border border-primary">
+                                    <img src="img/galary-6.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                </div>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+
+    <!-- Copyright Start -->
+    <div class="container-fluid copyright bg-dark py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <span class="text-light"><a href="#">2025 <i class="fas fa-copyright text-light me-2"></i>Govt. HSS Larnoo</a>, All right reserved.</span>
+                </div>
+                <div class="col-md-6 my-auto text-center text-md-end text-white">
+                    <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
+                    <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
+                    <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
+                    Designed By <a class="border-bottom" href="#">MD Colab</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Copyright End -->
+
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
+
+    
+<!-- JavaScript Libraries -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="lib/wow/wow.min.js"></script>
+<script src="lib/easing/easing.min.js"></script>
+<script src="lib/waypoints/waypoints.min.js"></script>
+<script src="lib/lightbox/js/lightbox.min.js"></script>
+<script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="js/main.js"></script>
 </body>
-</html>
