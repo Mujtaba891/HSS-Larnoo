@@ -135,6 +135,11 @@
         .close-btn { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
         .modal-actions { margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;}
 
+        /* Specific styles for edit modal photo */
+        #editForm .current-photo-preview { margin-bottom: 15px; text-align: center; }
+        #editForm .current-photo-preview img { max-width: 120px; height: auto; border-radius: 8px; border: 1px solid #eee; }
+
+
         @media (max-width: 768px) {
             #app-header { flex-direction: column; gap: 15px; }
             .main-content { gap: 20px; }
@@ -255,7 +260,7 @@
     </div>
 
     <!-- Modals -->
-    <div id="view-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2 class="section-title" style="border:none;padding:0;margin:0;">Student Card Preview</h2><span class="close-btn">×</span></div><div id="modal-card-container"></div><div class="modal-actions"><button id="editFromViewBtn" class="btn btn-primary" style="background-color:var(--edit-color);"><i class="fa-solid fa-pencil"></i> Edit</button><button id="downloadFromViewBtn" class="btn btn-primary"><i class="fa-solid fa-download"></i> Download</button></div></div></div>
+    <div id="view-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2 class="section-title" style="border:none;padding:0;margin:0;">Student Card Preview</h2><span class="close-btn">×</span></div><div id="modal-card-container"></div><div class="modal-actions"><button id="editFromViewBtn" class="btn btn-primary" style="background-color:var(--edit-color);"><i class="fa-solid fa-pencil"></i> Edit</button><button id="downloadFromViewBtn" class="btn btn-primary"><i class="fa-solid fa-download"></i> Download</button><button id="shareFromViewBtn" class="btn btn-primary" style="background-color:#17a2b8;"><i class="fa-solid fa-share-alt"></i> Share</button></div></div></div>
     <div id="edit-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2 class="section-title" style="border:none;padding:0;margin:0;">Edit Student Record</h2><span class="close-btn">×</span></div><form id="editForm"></form></div></div>
     
    <script type="module">
@@ -281,6 +286,7 @@
         compressedPhotoBase64: '', currentView: 'student', qrScanner: null,
         lastScannedId: null, scanTimeout: null, attendanceListener: null,
         selectedDate: new Date(),
+        editModalPhotoData: null // New state variable for edit modal photo
     };
 
     const allViews = document.querySelectorAll('.view');
@@ -363,7 +369,7 @@
             cardPreview.phone.textContent = phone;
             cardPreview.roll.textContent = roll;
             cardPreview.address.textContent = address;
-            cardPreview.photo.src = state.compressedPhotoBase64 || "https://via.placeholder.com/95x115.png?text=Photo";
+            cardPreview.photo.src = state.compressedPhotoBase64 || "profile.png"; // Changed placeholder to local profile.png
 
             if (['9', '10'].includes(classSelect.value) && dynamicValue && dynamicValue !== '-- Select Gender --') {
                 cardPreview.class.textContent = `${className} (${dynamicValue})`;
@@ -400,8 +406,24 @@
                     state.compressedPhotoBase64 = res;
                     updateCardPreview();
                 });
+            } else {
+                state.compressedPhotoBase64 = ''; // Clear photo if no file selected
+                updateCardPreview();
             }
         });
+
+        // Function to reset the form and preview completely
+        function resetStudentFormAndPreview() {
+            form.reset();
+            dynamicGroup.style.display = 'none';
+            state.compressedPhotoBase64 = '';
+            cardPreview.id.textContent = 'Not Assigned'; // Reset ID displayed on card
+            cardPreview.photo.src = 'profile.png'; // Reset photo
+            cardPreview.qrCode.innerHTML = ''; // Clear QR code
+            updateCardPreview(); // Update all other fields to default
+            downloadBtn.style.display = 'none'; // Hide download button
+        }
+
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -423,6 +445,21 @@
             };
 
             try {
+                // Check for duplicate student before generating ID
+                const duplicateQuery = query(
+                    collection(db, "students"),
+                    where("name", "==", studentData.name),
+                    where("parentage", "==", studentData.parentage),
+                    where("class", "==", studentData.class),
+                    where("roll", "==", studentData.roll)
+                );
+                const duplicateSnapshot = await getDocs(duplicateQuery);
+
+                if (!duplicateSnapshot.empty) {
+                    alert('An ID card with these details (Name, Parentage, Class, Roll No) already exists!');
+                    return; // Stop submission
+                }
+
                 const newId = await runTransaction(db, async (transaction) => {
                     const year = new Date().getFullYear().toString().slice(-2);
                     const classCounterId = `${year}-${studentData.class}`;
@@ -435,17 +472,13 @@
                 studentData.customId = newId;
                 await addDoc(collection(db, "students"), studentData);
                 
-                cardPreview.id.textContent = newId;
+                cardPreview.id.textContent = newId; // Update displayed ID immediately after assignment
                 updateCardPreview();
                 alert(`Success! Student registered with ID: ${newId}.`);
                 downloadBtn.style.display = 'inline-flex';
-                form.reset();
-                dynamicGroup.style.display = 'none';
-                state.compressedPhotoBase64 = '';
-                setTimeout(() => {
-                    cardPreview.id.textContent = 'Not Assigned';
-                    updateCardPreview();
-                }, 100);
+                
+                resetStudentFormAndPreview(); // Clear form and preview after success
+
             } catch (error) { console.error("Error:", error); alert(`Error: ${error.message}`);
             } finally { submitBtn.disabled = false; submitBtn.innerHTML = `<i class="fa-solid fa-cogs"></i> Generate & Submit`; }
         });
@@ -457,7 +490,7 @@
                     link.href = canvas.toDataURL('image/png'); link.click();
                 });
         });
-        updateCardPreview();
+        updateCardPreview(); // Initial update of the card preview
     })();
 
     (function AdminViewModule() {
@@ -525,33 +558,8 @@
                 filterAndRenderTable(e.target.dataset.class);
             }
         });
-        
-        function filterAndRenderTable(selectedClass) {
-             const filteredData = selectedClass === 'All' ? state.allStudents : state.allStudents.filter(s => s.class === selectedClass);
-             renderTable(filteredData);
-        }
 
-        function renderTable(dataToRender) {
-            tableBody.innerHTML = '';
-            if (dataToRender.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">No records found.</td></tr>`;
-                return;
-            }
-            dataToRender.forEach(student => {
-                const row = tableBody.insertRow();
-                row.innerHTML = `
-                    <td>${student.customId || 'N/A'}</td> <td><img src="${student.photo || ''}" class="table-photo"></td>
-                    <td>${student.name}</td> <td>${student.parentage}</td> <td>${student.class}th</td>
-                    <td>${student.stream || student.gender || '--'}</td> <td>${student.roll}</td>
-                    <td>
-                        <button class="action-btn view-card-btn" data-id="${student.firestoreId}" title="View"><i class="fa-solid fa-eye"></i></button>
-                        <button class="action-btn edit-card-btn" data-id="${student.firestoreId}" title="Edit"><i class="fa-solid fa-pencil"></i></button>
-                        <button class="action-btn delete-card-btn" data-id="${student.firestoreId}" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
-                    </td>`;
-            });
-        }
-        
-//////////////////   new  Search functionality for student records     
+                // Search functionality for student records
         searchInput.addEventListener('keyup', () => {
             // When a search is performed, it's best to clear any active class filters
             // and default to searching through "All" students.
@@ -593,7 +601,32 @@
             // Render the table with the filtered results
             renderTable(filteredStudents);
         });
+        
+        function filterAndRenderTable(selectedClass) {
+             const filteredData = selectedClass === 'All' ? state.allStudents : state.allStudents.filter(s => s.class === selectedClass);
+             renderTable(filteredData);
+        }
 
+        function renderTable(dataToRender) {
+            tableBody.innerHTML = '';
+            if (dataToRender.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">No records found.</td></tr>`;
+                return;
+            }
+            dataToRender.forEach(student => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                    <td>${student.customId || 'N/A'}</td> <td><img src="${student.photo || ''}" class="table-photo"></td>
+                    <td>${student.name}</td> <td>${student.parentage}</td> <td>${student.class}th</td>
+                    <td>${student.stream || student.gender || '--'}</td> <td>${student.roll}</td>
+                    <td>
+                        <button class="action-btn view-card-btn" data-id="${student.firestoreId}" title="View"><i class="fa-solid fa-eye"></i></button>
+                        <button class="action-btn edit-card-btn" data-id="${student.firestoreId}" title="Edit"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="action-btn delete-card-btn" data-id="${student.firestoreId}" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>`;
+            });
+        }
+        
         function openModal(modal) { modal.style.display = 'block'; }
         function closeModal(modal) { modal.style.display = 'none'; }
         [...document.querySelectorAll('.close-btn')].forEach(btn => btn.addEventListener('click', (e) => closeModal(e.target.closest('.modal'))));
@@ -616,15 +649,91 @@
         
         function openEditModal(student) {
             state.currentlyEditingId = student.firestoreId;
+            state.editModalPhotoData = student.photo; // Store current photo for preview and default
+            
             editFormContainer.innerHTML = `
                 <input type="hidden" name="firestoreId" value="${student.firestoreId}">
                 <div class="form-group"><label>Full Name</label><input type="text" name="name" value="${student.name || ''}" required></div>
                 <div class="form-group"><label>Parentage</label><input type="text" name="parentage" value="${student.parentage || ''}" required></div>
-                <div class="form-group"><label>Roll No</label><input type="text" name="roll" value="${student.roll || ''}" required></div>
-                <div class="form-group"><label>Phone</label><input type="tel" name="phone" value="${student.phone || ''}" required></div>
+                
+                <div class="form-group custom-select-wrapper">
+                    <label for="editClass">Class</label>
+                    <select id="editClass" name="class" required> 
+                        <option value="">-- Select Class --</option>
+                        <option value="9">9th</option> <option value="10">10th</option> 
+                        <option value="11">11th</option> <option value="12">12th</option> 
+                    </select>
+                </div>
+                <div class="form-group" id="edit-dynamic-group" style="display: none;">
+                    <label id="edit-dynamic-label"></label>
+                    <div class="custom-select-wrapper"><select id="edit-dynamic-select" name="dynamicField"></select></div>
+                </div>
+
+                <div class="form-group"><label>Roll No</label><input type="number" name="roll" value="${student.roll || ''}" required></div>
+                <div class="form-group"><label>Phone</label><input type="number" name="phone" value="${student.phone || ''}" required></div>
                 <div class="form-group"><label>Address</label><textarea name="address" rows="2" required>${student.address || ''}</textarea></div>
+                
+                <div class="form-group">
+                    <label>Current Photo</label>
+                    <div class="current-photo-preview">
+                        <img id="editPhotoPreview" src="${student.photo || 'profile.png'}" alt="Current Student Photo">
+                    </div>
+                    <label for="editPhoto">Upload New Photo (Optional)</label>
+                    <input type="file" id="editPhoto" name="newPhoto" accept="image/jpeg, image/png">
+                </div>
+
                 <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Save Changes</button>
             `;
+            
+            const editClassSelect = editFormContainer.querySelector('#editClass');
+            const editDynamicGroup = editFormContainer.querySelector('#edit-dynamic-group');
+            const editDynamicLabel = editFormContainer.querySelector('#edit-dynamic-label');
+            const editDynamicSelect = editFormContainer.querySelector('#edit-dynamic-select');
+            const editPhotoInput = editFormContainer.querySelector('#editPhoto');
+            const editPhotoPreview = editFormContainer.querySelector('#editPhotoPreview');
+
+            // Populate static fields
+            editFormContainer.querySelector('input[name="name"]').value = student.name || '';
+            editFormContainer.querySelector('input[name="parentage"]').value = student.parentage || '';
+            editFormContainer.querySelector('input[name="roll"]').value = student.roll || '';
+            editFormContainer.querySelector('input[name="phone"]').value = student.phone || '';
+            editFormContainer.querySelector('textarea[name="address"]').value = student.address || '';
+            editClassSelect.value = student.class || '';
+
+            // Handle dynamic class/stream/gender for edit modal
+            const updateEditDynamicFields = () => {
+                const selectedClass = editClassSelect.value;
+                editDynamicSelect.innerHTML = ''; // Clear previous options
+                editDynamicGroup.style.display = 'none';
+
+                if (['9', '10'].includes(selectedClass)) {
+                    editDynamicLabel.textContent = 'Gender';
+                    editDynamicSelect.innerHTML = `<option value="">-- Select Gender --</option><option value="Boys">Boys</option><option value="Girls">Girls</option>`;
+                    if (student.gender) editDynamicSelect.value = student.gender;
+                    editDynamicGroup.style.display = 'block';
+                } else if (['11', '12'].includes(selectedClass)) {
+                    editDynamicLabel.textContent = 'Stream';
+                    editDynamicSelect.innerHTML = `<option value="">-- Select Stream --</option><option value="Arts">Arts</option><option value="Medical">Medical</option><option value="Non-Medical">Non-Medical</option>`;
+                    if (student.stream) editDynamicSelect.value = student.stream;
+                    editDynamicGroup.style.display = 'block';
+                }
+            };
+            
+            editClassSelect.addEventListener('change', updateEditDynamicFields);
+            updateEditDynamicFields(); // Call once to set initial state based on student data
+
+            editPhotoInput.addEventListener('change', (e) => {
+                if (e.target.files[0]) {
+                    compressImage(e.target.files[0], 400, (res) => {
+                        state.editModalPhotoData = res; // Store compressed photo for update
+                        editPhotoPreview.src = res; // Update preview
+                    });
+                } else {
+                    state.editModalPhotoData = student.photo; // Revert to original if no new file selected
+                    editPhotoPreview.src = student.photo || 'profile.png';
+                }
+            });
+
             openModal(editModal);
         }
 
@@ -632,19 +741,46 @@
             e.preventDefault();
             const updateBtn = e.target.querySelector('button');
             updateBtn.disabled = true;
+            updateBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
+
             const formData = new FormData(e.target);
             const updatedData = {};
-            for(let [key, value] of formData.entries()) {
-                if(key !== 'firestoreId') updatedData[key] = value;
+            // Gather data from text/number inputs and selects
+            updatedData.name = formData.get('name');
+            updatedData.parentage = formData.get('parentage');
+            updatedData.class = formData.get('class');
+            updatedData.roll = formData.get('roll');
+            updatedData.phone = formData.get('phone');
+            updatedData.address = formData.get('address');
+
+            // Handle dynamic field (stream/gender)
+            const selectedClass = updatedData.class;
+            if (['9', '10'].includes(selectedClass)) {
+                updatedData.gender = formData.get('dynamicField');
+                updatedData.stream = null; // Ensure stream is null if gender class
+            } else if (['11', '12'].includes(selectedClass)) {
+                updatedData.stream = formData.get('dynamicField');
+                updatedData.gender = null; // Ensure gender is null if stream class
+            } else {
+                updatedData.stream = null;
+                updatedData.gender = null;
             }
+
+            // Handle photo update
+            if (state.editModalPhotoData) { // Check if photo data was updated in the modal
+                updatedData.photo = state.editModalPhotoData;
+            }
+
             try {
                 await updateDoc(doc(db, "students", formData.get('firestoreId')), updatedData);
-                alert("Record Updated!");
+                alert("Record Updated Successfully!");
                 closeModal(editModal);
             } catch(err) {
                 alert(`Update failed: ${err.message}`);
+                console.error(err);
             } finally {
                 updateBtn.disabled = false;
+                updateBtn.innerHTML = `<i class="fa-solid fa-save"></i> Save Changes`;
             }
         });
 
@@ -658,6 +794,7 @@
             if (button.classList.contains('view-card-btn')) {
                 document.getElementById('editFromViewBtn').dataset.id = docId;
                 document.getElementById('downloadFromViewBtn').dataset.id = docId;
+                document.getElementById('shareFromViewBtn').dataset.id = docId; // Set ID for share button
                 populateCardInModal(student);
             } else if (button.classList.contains('edit-card-btn')) {
                 openEditModal(student);
@@ -667,6 +804,8 @@
                 }
             }
         });
+
+        // Event listeners for modal action buttons
         document.getElementById('editFromViewBtn').addEventListener('click', (e) => {
             const student = state.allStudents.find(s => s.firestoreId === e.target.dataset.id);
             if (student) {
@@ -674,9 +813,16 @@
                 openEditModal(student);
             }
         });
+
          document.getElementById('downloadFromViewBtn').addEventListener('click', (e) => {
             const student = state.allStudents.find(s => s.firestoreId === e.target.dataset.id);
             if (student) {
+                // IMPORTANT: html2canvas needs the element to be visible to render correctly.
+                // The modal content might be hidden or scaled, so ensure correct rendering context.
+                // A better approach would be to render the ID card template dynamically
+                // into an off-screen element for canvas, or use the one inside the modal if it's visible.
+                // As the modal is visible, we use the already populated #modal-card-container #idCard
+                
                 html2canvas(document.querySelector('#modal-card-container #idCard'), { scale: 4, useCORS: true, backgroundColor: null })
                     .then(canvas => {
                         const link = document.createElement('a');
@@ -685,6 +831,37 @@
                     });
             }
         });
+
+        document.getElementById('shareFromViewBtn').addEventListener('click', async (e) => {
+            const student = state.allStudents.find(s => s.firestoreId === e.target.dataset.id);
+            if (!student) return;
+
+            if (navigator.share) {
+                try {
+                    const canvas = await html2canvas(document.querySelector('#modal-card-container #idCard'), { scale: 4, useCORS: true, backgroundColor: null });
+                    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                    const file = new File([blob], `ID-Card_${student.name.replace(/\s+/g, '_')}.png`, { type: 'image/png' });
+
+                    await navigator.share({
+                        files: [file],
+                        title: `${student.name}'s ID Card`,
+                        text: `Check out the ID card for ${student.name} from HSS Larnoo.`,
+                    });
+                    console.log('ID Card shared successfully!');
+                } catch (error) {
+                    console.error('Error sharing ID Card:', error);
+                    if (error.name !== 'AbortError') { // AbortError means user cancelled share
+                        alert('Could not share the ID card. Please try downloading it instead.');
+                    }
+                }
+            } else {
+                // Fallback for browsers that do not support Web Share API
+                alert('Web Share API is not supported in your browser. Please use the "Download" button to save the card.');
+                // Optionally, trigger download as a fallback
+                document.getElementById('downloadFromViewBtn').click(); 
+            }
+        });
+
     })();
     
     (function AttendanceViewModule() {
@@ -713,7 +890,8 @@
             
             const q = query(collection(db, "attendance"), where("date", "==", dateStr));
             state.attendanceListener = onSnapshot(q, (snapshot) => {
-                const totalStudents = state.allStudents.length;
+                // Calculate total students from the loaded state.allStudents
+                const totalStudents = state.allStudents.length; 
                 const presentCount = snapshot.size;
                 const percentage = totalStudents > 0 ? ((presentCount / totalStudents) * 100).toFixed(0) : 0;
                 attendancePercentageEl.textContent = `${percentage}% Attended`;
@@ -727,21 +905,32 @@
         function renderAttendanceLists(attendanceDocs) {
             listsContainer.innerHTML = '';
             const presentStudentMap = new Map(attendanceDocs.map(doc => [doc.data().customId, doc.data()]));
-            if (presentStudentMap.size === 0) { listsContainer.innerHTML = '<p style="text-align:center; padding: 20px;">No attendance recorded for this day.</p>'; return; }
+            
+            // Filter all students to get only those present
+            const presentStudents = state.allStudents.filter(student => presentStudentMap.has(student.customId));
+
+            if (presentStudents.length === 0) { 
+                listsContainer.innerHTML = '<p style="text-align:center; padding: 20px;">No attendance recorded for this day.</p>'; 
+                return; 
+            }
 
             const sections = {};
-            state.allStudents.forEach(student => {
-                if (presentStudentMap.has(student.customId)) {
-                    let sectionKey = student.stream ? `${student.class}th ${student.stream}` : `${student.class}th ${student.gender}`;
-                    if (!sections[sectionKey]) sections[sectionKey] = [];
-                    sections[sectionKey].push(student);
+            presentStudents.forEach(student => { // Iterate only through present students
+                let sectionKey = student.stream ? `${student.class}th ${student.stream}` : `${student.class}th ${student.gender}`;
+                // If student has neither stream nor gender, fallback to just class
+                if (!student.stream && !student.gender) {
+                    sectionKey = `${student.class}th`;
                 }
+                if (!sections[sectionKey]) sections[sectionKey] = [];
+                sections[sectionKey].push(student);
             });
 
             const sortedSections = Object.keys(sections).sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
             sortedSections.forEach(sectionKey => {
                 const students = sections[sectionKey];
-                // CHANGED: Added more columns to the student rows and header
+                // Sort students within each section by roll number
+                students.sort((a, b) => a.roll - b.roll); 
+
                 const studentRows = students.map(student => {
                     const record = presentStudentMap.get(student.customId);
                     const time = record.timestamp?.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || '';
@@ -784,7 +973,8 @@
             state.lastScannedId = decodedText;
             clearTimeout(state.scanTimeout);
             
-            scannerContainer.className = 'scanner-active';
+            scannerContainer.classList.remove('scanner-success', 'scanner-error'); // Reset
+            scannerContainer.classList.add('scanner-active');
             scanResultEl.className = 'result-info';
             scanResultEl.textContent = `Processing: ${decodedText}...`;
 
@@ -800,10 +990,22 @@
                     feedbackText = `${student.name} already marked present.`;
                 } else {
                     try {
-                        await addDoc(collection(db, "attendance"), { customId: student.customId, date: today, timestamp: serverTimestamp() });
+                        await addDoc(collection(db, "attendance"), { 
+                            customId: student.customId, 
+                            date: today, 
+                            timestamp: serverTimestamp(),
+                            // Store student name and class for easier display in attendance lists
+                            studentName: student.name, 
+                            studentClass: student.class,
+                            studentStream: student.stream || null,
+                            studentGender: student.gender || null
+                        });
                         feedbackClass = 'scanner-success';
                         feedbackText = `Welcome, ${student.name}!`;
-                    } catch (error) { feedbackText = "Error saving attendance."; }
+                    } catch (error) { 
+                        feedbackText = "Error saving attendance."; 
+                        console.error("Error adding attendance record:", error);
+                    }
                 }
             }
             
@@ -813,7 +1015,8 @@
 
             state.scanTimeout = setTimeout(() => { 
                 state.lastScannedId = null; 
-                scannerContainer.className = 'scanner-active';
+                scannerContainer.classList.remove('scanner-success', 'scanner-error');
+                scannerContainer.classList.add('scanner-active');
                 scanResultEl.className = 'result-info';
                 scanResultEl.textContent = 'Awaiting Scan...';
             }, 2500);
@@ -830,13 +1033,22 @@
             
             if (state.qrScanner.isScanning) return;
 
-            scannerContainer.className = 'scanner-active';
+            scannerContainer.classList.remove('scanner-success', 'scanner-error'); // Ensure clean state
+            scannerContainer.classList.add('scanner-active');
             scanResultEl.className = 'result-info';
             scanResultEl.textContent = 'Awaiting Scan...';
 
             const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-            state.qrScanner.start({ facingMode: "environment" }, config, onScanSuccess, (error) => {})
-                .catch(err => console.warn("Scanner start failed:", err));
+            state.qrScanner.start({ facingMode: "environment" }, config, onScanSuccess, (error) => {
+                // This callback is for verbose errors; usually we only care about success or global scanner failures
+                // console.warn("Scanner runtime error:", error); 
+            })
+            .catch(err => {
+                console.error("Scanner start failed:", err);
+                scanResultEl.className = 'result-error';
+                scanResultEl.textContent = 'Failed to start scanner. Ensure camera permissions are granted.';
+                scannerContainer.classList.remove('scanner-active');
+            });
         }
     })();
 </script>
