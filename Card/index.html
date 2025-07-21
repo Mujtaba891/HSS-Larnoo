@@ -81,7 +81,7 @@
         .card-body { flex-grow: 1; display: flex; padding: 10px 10px; gap: 10px; align-items: center; }
         .card-body .displayPhoto { width: 90px; height: 110px; object-fit: cover; border: 3px solid var(--white-color); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); flex-shrink: 0; background-color: #ddd; }
         .student-details { font-size: 11px; line-height: 1.45; flex-grow: 1; }
-        .displayName { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; color: var(--primary-color); margin: 0 0 4px 0; }
+        .displayName { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 650; color: var(--primary-color); margin: 0 0 4px 0; }
         .student-details p { margin: 0; }
         .student-details .label { font-weight: 600; color: #555; }
         .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
@@ -160,9 +160,9 @@
     <header id="app-header">
         <h1><i class="fa-solid fa-id-card"></i> HSS Larnoo ID System</h1>
         <nav>
-            <a id="nav-student" class="nav-link active">Student Portal</a>
-            <a id="nav-admin" class="nav-link">Admin Panel</a>
-            <a id="nav-attendance" class="nav-link">Attendance</a>
+            <a href="#nav-student" id="nav-student" class="nav-link active">Student Portal</a>
+            <a href="#nav-admin" id="nav-admin" class="nav-link">Admin Panel</a>
+            <a href="#nav-attendance" id="nav-attendance" class="nav-link">Attendance</a>
         </nav>
     </header>
 
@@ -197,12 +197,12 @@
                             <div class="card-header">
                                 <img src="logo3.png" alt="School Logo" class="logo">
                                 <div class="school-title-group"> <h2 class="school-title">GOVT HSS LARNOO</h2> <p class="school-subtitle">Student Identity Card</p> </div>
-                                <div class="udise-code"> <span>UDISE:</span> <span1>01061601505</span1></div>
+                                <div class="udise-code"> <span>UDISE:</span> <span1>01050801402</span1></div>
                             </div>
                             <div class="card-body">
                                 <img class="displayPhoto" src="profile.png" alt="Student Photo" onerror="this.onerror=null; this.src='profile.png';">
                                 <div class="student-info-wrapper">
-                                    <h4 class="displayName">Student Name</h4>
+                                    <h3 class="displayName">Student Name</h3>
                                     <div class="student-details">
                                         <p class="detail-full-width"><span class="label">Parentage:</span> <p class="displayParentage"></p></p>
                                         <p><span class="label">Phone:</span> <span class="displayPhone"></span></p>
@@ -216,7 +216,7 @@
                                 </div>
                                 <div class="card-right-panel"> <div class="card-qr-code"></div> </div>
                             </div>
-                            <div class="card-footer"> <span>Tel: +91 7006485144 | Email: hsslarnoo024@gmail.com |  Larnoo, Kokarnag, Anantnag, J&K</span> </div>
+                            <div class="card-footer"> <span>Tel: +91 7006485144 | Email: ghsslarnoo@gmail.com |  Larnoo, Kokarnag, Anantnag, J&K</span> </div>
                         </div>
                     </div>
                     <button id="studentDownloadBtn" class="btn btn-primary"><i class="fa-solid fa-download"></i> Download Your Card</button>
