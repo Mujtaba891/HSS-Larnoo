@@ -15,8 +15,13 @@
         <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet"> 
 
         <!-- Icon Font Stylesheet -->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+         <!-- Font Awesome v6.5.1 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" />
+
+<!-- Bootstrap Icons v1.11.3 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+        
 
         <!-- Libraries Stylesheet -->
         <link href="lib/animate/animate.min.css" rel="stylesheet">
@@ -28,119 +33,99 @@
 
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
-
-        
-
     </head>
 
     <body>
+        <!-- Spinner Start -->
+    <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status"></div>
+    </div>
+    <!-- Spinner End -->
 
-        <!-- Spinner Start 
-        <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
-            <div class="spinner-grow text-primary" role="status"></div>
-        </div>
-        <!-- Spinner End -->
 
-
-        <!-- Navbar start -->
-        <div class="container-fluid border-bottom bg-light wow fadeIn" data-wow-delay="0.1s">
-            <div class="container topbar bg-primary d-none d-lg-block py-2" style="border-radius: 0 40px">
-                <div class="d-flex justify-content-between">
-                    <div class="top-info ps-2">
-                        <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="https://maps.app.goo.gl/U5pmjifhstCcZTyA8" class="text-white">Bhat Pora,Larnoo,Kokarnag,Anantnag,J&K,India</a></small>
-                        <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="mailto:workwithhsslarnoo@gmail.com" class="text-white">workwithhsslarnoo@gmail.com</a></small>
-                    </div>
-                    <div class="top-link pe-2">
-                        <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-facebook-f text-secondary"></i></a>
-                        <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-twitter text-secondary"></i></a>
-                        <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-instagram text-secondary"></i></a>
-                        <a href="" class="btn btn-light btn-sm-square rounded-circle me-0"><i class="fab fa-linkedin-in text-secondary"></i></a>
-                    </div>
+    <!-- Navbar start -->
+    <div class="container-fluid border-bottom bg-light wow fadeIn" data-wow-delay="0.1s">
+        <div class="container topbar bg-primary d-none d-lg-block py-2" style="border-radius: 0 40px">
+            <div class="d-flex justify-content-between">
+                <div class="top-info ps-2">
+                    <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="https://maps.app.goo.gl/U5pmjifhstCcZTyA8" class="text-white">Larnoo, Anantnag, Jammu and Kashmir - 192202</a></small>
+                    <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="mailto:hsslarnoo024@gmail.com" class="text-white">hsslarnoo024@gmail.com</a></small>
+                </div>
+                <div class="top-link pe-2">
+                    <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-facebook-f text-secondary"></i></a>
+                    <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-twitter text-secondary"></i></a>
+                    <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-instagram text-secondary"></i></a>
+                    <a href="" class="btn btn-light btn-sm-square rounded-circle me-0"><i class="fab fa-linkedin-in text-secondary"></i></a>
                 </div>
             </div>
-            <div class="container px-0">
-                <nav class="navbar navbar-light navbar-expand-xl py-3">
-                    <a href="index.html" class="navbar-brand"><h1 class="text-primary display-6"><img src="/img/logo3.png" alt=""></h1></a>
-                    <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                        <span class="fa fa-bars text-primary"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarCollapse">
-                        <div class="navbar-nav mx-auto">
-                            <a href="index.html" class="nav-item nav-link active">Home</a>
-                            <a href="about.html" class="nav-item nav-link">About</a>
-                            <a href="service.html" class="nav-item nav-link">Services</a>
-                            <a href="program.html" class="nav-item nav-link">Programs</a>
-                            <a href="event.html" class="nav-item nav-link">Events</a>
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                                <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                                    <a href="blog.html" class="dropdown-item">Our Blog</a>
-                                    <a href="team.html" class="dropdown-item">Our Team</a>
-                                    <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                                    <a href="404.html" class="dropdown-item">404 Page</a>
-                                </div>
+        </div>
+        <div class="container px-0">
+            <nav class="navbar navbar-light navbar-expand-xl py-3">
+                <a href="index.html" class="navbar-brand"><h1 class="text-primary display-6"><img src="/img/logo3.png" alt=""></h1></a>
+                <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa  text-primary"><img src="img/icons/menu.png" alt="" width="30px"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav mx-auto">
+                        <a href="index.html" class="nav-item nav-link">Home</a>
+                        <a href="about.html" class="nav-item nav-link">About</a>
+                        <a href="service.html" class="nav-item nav-link">Services</a>
+                        <a href="program.html" class="nav-item nav-link">Programs</a>
+                        <a href="event.html" class="nav-item nav-link">Events</a>
+                        <a href="admission.html" class="nav-item nav-link">Admission</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                            <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                                <a href="blog.html" class="dropdown-item">Our Blog</a>
+                                <a href="team.html" class="dropdown-item">Our Team</a>
+                                <a href="/Card/index.html" class="dropdown-item">ID Card</a>
+                                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                                <a href="404.html" class="dropdown-item">404 Page</a>
                             </div>
-                            <a href="contact.html" class="nav-item nav-link">Contact</a>
                         </div>
-                        <div class="d-flex me-4">
-                            <div id="phone-tada" class="d-flex align-items-center justify-content-center">
-                                <a href="" class="position-relative wow tada" data-wow-delay=".9s" >
-                                    <i class="fa fa-phone-alt text-primary fa-2x me-4"></i>
-                                    <div class="position-absolute" style="top: -7px; left: 20px;">
-                                        <span><i class="fa fa-comment-dots text-secondary"></i></span>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="d-flex flex-column pe-3 border-end border-primary">
+                        <a href="contact.html" class="nav-item nav-link active">Contact</a>
+                    </div>
+                    <div class="d-flex me-4">
+                        <div id="phone-tada" class="d-flex align-items-center justify-content-center">
+                            <a href="" class="position-relative wow tada" data-wow-delay=".9s" >
+                                <i class="fa  text-primary fa-2x me-4"><img src="img/icons/call.png" alt="" width="30px"></i>
+                                <div class="position-absolute" style="top: -7px; left: 20px;">
+                                    <span><i class="fa fa-comment-dots text-secondary"></i></span>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="d-flex flex-column pe-3 border-end border-primary">
                                 <span class="text-primary">Have any questions?</span>
                                 <a href="tel:+917006485144"><span class="text-secondary">Free: +91 70064 85144</span></a>
                                 <a href="tel:+917780830369"><span class="text-secondary">Free: +91 77808 30369</span></a>
-                            </div>
                         </div>
-                        <button class="btn-search btn btn-primary btn-md-square rounded-circle" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-white"></i></button>
                     </div>
-                </nav>
-            </div>
+                    <button class="btn-search btn btn-primary btn-md-square rounded-circle" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-white"></i></button>
+                </div>
+            </nav>
         </div>
-        <!-- Navbar End -->
+    </div>
+    <!-- Navbar End -->
 
-
-        <!-- Modal Search Start -->
-        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-fullscreen">
-                <div class="modal-content rounded-0">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body d-flex align-items-center">
-                        <div class="input-group w-75 mx-auto d-flex">
-                            <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
-                            <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
-                        </div>
+    <!-- Modal Search Start -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex align-items-center">
+                    <div class="input-group w-75 mx-auto d-flex">
+                        <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
+                        <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Modal Search End -->
-
+    </div>
+    <!-- Modal Search End -->
         
-        <!-- Page Header Start -->
-        <div class="container-fluid page-header py-5 wow fadeIn" data-wow-delay="0.1s">
-            <div class="container text-center py-5">
-                <h1 class="display-2 text-white mb-4">Contact Us</h1>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb justify-content-center mb-0">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                        <li class="breadcrumb-item text-white" aria-current="page">Contact Us</li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
-        <!-- Page Header End -->
-
-
         <!-- Contact Start -->
         <div class="container-fluid py-5">
             <div class="container py-5">
@@ -148,11 +133,12 @@
                     <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
                         <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">Contact Us</h4>
                         <h1 class="display-3">Contact For Any Query</h1>
-                        </div>
+                    </div>
+                    <!-- Your address, mail, and telephone info blocks remain here... -->
                     <div class="row g-5 mb-5">
                         <div class="col-lg-4 wow fadeIn" data-wow-delay="0.1s">
                             <div class="d-flex w-100 border border-primary p-4 rounded bg-white">
-                                <i class="fas fa-map-marker-alt fa-2x text-primary me-4"></i>
+                                <i class=" fa-2x text-primary me-4"><img src="img/icons/location.png" alt="" width="30px"></i>
                                 <div class="">
                                     <h4>Address</h4>
                                     <p class="mb-2">Larnoo,Kokarnag,Anantnag,J&K,India</p>
@@ -161,7 +147,7 @@
                         </div>
                         <div class="col-lg-4 wow fadeIn" data-wow-delay="0.3s">
                             <div class="d-flex w-100 border border-primary p-4 rounded bg-white">
-                                <i class="fas fa-envelope fa-2x text-primary me-4"></i>
+                                <i class=" fa-2x text-primary me-4"><img src="img/icons/mail.png" alt="" width="40px"></i>
                                 <div class="">
                                     <h4>Mail Us</h4>
                                     <p class="mb-2">workwithhsslarnoo@gmail.com</p>
@@ -170,7 +156,7 @@
                         </div>
                         <div class="col-lg-4 wow fadeIn" data-wow-delay="0.5s">
                             <div class="d-flex w-100 border border-primary p-4 rounded bg-white">
-                                <i class="fa fa-phone-alt fa-2x text-primary me-4"></i>
+                                <i class=" fa-2x text-primary me-4"><img src="img/icons/call.png" alt="" width="30px"></i>
                                 <div class="">
                                     <h4>Telephone</h4>
                                     <p class="mb-2">+91 70064 85144</p>
@@ -180,18 +166,20 @@
                     </div>
                     <div class="row g-5">
                         <div class="col-lg-6 wow fadeIn" data-wow-delay="0.3s">
-                            <form action="https://api.web3forms.com/submit" method="POST">
-    <input type="hidden" name="access_key" value="e8dfff52-ae0f-47bc-bae2-88605fadfdba">
-    <input type="text" name="name" class="w-100 form-control py-3 mb-5 border-primary" placeholder="Your Name" required>
-    <input type="email" name="email" class="w-100 form-control py-3 mb-5 border-primary" placeholder="Enter Your Email" required>
-    <textarea name="message" class="w-100 form-control mb-5 border-primary" rows="8" cols="10" placeholder="Your Message" required></textarea>
-    <input type="hidden" name="redirect" value="https://web3forms.com/success">
-    <button class="w-100 btn btn-primary form-control py-3 border-primary text-white bg-primary" type="submit">Submit</button>
-</form>
+                            <!-- UPDATED FORM: No action, no method, no hidden inputs -->
+                            <form id="contactForm">
+                                <input type="text" id="contactName" name="name" class="w-100 form-control py-3 mb-5 border-primary" placeholder="Your Name" required>
+                                <input type="email" id="contactEmail" name="email" class="w-100 form-control py-3 mb-5 border-primary" placeholder="Enter Your Email" required>
+                                <textarea id="contactMessage" name="message" class="w-100 form-control mb-5 border-primary" rows="8" cols="10" placeholder="Your Message" required></textarea>
+                                
+                                <button class="w-100 btn btn-primary form-control py-3 border-primary text-white bg-primary" type="submit">Submit</button>
+                            </form>
+                            <!-- Status message container -->
+                            <div id="form-status" style="margin-top: 20px; text-align: center; font-weight: bold; font-size: 1.1em;"></div>
                         </div>
                         <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
                             <div class="border border-primary h-100 rounded">
-                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d788.2832847805882!2d75.37461452944979!3d33.62564946957734!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391d8a9b3d9ece2b%3A0x393190c936b22840!2sJ9GF%2B6W3%2C%20Larnoo%2C%20Guri%20Draman%2C%20192202!5e1!3m2!1sen!2sin!4v1752385990885!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d788.2832847805882!2d75.37461452944979!3d33.62564946957734!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391d8a9b3d9ece2b%3A0x393190c936b22840!2sJ9GF%2B6W3%2C%20Larnoo%2C%20Guri%20Draman%2C%20192202!5e1!3m2!1sen!2sin!4v1752385990885!5m2!1sen!2sin" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                             </div>
                         </div>
                     </div>
@@ -199,7 +187,6 @@
             </div>
         </div>
         <!-- Contact End -->
-
 
         <!-- Footer Start -->
         <div class="container-fluid footer py-5 wow fadeIn" data-wow-delay="0.1s">
@@ -239,10 +226,10 @@
                         <div class="footer-item">
                             <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">LOCATION</h4>
                             <div class="d-flex flex-column align-items-start">
-                                <a href="https://maps.app.goo.gl/U5pmjifhstCcZTyA8" target="_blank" class="text-body mb-4"><i class="fa fa-map-marker-alt text-primary me-2"></i>Larnoo, Kokarnag, Anantnag, J&K, India</a>
-                                <a href="tel:+917006485144" class="text-start rounded-0 text-body mb-4"><i class="fa fa-phone-alt text-primary me-2"></i> +91 70064 85144</a>
-                                <a href="mailto:workwithhsslarnoo@gmail.com" class="text-start rounded-0 text-body mb-4"><i class="fas fa-envelope text-primary me-2"></i> workwithhsslarnoo@gmail.com</a>
-                                <div class="text-start rounded-0 text-body mb-4"><i class="fa fa-clock text-primary me-2"></i> 24/7 Hours Service</div>
+                                <a href="https://maps.app.goo.gl/U5pmjifhstCcZTyA8" target="_blank" class="text-body mb-4"><img src="img/icons/location.png" alt="" >Larnoo, Kokarnag, Anantnag, J&K, India</a>
+                                <a href="tel:+917006485144" class="text-start rounded-0 text-body mb-4"><i class=" text-primary me-2"><img src="img/icons/call.png" alt=""  ></i> +91 70064 85144</a>
+                                <a href="mailto:workwithhsslarnoo@gmail.com" class="text-start rounded-0 text-body mb-4"><i class=" text-primary me-2"><img src="img/icons/mail.png"></i> workwithhsslarnoo@gmail.com</a>
+                                <a class="text-start rounded-0 text-body mb-4"><i class=" text-primary me-2"><img src="img/icons/clock.png" alt=""></i> 24/7 Hours Service</a>
                                 <div class="footer-icon d-flex">
                                     <a class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" href=""><i class="fab fa-facebook-f"></i></a>
                                     <a class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" href=""><i class="fab fa-twitter"></i></a>
@@ -311,12 +298,9 @@
             </div>
         </div>
         <!-- Copyright End -->
+         <!-- Back to Top -->
+    <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
 
-
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
-
-        
     <!-- JavaScript Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -328,6 +312,71 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
-    </body>
+    <script type="module" src="js/newsletter.js"></script>
 
+    <!-- UPDATED Firebase Logic for Contact Form -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+
+        // This is your unified project configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU",
+            authDomain: "hss-larnoo-teachers.firebaseapp.com",
+            projectId: "hss-larnoo-teachers",
+            storageBucket: "hss-larnoo-teachers.appspot.com",
+            messagingSenderId: "143363278401",
+            appId: "1:143363278401:web:49d7fffbdf31ce073e68c0",
+            measurementId: "G-GHQLMME6PJ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- Form Submission Logic ---
+        const contactForm = document.getElementById('contactForm');
+        const formStatus = document.getElementById('form-status');
+        
+        contactForm.addEventListener('submit', async (e) => {
+            // Prevent the default form submission which reloads the page
+            e.preventDefault();
+
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            
+            // Disable the button and show a "sending" message
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Submitting...';
+            formStatus.textContent = ''; // Clear previous status messages
+
+            try {
+                // Save the data to Firestore
+                await addDoc(collection(db, 'contact_messages'), {
+                    name: document.getElementById('contactName').value,
+                    email: document.getElementById('contactEmail').value,
+                    message: document.getElementById('contactMessage').value,
+                    timestamp: serverTimestamp() // Add a server-side timestamp for accurate sorting
+                });
+
+                // --- Success Feedback ---
+                formStatus.style.color = 'green';
+                formStatus.textContent = 'Message sent successfully! Thank you.';
+                
+                // Reset the form fields after successful submission
+                contactForm.reset();
+
+            } catch (error) {
+                // --- Error Feedback ---
+                console.error("Error saving message to Firestore: ", error);
+                formStatus.style.color = 'red';
+                formStatus.textContent = 'An error occurred. Please try again later.';
+            } finally {
+                // Re-enable the button and reset its text after a short delay
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = 'Submit';
+                }, 2000); // Wait 2 seconds before resetting the button
+            }
+        });
+    </script>
+    </body>
 </html>

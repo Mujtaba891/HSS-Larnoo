@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Contact Messages</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container { width: 100%; max-width: 1100px; padding: 20px; }
+        .login-container, .data-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+            margin: auto;
+        }
+        .login-container { max-width: 450px; text-align: center; }
+        h1, h2 { font-family: 'Poppins', sans-serif; color: #2c3e50; text-align: center; }
+        p { color: #555; text-align: center; margin-bottom: 25px; }
+        .form-input { width: 100%; padding: 12px 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; margin-bottom: 20px;}
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; background: #2c3e50; color: white; font-size: 16px; cursor: pointer; }
+        .hidden { display: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px 15px; border: 1px solid #ddd; text-align: left; vertical-align: top; }
+        th { background-color: #f4f7f6; font-family: 'Poppins', sans-serif; }
+        .message-content { max-height: 120px; overflow-y: auto; display: block; white-space: pre-wrap; word-wrap: break-word; }
+        .logout-btn { display: block; margin: 20px auto 0; width: 200px; background-color: #e74c3c; }
+        #login-error { color: #e74c3c; font-weight: bold; margin-bottom: 15px; height: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Login Form - Shown by default -->
+        <div id="login-container" class="login-container">
+            <h2>Admin Panel Login</h2>
+            <div id="login-error"></div>
+            <form id="login-form">
+                <input type="password" id="admin-password" class="form-input" placeholder="Enter Admin Password" required>
+                <button type="submit" class="btn">Login</button>
+            </form>
+        </div>
+
+        <!-- Data Table - Hidden by default -->
+        <div id="data-container" class="data-container hidden">
+            <h2>Contact Form Messages</h2>
+            <div style="overflow-x:auto;">
+                <table id="messages-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">Date</th>
+                            <th style="width: 15%;">Name</th>
+                            <th style="width: 20%;">Email</th>
+                            <th style="width: 50%;">Message</th>
+                        </tr>
+                    </thead>
+                    <tbody id="messages-tbody">
+                        <!-- Data will be inserted here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <button id="logout-btn" class="btn logout-btn">Logout</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+
+        // This is your unified project configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU",
+            authDomain: "hss-larnoo-teachers.firebaseapp.com",
+            projectId: "hss-larnoo-teachers",
+            storageBucket: "hss-larnoo-teachers.appspot.com",
+            messagingSenderId: "143363278401",
+            appId: "1:143363278401:web:49d7fffbdf31ce073e68c0",
+            measurementId: "G-GHQLMME6PJ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- PASSWORD (Visible in code as required by the "no backend" constraint) ---
+        const ADMIN_PASSWORD = "HSS@616015_Admin";
+
+        // --- DOM Elements ---
+        const loginContainer = document.getElementById('login-container');
+        const dataContainer = document.getElementById('data-container');
+        const loginForm = document.getElementById('login-form');
+        const passwordInput = document.getElementById('admin-password');
+        const loginError = document.getElementById('login-error');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        // --- Login Logic ---
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (passwordInput.value === ADMIN_PASSWORD) {
+                // If password is correct, set a flag in sessionStorage
+                sessionStorage.setItem('isAdminLoggedIn', 'true');
+                // Hide login form and show data table
+                showDataView();
+            } else {
+                loginError.textContent = "Incorrect password.";
+            }
+        });
+
+        // --- Logout Logic ---
+        logoutBtn.addEventListener('click', () => {
+            // Remove the flag from sessionStorage
+            sessionStorage.removeItem('isAdminLoggedIn');
+            // Hide data table and show login form
+            showLoginView();
+        });
+
+        // --- Main Function to Control View ---
+        function checkLoginState() {
+            if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
+                showDataView();
+            } else {
+                showLoginView();
+            }
+        }
+
+        function showLoginView() {
+            dataContainer.classList.add('hidden');
+            loginContainer.classList.remove('hidden');
+            passwordInput.value = ''; // Clear password field
+            loginError.textContent = '';
+        }
+
+        function showDataView() {
+            loginContainer.classList.add('hidden');
+            dataContainer.classList.remove('hidden');
+            fetchAndDisplayMessages();
+        }
+
+        // --- Fetch and Display Data from Firestore ---
+        async function fetchAndDisplayMessages() {
+            const tbody = document.getElementById('messages-tbody');
+            tbody.innerHTML = '<tr><td colspan="4">Loading messages...</td></tr>';
+            
+            try {
+                const messagesRef = collection(db, "contact_messages");
+                const q = query(messagesRef, orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                tbody.innerHTML = ''; // Clear loading row
+                if (querySnapshot.empty) {
+                     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No messages found.</td></tr>';
+                } else {
+                    querySnapshot.forEach(doc => {
+                        const data = doc.data();
+                        // Format the timestamp nicely
+                        const date = data.timestamp ? data.timestamp.toDate().toLocaleString() : 'N/A';
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${escapeHtml(date)}</td>
+                            <td>${escapeHtml(data.name)}</td>
+                            <td>${escapeHtml(data.email)}</td>
+                            <td><div class="message-content">${escapeHtml(data.message)}</div></td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+            } catch(error) {
+                console.error("Error fetching messages:", error);
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">Error loading messages. Check console.</td></tr>`;
+            }
+        }
+
+        // Simple function to prevent basic HTML injection attacks
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // --- Run on page load ---
+        checkLoginState();
+
+    </script>
+</body>
+</html>
