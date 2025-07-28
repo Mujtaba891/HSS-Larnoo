@@ -660,6 +660,11 @@ h6,
     width: 30px;
     background: var(--bs-secondary);
 }
+
+.quote{
+    width: 20px;
+    height: 30px;
+}
 /*** testimonial End ***/
 
 
@@ -673,6 +678,7 @@ h6,
 
 .footer .footer-galary-img img {
     width: 100%;
+    height: auto;
     border-style: dotted; 
     border-color: var(--bs-primary);
     transition: 0.5s;
@@ -684,6 +690,9 @@ h6,
 
 .footer-item a.text-body:hover {
     color: var(--bs-secondary) !important;
+}
+.footer-item a.text-body img{
+    height: 20px
 }
 .footer-item img{
     height: 6em;
