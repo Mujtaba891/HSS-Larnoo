@@ -3,217 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Your Details | HSS Larnoo Team</title>
+    <title>Team Management | HSS Larnoo</title>
     
-    <!-- Google Fonts for a unique style -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- General Styling --- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        :root {
+            --primary-start: #667eea;
+            --primary-end: #764ba2;
+            --background-gradient: linear-gradient(135deg, var(--primary-start) 0%, var(--primary-end) 100%);
+            --card-background: rgba(255, 255, 255, 0.98);
+            --text-primary: #2c3e50;
+            --text-secondary: #555;
+            --border-color: #ddd;
+            --shadow-color: rgba(0, 0, 0, 0.1);
         }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { min-height: 100%; font-family: 'Lato', sans-serif; color: var(--text-primary); }
 
-        html, body {
-            height: 100%;
-            font-family: 'Lato', sans-serif;
-            color: #333;
-        }
-
-        /* --- Main Container with Gradient Background --- */
         .main-container {
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 100%; min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: flex-start; padding: 40px 20px;
+            background: var(--background-gradient); gap: 20px;
         }
 
-        /* --- Form Card --- */
-        .form-card {
-            width: 100%;
-            max-width: 500px;
-            background: rgba(255, 255, 255, 0.98);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .view-switcher {
+            display: flex; gap: 15px; background: rgba(255, 255, 255, 0.3);
+            padding: 8px; border-radius: 12px; margin-bottom: 20px;
+        }
+        .switcher-btn {
+            padding: 10px 25px; font-family: 'Poppins', sans-serif; font-size: 16px;
+            font-weight: 600; border: none; border-radius: 8px; background-color: transparent;
+            color: var(--text-primary); cursor: pointer; transition: all 0.3s ease;
+        }
+        .switcher-btn.active {
+            background: white; color: var(--primary-start); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .form-card h1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #2c3e50;
+        .card {
+            width: 100%; max-width: 600px; background: var(--card-background);
+            padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px var(--shadow-color);
         }
+        
+        #managementSection { display: none; }
 
-        .form-card p {
-            margin-bottom: 30px;
-            color: #555;
-            font-size: 16px;
+        .card h1 {
+            font-family: 'Poppins', sans-serif; font-size: 28px; font-weight: 700;
+            margin-bottom: 10px; color: var(--text-primary); text-align: center;
         }
+        .card p.subtitle { margin-bottom: 30px; color: var(--text-secondary); font-size: 16px; text-align: center; }
 
-        /* --- Form Elements --- */
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 700;
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-        }
-
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 700; font-family: 'Poppins', sans-serif; font-size: 14px; }
         .form-input, .form-select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            background-color: white;
-            transition: all 0.3s ease;
+            width: 100%; padding: 12px 15px; border: 1px solid var(--border-color);
+            border-radius: 8px; font-size: 16px; transition: all 0.3s ease;
         }
+        .form-input:focus, .form-select:focus { border-color: var(--primary-start); box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2); outline: none; }
+
+        input[type="file"] { display: none; }
+        .file-upload-label { display: inline-block; padding: 12px 20px; background-color: #f0f0f0; border: 1px dashed #ccc; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; color: var(--text-secondary); }
+        .file-upload-label:hover { background-color: #e9e9e9; border-color: var(--primary-start); }
+        .file-name { margin-top: 10px; font-style: italic; color: #777; font-size: 14px; }
+        .submit-btn { width: 100%; padding: 15px; border: none; border-radius: 8px; background: var(--background-gradient); color: white; font-family: 'Poppins', sans-serif; font-size: 18px; font-weight: 600; cursor: pointer; transition: opacity 0.3s ease; }
+        .submit-btn:hover { opacity: 0.9; }
+        .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .status-message { padding: 12px; margin-bottom: 20px; border-radius: 8px; display: none; text-align: center; }
+        .status-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        #teamListContainer { display: flex; flex-direction: column; gap: 15px; max-height: 50vh; overflow-y: auto; padding-right: 10px;}
+        .team-member-card { display: flex; align-items: center; padding: 15px; border: 1px solid #eee; border-radius: 10px; background: #f9f9f9; }
+        .team-member-card img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-right: 15px; }
+        .team-member-info { flex-grow: 1; }
+        .team-member-actions button { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; margin-left: 10px; }
+        .btn-edit { background-color: #ffc107; color: white; }
+        .btn-delete { background-color: #dc3545; color: white; }
+        .spinner { text-align: center; padding: 20px; }
         
-        .form-select:disabled {
-            background-color: #f5f5f5;
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6);
+            align-items: center; justify-content: center; backdrop-filter: blur(5px);
         }
+        .modal-content { margin: auto; max-width: 500px; position: relative; }
+        .close-btn { color: #aaa; position: absolute; right: 25px; top: 25px; font-size: 28px; font-weight: bold; cursor: pointer; }
+        #passwordError { color: #721c24; text-align: center; margin-top: 15px; height: 20px;}
 
-        .form-input:focus, .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-            outline: none;
-        }
-
-        /* --- Custom File Upload Button --- */
-        #teacherImage {
-            display: none;
-        }
-        
-        .file-upload-label {
-            display: inline-block;
-            padding: 12px 20px;
-            background-color: #f0f0f0;
-            border: 1px dashed #ccc;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #555;
-        }
-
-        .file-upload-label:hover {
-            background-color: #e9e9e9;
-            border-color: #667eea;
-        }
-
-        #file-name {
-            margin-top: 10px;
-            font-style: italic;
-            color: #777;
-            font-size: 14px;
-        }
-
-        /* --- Submit Button --- */
-        .submit-btn {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity 0.3s ease;
-        }
-
-        .submit-btn:hover {
-            opacity: 0.9;
-        }
-
-        .submit-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        /* --- Status Messages --- */
-        #statusMessage {
-            padding: 12px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            display: none;
-            text-align: center;
-        }
-
-        .status-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .status-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
+        #editImagePreviewContainer { text-align: center; margin-bottom: 20px; }
+        #editImagePreview { max-width: 150px; max-height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #eee; }
     </style>
 </head>
 <body>
 
     <div class="main-container">
-        <div class="form-card">
-            <h1>Join Our Team</h1>
-            <p>Add your details to be featured on the school's official team page.</p>
+        <div class="view-switcher">
+            <button id="showUploadBtn" class="switcher-btn active">Add New Member</button>
+            <button id="showManagementBtn" class="switcher-btn">Manage Team</button>
+        </div>
 
-            <div id="statusMessage"></div>
-
-            <form id="teacherForm">
+        <div id="uploadSection" class="card">
+            <h1>Add a New Team Member</h1>
+            <p class="subtitle">Fill out the form to add a new person to the team page.</p>
+            <div id="uploadStatusMessage" class="status-message"></div>
+            <form id="uploadForm">
                 <div class="form-group">
                     <label for="teacherName">Full Name</label>
-                    <input type="text" class="form-input" id="teacherName" placeholder="e.g., John Doe" required>
+                    <input type="text" class="form-input" id="teacherName" placeholder="e.g., Jane Doe" required>
                 </div>
-
                 <div class="form-group">
                     <label for="teacherDesignation">Occupation / Subject</label>
-                    <!-- This dropdown will be populated dynamically -->
                     <select id="teacherDesignation" class="form-select" required>
-                        <option value="" disabled selected>Loading available positions...</option>
+                        <option value="" disabled selected>Loading...</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label>Profile Picture</label>
-                    <label for="teacherImage" class="file-upload-label">
-                        Click to Upload Image
-                    </label>
+                    <label for="teacherImage" class="file-upload-label">Click to Upload Image</label>
                     <input type="file" id="teacherImage" accept="image/*" required>
-                    <div id="file-name">No file chosen</div>
+                    <div id="uploadFileName" class="file-name">No file chosen</div>
                 </div>
+                <button id="submitUploadBtn" class="submit-btn" type="submit">Submit Details</button>
+            </form>
+        </div>
 
-                <button id="submitBtn" class="submit-btn" type="submit">Submit Details</button>
+        <div id="managementSection" class="card">
+            <h1>Manage Existing Team</h1>
+            <p class="subtitle">Edit details or remove members from the team page.</p>
+            <div id="managementStatusMessage" class="status-message"></div>
+            <div id="teamListContainer">
+                 <div class="spinner">Please wait...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="passwordModal" class="modal">
+        <div class="card modal-content">
+            <span id="closePasswordModal" class="close-btn">&times;</span>
+            <h1>Admin Access Required</h1>
+            <p class="subtitle">Please enter the password to manage the team.</p>
+            <form id="passwordForm">
+                 <div class="form-group">
+                    <label for="passwordInput">Password</label>
+                    <input type="password" id="passwordInput" class="form-input" required>
+                 </div>
+                 <button class="submit-btn" type="submit">Unlock</button>
+                 <div id="passwordError"></div>
             </form>
         </div>
     </div>
 
-    <!-- Firebase SDK and Custom Logic -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+    <div id="editModal" class="modal">
+        <div class="card modal-content">
+            <span id="closeEditModal" class="close-btn">&times;</span>
+            <h1>Edit Team Member</h1>
+            <form id="editForm">
+                <input type="hidden" id="editDocId">
+                <input type="hidden" id="currentImageBase64">
+                <div id="editImagePreviewContainer">
+                    <img id="editImagePreview" src="" alt="Current Profile Picture">
+                </div>
+                <div class="form-group">
+                    <label for="editTeacherName">Full Name</label>
+                    <input type="text" class="form-input" id="editTeacherName" required>
+                </div>
+                <div class="form-group">
+                    <label>Occupation / Subject</label>
+                     <input type="text" class="form-input" id="editTeacherDesignation" readonly style="background-color: #f5f5f5;">
+                     <small>Designation cannot be changed. Re-add to change.</small>
+                </div>
+                <div class="form-group">
+                    <label>New Profile Picture (Optional)</label>
+                    <label for="editTeacherImage" class="file-upload-label">Upload New Image</label>
+                    <input type="file" id="editTeacherImage" accept="image/*">
+                    <div id="editFileName" class="file-name">No new file chosen</div>
+                </div>
+                <button id="submitEditBtn" class="submit-btn" type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
 
-        // Your web app's Firebase configuration
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU",
             authDomain: "hss-larnoo-teachers.firebaseapp.com",
@@ -224,139 +202,211 @@
             measurementId: "G-GHQLMME6PJ"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const ADMIN_PASSWORD = "hss_larnoo_admin_2024";
+        const ALL_POSITIONS = ['HOI','VICE HOI','ENGLISH LITERATURE','IT/ITES','TOURISM & HOSPITALITY','SOCIOLOGY','SOCIAL STUDIES','ZOOLOGY','BOTANY','PHYSICS','CHEMISTRY','MATHEMATICS','HISTORY','POLITICAL SCIENCE','ECONOMICS','MTS'];
+        let isManagementDataLoaded = false;
+        let allTeachersCache = [];
 
-        // --- MASTER LIST OF ALL POSSIBLE POSITIONS ---
-        const ALL_POSITIONS = [
-            'HOI',
-            'VICE HOI',
-            'ENGLISH LITERATURE',
-            'IT/ITES',
-            'TOURISM & HOSPITALITY',
-            'SOCIOLOGY',
-            'SOCIAL STUDIES',
-            'ZOOLOGY',
-            'BOTANY',
-            'PHYSICS',
-            'CHEMISTRY',
-            'MATHEMATICS',
-            'HISTORY',
-            'POLITICAL SCIENCE',
-            'ECONOMICS',
-            'MTS'
-        ];
+        const $ = (selector) => document.querySelector(selector);
+        
+        const showStatus = (element, message, type, duration = 4000) => {
+            element.textContent = message;
+            element.className = `status-message ${type === 'success' ? 'status-success' : 'status-error'}`;
+            element.style.display = 'block';
+            if(duration) setTimeout(() => { element.style.display = 'none'; }, duration);
+        };
 
-        // Get DOM elements
-        const teacherForm = document.getElementById('teacherForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const statusMessage = document.getElementById('statusMessage');
-        const teacherImageInput = document.getElementById('teacherImage');
-        const fileNameDiv = document.getElementById('file-name');
-        const designationDropdown = document.getElementById('teacherDesignation');
-
-        // Function to populate the dropdown
-        async function populateDesignationsDropdown() {
-            try {
-                // 1. Fetch all current teachers to see which positions are taken
-                const querySnapshot = await getDocs(collection(db, "teachers"));
-                const occupiedPositions = new Set(querySnapshot.docs.map(doc => doc.data().designation.toUpperCase()));
-
-                // 2. Clear the dropdown and add a default option
-                designationDropdown.innerHTML = '';
-                const defaultOption = document.createElement('option');
-                defaultOption.value = "";
-                defaultOption.textContent = "Select your position";
-                defaultOption.disabled = true;
-                defaultOption.selected = true;
-                designationDropdown.appendChild(defaultOption);
-
-                // 3. Loop through the master list and create options
-                ALL_POSITIONS.forEach(position => {
-                    const option = document.createElement('option');
-                    option.value = position;
-                    
-                    if (occupiedPositions.has(position.toUpperCase())) {
-                        // If position is taken, disable it and mark it
-                        option.textContent = `${position} (Occupied)`;
-                        option.disabled = true;
-                    } else {
-                        // Otherwise, it's available
-                        option.textContent = position;
-                    }
-                    designationDropdown.appendChild(option);
-                });
-
-            } catch (error) {
-                console.error("Error fetching positions: ", error);
-                showStatusMessage('Could not load positions from the database.', 'error');
-                designationDropdown.innerHTML = '<option value="">Error loading</option>';
-                designationDropdown.disabled = true;
-            }
-        }
-
-        // Run the population function when the page loads
-        document.addEventListener('DOMContentLoaded', populateDesignationsDropdown);
-
-        // Display selected file name
-        teacherImageInput.addEventListener('change', () => {
-            fileNameDiv.textContent = teacherImageInput.files.length > 0 ? teacherImageInput.files[0].name : 'No file chosen';
-        });
-
-        // Handle Form Submission
-        teacherForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'Submitting...';
-            statusMessage.style.display = 'none';
-
-            const name = document.getElementById('teacherName').value;
-            const designation = designationDropdown.value;
-            const imageFile = teacherImageInput.files[0];
-
-            if (!name || !designation || !imageFile) {
-                showStatusMessage('Please fill out all fields and select an available position.', 'error');
-                submitBtn.disabled = false;
-                submitBtn.innerText = 'Submit Details';
-                return;
-            }
-
+        const fileToBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
-            reader.readAsDataURL(imageFile);
-            reader.onload = async () => {
-                const imageBase64 = reader.result;
-                try {
-                    await addDoc(collection(db, "teachers"), {
-                        name: name,
-                        designation: designation,
-                        imageBase64: imageBase64,
-                        createdAt: new Date()
-                    });
-                    showStatusMessage('Success! Redirecting you to the team page...', 'success');
-                    setTimeout(() => { window.location.href = 'success.html'; }, 2000);
-                } catch (e) {
-                    console.error("Error adding document: ", e);
-                    showStatusMessage(`Error: ${e.message}.`, 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = 'Try Again';
-                }
-            };
-            reader.onerror = (error) => {
-                console.error("File reading error: ", error);
-                showStatusMessage('Error reading the image file.', 'error');
-                submitBtn.disabled = false;
-                submitBtn.innerText = 'Try Again';
-            };
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
         });
 
-        function showStatusMessage(message, type) {
-            statusMessage.textContent = message;
-            statusMessage.className = type === 'success' ? 'status-success' : 'status-error';
-            statusMessage.style.display = 'block';
+        function switchView(view) {
+            if (view === 'upload') {
+                $('#uploadSection').style.display = 'block';
+                $('#managementSection').style.display = 'none';
+                $('#showUploadBtn').classList.add('active');
+                $('#showManagementBtn').classList.remove('active');
+            } else if (view === 'management') {
+                $('#uploadSection').style.display = 'none';
+                $('#managementSection').style.display = 'block';
+                $('#showUploadBtn').classList.remove('active');
+                $('#showManagementBtn').classList.add('active');
+                if (!isManagementDataLoaded) {
+                    populateManagementList();
+                }
+            }
         }
-    </script>
+        
+        $('#showUploadBtn').addEventListener('click', () => switchView('upload'));
+        $('#showManagementBtn').addEventListener('click', () => {
+            $('#passwordModal').style.display = 'flex';
+            $('#passwordInput').focus();
+        });
 
+        $('#passwordForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            if ($('#passwordInput').value === ADMIN_PASSWORD) {
+                $('#passwordModal').style.display = 'none';
+                $('#passwordInput').value = '';
+                $('#passwordError').textContent = '';
+                switchView('management');
+            } else {
+                $('#passwordError').textContent = 'Invalid password. Please try again.';
+            }
+        });
+        
+        $('#closePasswordModal').onclick = () => $('#passwordModal').style.display = 'none';
+        
+        async function fetchAllTeachers() {
+            const querySnapshot = await getDocs(collection(db, "teachers"));
+            allTeachersCache = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            return allTeachersCache;
+        }
+
+        async function populateUploadDropdown() {
+            const occupiedPositions = new Set(allTeachersCache.map(teacher => teacher.designation.toUpperCase()));
+            const dropdown = $('#teacherDesignation');
+            dropdown.innerHTML = '<option value="" disabled selected>Select a position</option>';
+            ALL_POSITIONS.forEach(pos => {
+                const isOccupied = occupiedPositions.has(pos.toUpperCase());
+                dropdown.innerHTML += `<option value="${pos}" ${isOccupied ? 'disabled' : ''}>${pos}${isOccupied ? ' (Occupied)' : ''}</option>`;
+            });
+        }
+
+        function populateManagementList() {
+            $('#teamListContainer').innerHTML = '<div class="spinner">Loading team members...</div>';
+            const listContainer = $('#teamListContainer');
+            listContainer.innerHTML = '';
+            if (allTeachersCache.length === 0) {
+                listContainer.innerHTML = '<p>No team members found. Add one using the form above.</p>';
+            } else {
+                allTeachersCache.forEach(member => {
+                    listContainer.innerHTML += `
+                        <div class="team-member-card" data-id="${member.id}">
+                            <img src="${member.imageBase64}" alt="${member.name}">
+                            <div class="team-member-info"><h4>${member.name}</h4><p>${member.designation}</p></div>
+                            <div class="team-member-actions">
+                                <button class="btn-edit">Edit</button>
+                                <button class="btn-delete">Delete</button>
+                            </div>
+                        </div>`;
+                });
+            }
+            isManagementDataLoaded = true;
+        }
+
+        async function refreshDataAndViews() {
+            await fetchAllTeachers();
+            populateUploadDropdown();
+            if (isManagementDataLoaded) {
+                populateManagementList();
+            }
+        }
+
+        $('#uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = $('#submitUploadBtn');
+            btn.disabled = true;
+            btn.innerText = 'Submitting...';
+            const statusEl = $('#uploadStatusMessage');
+
+            const name = $('#teacherName').value;
+            const designation = $('#teacherDesignation').value;
+            const imageFile = $('#teacherImage').files[0];
+
+            try {
+                const imageBase64 = await fileToBase64(imageFile);
+                await addDoc(collection(db, "teachers"), { name, designation, imageBase64, createdAt: new Date() });
+                showStatus(statusEl, 'Team member added successfully!', 'success');
+                $('#uploadForm').reset();
+                $('#uploadFileName').textContent = 'No file chosen';
+                await refreshDataAndViews();
+            } catch (error) {
+                showStatus(statusEl, `Upload failed: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Submit Details';
+            }
+        });
+
+        $('#teamListContainer').addEventListener('click', async (e) => {
+            const card = e.target.closest('.team-member-card');
+            if (!card) return;
+            const docId = card.dataset.id;
+            const member = allTeachersCache.find(t => t.id === docId);
+
+            if (e.target.classList.contains('btn-delete')) {
+                if (confirm(`Are you sure you want to delete ${member.name}?`)) {
+                    await deleteDoc(doc(db, "teachers", docId));
+                    showStatus($('#managementStatusMessage'), 'Member deleted.', 'success');
+                    await refreshDataAndViews();
+                }
+            }
+
+            if (e.target.classList.contains('btn-edit')) {
+                $('#editDocId').value = docId;
+                $('#editTeacherName').value = member.name;
+                $('#editTeacherDesignation').value = member.designation;
+                $('#editImagePreview').src = member.imageBase64;
+                $('#currentImageBase64').value = member.imageBase64; // Store original image
+                $('#editForm').reset(); // Resets file input
+                 $('#editFileName').textContent = 'No new file chosen';
+                $('#editModal').style.display = 'flex';
+            }
+        });
+        
+        $('#editTeacherImage').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                $('#editFileName').textContent = file.name;
+                $('#editImagePreview').src = await fileToBase64(file);
+            } else {
+                 $('#editFileName').textContent = 'No new file chosen';
+                 $('#editImagePreview').src = $('#currentImageBase64').value; // Revert to original if cancelled
+            }
+        });
+
+        $('#editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = $('#submitEditBtn');
+            btn.disabled = true;
+            btn.innerText = 'Saving...';
+            const docId = $('#editDocId').value;
+            
+            try {
+                const updatedData = { name: $('#editTeacherName').value };
+                const newImageFile = $('#editTeacherImage').files[0];
+                if (newImageFile) {
+                    updatedData.imageBase64 = await fileToBase64(newImageFile);
+                }
+                await updateDoc(doc(db, "teachers", docId), updatedData);
+                showStatus($('#managementStatusMessage'), 'Member updated successfully.', 'success');
+                $('#editModal').style.display = 'none';
+                await refreshDataAndViews();
+            } catch (error) {
+                alert(`Update failed: ${error.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Save Changes';
+            }
+        });
+        
+        $('#teacherImage').addEventListener('change', (e) => {
+            $('#uploadFileName').textContent = e.target.files.length > 0 ? e.target.files[0].name : 'No file chosen';
+        });
+
+        $('#closeEditModal').onclick = () => $('#editModal').style.display = 'none';
+        window.onclick = (e) => {
+            if (e.target == $('#editModal')) $('#editModal').style.display = "none";
+            if (e.target == $('#passwordModal')) $('#passwordModal').style.display = "none";
+        };
+        
+        document.addEventListener('DOMContentLoaded', fetchAllTeachers().then(populateUploadDropdown));
+    </script>
 </body>
 </html>

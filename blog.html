@@ -31,42 +31,24 @@
 
         <style>
             /* Style for the full-screen blog overlay */
-            .blog-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.9);
-                z-index: 10000;
-                display: none;
-                overflow-y: auto;
-                padding: 40px 20px;
-                color: #fff;
-            }
-            .blog-overlay-content {
-                max-width: 900px;
-                margin: auto;
-                background: #a8a059;
-                padding: 30px;
-                border-radius: 8px;
-            }
-            .blog-overlay-content img {
-                width: 100%;
-                max-height: 450px;
-                object-fit: cover;
-                border-radius: 8px;
-                margin-bottom: 20px;
-            }
-            .blog-overlay-close {
-                position: absolute;
-                top: 20px;
-                right: 30px;
-                font-size: 40px;
-                color: #fff;
-                cursor: pointer;
-                line-height: 1;
-            }
+        .blog-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.9); z-index: 10000;
+            display: none; overflow-y: auto; padding: 40px 20px; color: #fff;
+        }
+        .blog-overlay-content {
+            max-width: 900px; margin: auto; background: #2c3e50;
+            padding: 30px; border-radius: 8px; position: relative;
+        }
+        .blog-overlay-content img {
+            width: 100%; max-height: 450px; object-fit: cover;
+            border-radius: 8px; margin-bottom: 20px;
+        }
+        .blog-overlay-close {
+            position: absolute; top: 15px; right: 25px;
+            font-size: 40px; color: #fff; cursor: pointer; line-height: 1;
+        }
+        .blog-overlay-content p { white-space: pre-wrap; /* To respect newlines in content */ }
             .blog-overlay-comments {
                 margin-top: 30px;
                 border-top: 1px solid #555;
@@ -108,10 +90,10 @@
                     <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="mailto:hsslarnoo024@gmail.com" class="text-white">hsslarnoo024@gmail.com</a></small>
                 </div>
                 <div class="top-link pe-2">
-                    <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-facebook-f text-secondary"></i></a>
-                    <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-twitter text-secondary"></i></a>
-                    <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-instagram text-secondary"></i></a>
-                    <a href="" class="btn btn-light btn-sm-square rounded-circle me-0"><i class="fab fa-linkedin-in text-secondary"></i></a>
+                    <a href="https://www.facebook.com/share/16EyXzNAKb/" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-facebook-f text-secondary"></i></a>
+                    <a href="https://x.com/GHssLarnoo41" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-twitter text-secondary"></i></a>
+                    <a href="https://www.instagram.com/govt_hss_larnoo?igsh=MTA0c2JwczB3aHVqbg==" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-instagram text-secondary"></i></a>
+                    <a href="https://www.linkedin.com/in/work-with-ghss-larnoo-75b91b378?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="btn btn-light btn-sm-square rounded-circle me-0"><i class="fab fa-linkedin-in text-secondary"></i></a>
                 </div>
             </div>
         </div>
@@ -123,16 +105,21 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
-                        <a href="index.html" class="nav-item nav-link">Home</a>
+                        <a href="index.html" class="nav-item nav-link active">Home</a>
                         <a href="about.html" class="nav-item nav-link">About</a>
                         <a href="service.html" class="nav-item nav-link">Services</a>
                         <a href="program.html" class="nav-item nav-link">Programs</a>
                         <a href="event.html" class="nav-item nav-link">Events</a>
+                        <a href="admission.html" class="nav-item nav-link">Admission</a>
                         <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Pages</a>
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                                <a href="blog.html" class="dropdown-item active">Our Blog</a>
-                                <a href="team.html" class="dropdown-item">Our Team</a>
+                                
+                                <a href="academics.html" class="dropdown-item">Academics</a>
+                                <a href="blog.html" class="dropdown-item">Our Blog</a>
+                                <a href="staff.html" class="dropdown-item">Our Staf</a>
+                                <a href="gallery.html" class="dropdown-item">Gallery</a>
+                                <a href="student-zone.html" class="dropdown-item">Student Zone</a>
                                 <a href="/Card/index.html" class="dropdown-item">ID Card</a>
                                 <a href="testimonial.html" class="dropdown-item">Testimonial</a>
                                 <a href="404.html" class="dropdown-item">404 Page</a>
@@ -199,28 +186,32 @@
 
 
         <!-- Blog Start-->
-        <div class="container-fluid blog py-5">
-            <div class="container py-5">
-                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 600px;">
-                    <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">Latest News & Blog</h4>
-                    <h1 class="mb-5 display-3">Read Our Latest News & Blog</h1>
-                </div>
-                <!-- This row will be populated by the internal script -->
-                <div id="blog-container" class="row g-5 justify-content-center">
-                    <!-- Blog items will be inserted here -->
+    <div class="container-fluid blog py-5">
+        <div class="container py-5">
+            <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 600px;">
+                <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">Latest News & Blog</h4>
+                <h1 class="mb-5 display-3">Read Our Latest News & Blog</h1>
+            </div>
+            <!-- This row will be populated by Firebase -->
+            <div id="blog-container" class="row g-5 justify-content-center">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading latest blogs...</p>
                 </div>
             </div>
         </div>
-        <!-- Blog End-->
+    </div>
+    <!-- Blog End-->
 
         <!-- Full-screen Blog Overlay Start -->
-        <div id="blog-overlay" class="blog-overlay">
-            <span class="blog-overlay-close" onclick="closeBlogOverlay()">×</span>
-            <div id="blog-overlay-content-container" class="blog-overlay-content">
-                <!-- Content will be injected by JavaScript -->
-            </div>
+    <div id="blog-overlay" class="blog-overlay">
+        <div id="blog-overlay-content-container" class="blog-overlay-content">
+            <!-- Content will be injected by JavaScript -->
         </div>
-        <!-- Full-screen Blog Overlay End -->
+    </div>
+    <!-- Full-screen Blog Overlay End -->
 
 
        <!-- Footer Start -->
@@ -264,12 +255,12 @@
                                 <a href="https://maps.app.goo.gl/U5pmjifhstCcZTyA8" target="_blank" class="text-body mb-4"><img src="img/icons/location.png" alt="" >Larnoo, Kokarnag, Anantnag, J&K, India</a>
                                 <a href="tel:+917006485144" class="text-start rounded-0 text-body mb-4"><i class=" text-primary me-2"><img src="img/icons/call.png" alt=""  ></i> +91 70064 85144</a>
                                 <a href="mailto:workwithhsslarnoo@gmail.com" class="text-start rounded-0 text-body mb-4"><i class=" text-primary me-2"><img src="img/icons/mail.png"></i> workwithhsslarnoo@gmail.com</a>
-                                <a class="text-start rounded-0 text-body mb-4"><i class=" text-primary me-2"><img src="img/icons/clock.png" alt=""></i> 24/7 Hours Service</a>
+                                <a class="text-start rounded-0 text-body mb-4"><i class=" text-primary me-2"><img src="img/icons/clock.png" alt=""></i> 24/6 Hours Service</a>
                                 <div class="footer-icon d-flex">
-                                    <a class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" href=""><i class="fab fa-twitter"></i></a>
-                                    <a href="#" class="btn btn-primary btn-sm-square me-3 rounded-circle text-white"><i class="fab fa-instagram"></i></a>
-                                    <a href="#" class="btn btn-primary btn-sm-square rounded-circle text-white"><i class="fab fa-linkedin-in"></i></a>
+                                    <a class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" href="https://www.facebook.com/share/16EyXzNAKb/"><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" href="https://x.com/GHssLarnoo41"><i class="fab fa-twitter"></i></a>
+                                    <a href="https://www.instagram.com/govt_hss_larnoo?igsh=MTA0c2JwczB3aHVqbg==" class="btn btn-primary btn-sm-square me-3 rounded-circle text-white"><i class="fab fa-instagram"></i></a>
+                                    <a href="https://www.linkedin.com/in/work-with-ghss-larnoo-75b91b378?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="btn btn-primary btn-sm-square rounded-circle text-white"><i class="fab fa-linkedin-in"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -280,32 +271,32 @@
                             <div class="row g-3">
                                 <div class="col-4">
                                     <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="img/galary-1.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                        <img src="school/galery 1.jpg" class="img-fluid rounded-circle p-2" alt="">
                                     </div>
                                </div>
                                <div class="col-4">
                                     <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="img/galary-2.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                        <img src="school/galery 2.jpg" class="img-fluid rounded-circle p-2" alt="">
                                     </div>
                                </div>
                                 <div class="col-4">
                                     <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="img/galary-3.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                        <img src="school/galery 3.jpg" class="img-fluid rounded-circle p-2" alt="">
                                     </div>
                                </div>
                                 <div class="col-4">
                                     <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="img/galary-4.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                        <img src="school/galery 4.jpg" class="img-fluid rounded-circle p-2" alt="">
                                     </div>
                                </div>
                                 <div class="col-4">
                                     <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="img/galary-5.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                        <img src="school/galery 5.jpg" class="img-fluid rounded-circle p-2" alt="">
                                     </div>
                                </div>
                                 <div class="col-4">
                                     <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="img/galary-6.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                        <img src="school/galery 6.jpg" class="img-fluid rounded-circle p-2" alt="">
                                     </div>
                                </div>
                             </div>
@@ -314,7 +305,7 @@
                 </div>
             </div>
         </div>
-
+        <!-- Footer End -->
 
         <!-- Copyright Start -->
         <div class="container-fluid copyright bg-dark py-4">
@@ -327,7 +318,7 @@
                         <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
                         <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
                         <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
-                        Designed By <a class="border-bottom" href="#">MD Colab</a>
+                        Designed By <a class="border-bottom" href="https://mujtabaalam.vercel.app">Mujtaba Alam</a>
                     </div>
                 </div>
             </div>
@@ -353,258 +344,99 @@
     <!-- =============================================== -->
     <!-- INTERNAL SCRIPT FOR BLOGS -->
     <!-- =============================================== -->
-    <script>
-        // JSON data for blog posts
-        const blogData = [
-            {
-                id: 1,
-                title: "Viksit Bharat Sankalp Yatra Reaches Larnoo",
-                image: "img/blog-1.jpg",
-                date: "01 Jan 2024",
-                author: "School Administration",
-                authorImage: "img/logo3.png",
-                authorRole: "Govt. HSS Larnoo",
-                short_desc: "The Viksit Bharat Sankalp Yatra recently made its way to the far-flung areas of Larnoo, bringing a wave of community engagement and on-the-spot services.",
-                full_content: "The Viksit Bharat Sankalp Yatra extended its reach to various parts of Larnoo, including Gawran, Matihindoo, and Gundiraman, creating vibrant hubs of activity. [14] The Prime Minister's message was broadcasted via IEC vans, raising awareness about diverse welfare schemes and encouraging public participation. A key feature was the on-the-spot services, particularly the health camps which conducted screenings for thousands of individuals for TB, sickle cell anemia, and other health concerns. [14] The yatra successfully united citizens across numerous Gram Panchayats, with over 2.5 lakh people participating in the Anantnag district, showcasing a shared vision for positive change and development in the region. [14] Our students and staff were proud to be part of this significant national initiative.",
-                comments: [
-                    { user: "Aarif Ahmed", text: "It was a great initiative for our community. Very informative." },
-                    { user: "Fatima Jan", text: "The health camp was very helpful for my family. Thank you!" }
-                ]
-            },
-            {
-                id: 2,
-                title: "Promoting Fitness: GHSS Larnoo in National Active Championship",
-                image: "img/blog-2.jpg",
-                date: "15 Feb 2024",
-                author: "Sports Department",
-                authorImage: "img/logo3.png",
-                authorRole: "Govt. HSS Larnoo",
-                short_desc: "Our students are actively participating in the National Active Championship, embracing a healthier lifestyle by reducing screen time and engaging in physical activities.",
-                full_content: "Govt. HSS Larnoo is proud to announce its participation in the National Active Championship, a nationwide initiative to promote co-curricular and sports activities among students. [3] The program encourages students to reduce non-essential screen time and engage in fun, physical, and skill-based activities. [2] Our students can participate in a wide range of online and offline contests, including art, music, dance, poetry, quizzes, and various sports. By earning points for these activities, they not only compete for monthly prizes but also contribute to the school's national ranking. [3] We believe this championship is a fantastic way to foster well-rounded development and control the growing issue of excessive screen time among children. [2]",
-                comments: [
-                    { user: "Mushtaq Ali", text: "A great step towards a healthier generation. My son is very excited to participate." },
-                    { user: "Aisha Begum", text: "Wonderful to see the school focusing on more than just academics. Keep it up!" },
-                ]
-            },
-            {
-                id: 3,
-                title: "Successful Community Sports Day Held at Vailoo",
-                image: "img/blog-3.jpg",
-                date: "28 Mar 2024",
-                author: "Event Committee",
-                authorImage: "img/logo3.png",
-                authorRole: "Govt. HSS Larnoo",
-                short_desc: "In a vibrant showcase of talent and sportsmanship, YSS Anantnag organized a successful sports event at Vailoo, with enthusiastic participation from our students.",
-                full_content: "The Youth Services and Sports (YSS) department of Anantnag recently organized a series of sports events in the Vailoo zone, which saw enthusiastic participation from students across the region. [6] Our school, Govt. HSS Larnoo, was a proud participant in the events, which included competitions in Chess and Carrom. A total of 132 girls from various schools took part, showcasing their skills and competitive spirit. [6] Such events are crucial for promoting a healthy lifestyle, encouraging teamwork, and providing a platform for students to excel beyond the classroom. We congratulate all the participants and the organizers for making the day a grand success.",
-                comments: [
-                    { user: "Imran Khan", text: "It was a well-organized event. The students had a lot of fun." },
-                    { user: "Shazia Akhtar", text: "My daughter participated in the chess competition and loved it. More such events, please!" }
-                ]
-            },
-    {
-        "id": 4,
-        "title": "Eco Club and CRPF Join Hands for 'Clean Margan Top' Drive",
-        "image": "img/logo2.jpg",
-        "date": "07 Oct 2023",
-        "author": "Eco Club HSS Larnoo",
-        "authorImage": "img/logo3.png",
-        "authorRole": "Govt. HSS Larnoo",
-        "short_desc": "In a commendable environmental initiative, our Eco Club collaborated with the 164th Battalion CRPF and the local administration for a cleanliness drive at the scenic Margan Top.",
-        "full_content": "Our school's Eco Club was proud to participate in the “Clean Margan Top Drive,” a significant environmental preservation effort. [5] This initiative was a collaboration with the 164th Battalion CRPF and the Tehsildar of Larnoo, prompted by concerns from tourists about littering in the area. [5] Aligned with the 'Swachh Bharat Abhiyan,' the drive took place at an altitude of over 12,000 feet. [5] Beyond the cleanup, the initiative also focused on raising awareness among tourists and locals about responsible waste management to ensure the long-term preservation of Margan Top's natural beauty. We are thrilled our students could contribute to this vital community and environmental project. [5]",
-        "comments": [
-            { "user": "Farooq Ahmad", "text": "A fantastic initiative by the students and CRPF. We must all work to keep our beautiful tourist spots clean." },
-            { "user": "Sameera Akhtar", "text": "So proud of the Eco Club for taking part in such an important cause. This is practical education at its best." }
-        ]
-    },
-    {
-        "id": 5,
-        "title": "A Vision for a Model School: Transforming Our Learning Environment",
-        "image": "img/logo2.jpg",
-        "date": "14 Apr 2024",
-        "author": "School Leadership",
-        "authorImage": "img/logo3.png",
-        "authorRole": "Govt. HSS Larnoo",
-        "short_desc": "A dedicated effort over the past two years, involving staff, students, and the community, has been focused on transforming our school into a model institution for the region.",
-        "full_content": "Under the guidance of our cluster head, the staff at Govt. HSS Larnoo embarked on a mission two years ago to elevate our school into a model of excellence in education, hygiene, and overall environment. [2] The primary goal was to create a space where students feel even more comfortable and inspired than at home. [2] This transformation has been a collaborative effort, with incredible support from the Rural Development Department, our education officers, the local community, and our dedicated students. [2] Classrooms have been improved, and the overall infrastructure has been uplifted, creating a joyful learning experience. We are also grateful for the support from BDO Larnoo, Mudassir Sakinder, who has pledged his full support for future developments. [2]",
-        "comments": [
-            { "user": "Momin Ahmad (Student)", "text": "Our school feels better than home now. We worked hard to make it this way, and we are very proud." },
-            { "user": "Local Resident", "text": "The change in the school is visible to everyone in the community. Congratulations to the teachers and students for their hard work." }
-        ]
-    },
-    {
-        "id": 6,
-        "title": "Focus on Punctuality and Dedication",
-        "image": "img/logo4.png",
-        "date": "12 Dec 2022",
-        "author": "District Administration",
-        "authorImage": "img/logo3.png",
-        "authorRole": "Anantnag District",
-        "short_desc": "As part of a district-wide initiative to ensure punctuality and accountability, our school underwent a surprise inspection by officials from the District Administration.",
-        "full_content": "Recently, the District Administration of Anantnag conducted a comprehensive drive to ensure punctuality and the presence of staff across various government offices, including educational institutions. [6] Govt. HSS Larnoo was among the locations visited by the inspection teams. The Deputy Commissioner has emphasized a zero-tolerance policy towards absenteeism and a lack of punctuality to ensure the smooth functioning of all departments and the effective delivery of services to the public. [6] Our school is committed to upholding these standards and ensuring that our staff is always present and dedicated to their duties for the benefit of our students and the community. Surprise checks will continue to be a norm to maintain this high standard of accountability. [6, 7]",
-        "comments": [
-            { "user": "Concerned Parent", "text": "It is good to see the administration taking steps to ensure teachers are punctual. This is very important for our children's education." },
-            { "user": "Teacher", "text": "We are dedicated to our students and welcome these measures to ensure accountability in the education system." }
-        ]
-    }
-        ];
-
-        // Function to open the blog overlay
-        function openBlogOverlay(blogId) {
-            const blog = blogData.find(b => b.id === blogId);
-            if (!blog) return;
-
-            const overlayContentContainer = document.getElementById('blog-overlay-content-container');
-            
-            // Generate comments HTML
-            let commentsHtml = '';
-            if(blog.comments && blog.comments.length > 0) {
-                blog.comments.forEach(comment => {
-                    commentsHtml += `
-                        <div class="blog-overlay-comment">
-                            <p><strong>${comment.user}:</strong> ${comment.text}</p>
-                        </div>
-                    `;
-                });
-            } else {
-                commentsHtml = '<p>No comments yet.</p>';
-            }
-
-            // Populate the overlay
-            overlayContentContainer.innerHTML = `
-                <img src="${blog.image}" alt="${blog.title}">
-                <h2>${blog.title}</h2>
-                <p><em>By ${blog.author} on ${blog.date}</em></p>
-                <hr style="border-color: #555;">
-                <p>${blog.full_content}</p>
-                <div class="blog-overlay-comments">
-                    <h4>Comments (${blog.comments.length})</h4>
-                    ${commentsHtml}
-                </div>
-            `;
-            
-            document.getElementById('blog-overlay').style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
-        }
-
-        // Function to close the blog overlay
-        function closeBlogOverlay() {
-            document.getElementById('blog-overlay').style.display = 'none';
-            document.body.style.overflow = 'auto'; // Restore background scrolling
-        }
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const blogContainer = document.getElementById('blog-container');
-
-            // Generate blog cards from JSON data
-            blogData.forEach(blog => {
-                const blogItem = document.createElement('div');
-                blogItem.className = 'col-md-6 col-lg-6 col-xl-4 wow fadeIn';
-                blogItem.setAttribute('data-wow-delay', '0.1s');
-
-                blogItem.innerHTML = `
-                    <div class="blog-item rounded-bottom">
-                        <div class="blog-img overflow-hidden position-relative img-border-radius">
-                            <img src="${blog.image}" class="img-fluid w-100" alt="${blog.title}">
-                        </div>
-                        <div class="d-flex justify-content-between px-4 py-3 bg-light border-bottom border-primary blog-date-comments">
-                            <small class="text-dark"><i class="fas fa-calendar me-1 text-dark"></i> ${blog.date}</small>
-                            <small class="text-dark"><i class="fas fa-comment-alt me-1 text-dark"></i> Comments (${blog.comments.length})</small>
-                        </div>
-                        <div class="blog-content d-flex align-items-center px-4 py-3 bg-light">
-                            <div class="overflow-hidden rounded-circle rounded-top border border-primary">
-                                <img src="${blog.authorImage}" class="img-fluid rounded-circle p-2 rounded-top" alt="${blog.author}" style="width: 70px; height: 70px; border-style: dotted; border-color: var(--bs-primary) !important;">
-                            </div>
-                            <div class="ms-3">
-                                <h6 class="text-primary">${blog.author}</h6>
-                                <p class="text-muted">${blog.authorRole}</p>
-                            </div>
-                        </div>
-                        <div class="px-4 pb-4 bg-light rounded-bottom">
-                            <div class="blog-text-inner">
-                                <a href="#" class="h4">${blog.title}</a>
-                                <p class="mt-3 mb-4">${blog.short_desc}</p>
-                            </div>
-                            <div class="text-center">
-                                <button class="btn btn-primary text-white px-4 py-2 mb-3 btn-border-radius view-more-btn" data-blogid="${blog.id}">View More</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                blogContainer.appendChild(blogItem);
-            });
-
-            // Add event listeners to "View More" buttons
-            document.querySelectorAll('.view-more-btn').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    event.preventDefault(); // Prevent default anchor behavior
-                    const blogId = parseInt(event.target.getAttribute('data-blogid'));
-                    openBlogOverlay(blogId);
-                });
-            });
-        });
-    </script>
-    <script type="module">
+     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
-
-        // This is your unified project configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU",
-            authDomain: "hss-larnoo-teachers.firebaseapp.com",
-            projectId: "hss-larnoo-teachers",
-            storageBucket: "hss-larnoo-teachers.appspot.com",
-            messagingSenderId: "143363278401",
-            appId: "1:143363278401:web:49d7fffbdf31ce073e68c0",
-            measurementId: "G-GHQLMME6PJ"
-        };
-
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+        
+        const firebaseConfig = { apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU", authDomain: "hss-larnoo-teachers.firebaseapp.com", projectId: "hss-larnoo-teachers", storageBucket: "hss-larnoo-teachers.appspot.com", messagingSenderId: "143363278401", appId: "1:143363278401:web:49d7fffbdf31ce073e68c0", measurementId: "G-GHQLMME6PJ" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- Newsletter Subscription Logic ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const newsletterForm = document.querySelector('.footer-item .p-3.rounded');
+        const blogContainer = document.getElementById('blog-container');
+        let blogDataCache = [];
+
+        function openBlogOverlay(blogId) {
+            const blog = blogDataCache.find(b => b.id === blogId);
+            if (!blog) return;
+
+            const overlayContent = document.getElementById('blog-overlay-content-container');
+            overlayContent.innerHTML = `
+                <span class="blog-overlay-close">&times;</span>
+                <img src="${blog.imageUrl}" alt="${blog.title}">
+                <h2>${blog.title}</h2>
+                <p><em>By ${blog.author} on ${new Date(blog.createdAt.seconds * 1000).toLocaleDateString()}</em></p>
+                <hr style="border-color: #555;">
+                <p>${blog.fullContent}</p>
+            `;
             
-            if (newsletterForm) {
-                const emailInput = newsletterForm.querySelector('input[type="text"]');
-                const signUpButton = newsletterForm.querySelector('button');
+            document.getElementById('blog-overlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
 
-                signUpButton.addEventListener('click', async () => {
-                    const email = emailInput.value.trim();
-                    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                        alert('Please enter a valid email address.');
-                        return;
-                    }
+            overlayContent.querySelector('.blog-overlay-close').onclick = closeBlogOverlay;
+        }
 
-                    signUpButton.disabled = true;
-                    signUpButton.innerText = '...';
+        function closeBlogOverlay() {
+            document.getElementById('blog-overlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
 
-                    try {
-                        const subscribersRef = collection(db, "newsletter_subscribers");
-                        const q = query(subscribersRef, where("email", "==", email));
-                        const querySnapshot = await getDocs(q);
+        async function fetchAndDisplayBlogs() {
+            try {
+                const q = query(collection(db, "blogs"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                blogContainer.innerHTML = ''; // Clear spinner
+                if (querySnapshot.empty) {
+                    blogContainer.innerHTML = '<p class="text-center">No blog posts found.</p>';
+                    return;
+                }
 
-                        if (querySnapshot.empty) {
-                            await addDoc(subscribersRef, {
-                                email: email,
-                                subscribedAt: serverTimestamp()
-                            });
-                            alert(`Thank you for subscribing, ${email}!`);
-                            emailInput.value = '';
-                        } else {
-                            alert(`${email} is already subscribed.`);
-                        }
-                    } catch (error) {
-                        console.error("Error subscribing: ", error);
-                        alert("An error occurred. Please try again.");
-                    } finally {
-                        signUpButton.disabled = false;
-                        signUpButton.innerText = 'SignUp';
-                    }
+                querySnapshot.forEach(doc => {
+                    const blog = { id: doc.id, ...doc.data() };
+                    blogDataCache.push(blog);
+                    
+                    const blogItem = document.createElement('div');
+                    blogItem.className = 'col-md-6 col-lg-6 col-xl-4 wow fadeIn';
+                    blogItem.innerHTML = `
+                        <div class="blog-item rounded-bottom">
+                            <div class="blog-img overflow-hidden position-relative img-border-radius">
+                                <img src="${blog.imageUrl}" class="img-fluid w-100" alt="${blog.title}">
+                            </div>
+                            <div class="d-flex justify-content-between px-4 py-3 bg-light border-bottom border-primary">
+                                <small class="text-dark"><i class="fas fa-calendar me-1"></i> ${new Date(blog.createdAt.seconds * 1000).toLocaleDateString()}</small>
+                                <small class="text-dark"><i class="fas fa-comment-alt me-1"></i> Comments (${blog.comments.length})</small>
+                            </div>
+                            <div class="blog-content d-flex align-items-center px-4 py-3 bg-light">
+                                <div class="overflow-hidden rounded-circle border border-primary">
+                                    <img src="${blog.authorImage}" class="img-fluid rounded-circle p-2" alt="${blog.author}" style="width: 70px; height: 70px;">
+                                </div>
+                                <div class="ms-3">
+                                    <h6 class="text-primary">${blog.author}</h6>
+                                    <p class="text-muted mb-0">${blog.authorRole}</p>
+                                </div>
+                            </div>
+                            <div class="px-4 pb-4 bg-light rounded-bottom">
+                                <a href="#" class="h4 d-block mb-3">${blog.title}</a>
+                                <p>${blog.shortDesc}</p>
+                                <div class="text-center">
+                                    <button class="btn btn-primary text-white px-4 py-2 mb-3 btn-border-radius view-more-btn">View More</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    blogItem.querySelector('.view-more-btn').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openBlogOverlay(blog.id);
+                    });
+                    blogContainer.appendChild(blogItem);
                 });
+            } catch (error) {
+                console.error("Error fetching blogs: ", error);
+                blogContainer.innerHTML = '<p class="text-center">Could not load blogs. Please try again later.</p>';
             }
-        });
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchAndDisplayBlogs);
     </script>
 
     </body>

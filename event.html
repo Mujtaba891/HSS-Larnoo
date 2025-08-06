@@ -49,10 +49,10 @@
                     <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="mailto:hsslarnoo024@gmail.com" class="text-white">hsslarnoo024@gmail.com</a></small>
                 </div>
                 <div class="top-link pe-2">
-                    <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-facebook-f text-secondary"></i></a>
-                    <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-twitter text-secondary"></i></a>
-                    <a href="" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-instagram text-secondary"></i></a>
-                    <a href="" class="btn btn-light btn-sm-square rounded-circle me-0"><i class="fab fa-linkedin-in text-secondary"></i></a>
+                    <a href="https://www.facebook.com/share/16EyXzNAKb/" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-facebook-f text-secondary"></i></a>
+                    <a href="https://x.com/GHssLarnoo41" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-twitter text-secondary"></i></a>
+                    <a href="https://www.instagram.com/govt_hss_larnoo?igsh=MTA0c2JwczB3aHVqbg==" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-instagram text-secondary"></i></a>
+                    <a href="https://www.linkedin.com/in/work-with-ghss-larnoo-75b91b378?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="btn btn-light btn-sm-square rounded-circle me-0"><i class="fab fa-linkedin-in text-secondary"></i></a>
                 </div>
             </div>
         </div>
@@ -64,17 +64,21 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
-                        <a href="index.html" class="nav-item nav-link">Home</a>
+                        <a href="index.html" class="nav-item nav-link active">Home</a>
                         <a href="about.html" class="nav-item nav-link">About</a>
                         <a href="service.html" class="nav-item nav-link">Services</a>
                         <a href="program.html" class="nav-item nav-link">Programs</a>
-                        <a href="event.html" class="nav-item nav-link active">Events</a>
+                        <a href="event.html" class="nav-item nav-link">Events</a>
                         <a href="admission.html" class="nav-item nav-link">Admission</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                                
+                                <a href="academics.html" class="dropdown-item">Academics</a>
                                 <a href="blog.html" class="dropdown-item">Our Blog</a>
-                                <a href="team.html" class="dropdown-item">Our Team</a>
+                                <a href="staff.html" class="dropdown-item">Our Staf</a>
+                                <a href="gallery.html" class="dropdown-item">Gallery</a>
+                                <a href="student-zone.html" class="dropdown-item">Student Zone</a>
                                 <a href="/Card/index.html" class="dropdown-item">ID Card</a>
                                 <a href="testimonial.html" class="dropdown-item">Testimonial</a>
                                 <a href="404.html" class="dropdown-item">404 Page</a>
@@ -141,80 +145,24 @@
 
 
         <!-- Events Start -->
-        <div class="container-fluid events py-5 bg-light">
-            <div class="container py-5">
-                <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
-                    <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">Our Events</h4>
-                    <h1 class="mb-5 display-3">District-Wide School Events</h1>
-                </div>
-                <div class="row g-5 justify-content-center">
-                    <div class="col-md-6 col-lg-6 col-xl-4 wow fadeIn" data-wow-delay="0.1s">
-                        <div class="events-item bg-primary rounded">
-                            <div class="events-inner position-relative">
-                                <div class="events-img overflow-hidden rounded-circle position-relative">
-                                    <img src="img/school/Kabaddi 11.jpg" class="img-fluid w-100 rounded-circle" alt="Sports Events">
-                                    <div class="event-overlay">
-                                        <a href="img/school/Kabaddi 11.jpg" data-lightbox="event-1"><i class="fas fa-search-plus text-white fa-2x"></i></a>
-                                    </div>
-                                </div>
-                                <div class="px-4 py-2 bg-secondary text-white text-center events-rate">Ongoing</div>
-                                <div class="d-flex justify-content-between px-4 py-2 bg-secondary">
-                                    <small class="text-white"><i class="fas fa-calendar me-1 text-start"></i> Throughout the Year</small>
-                                    <small class="text-white"><i class="fas fa-map-marker-alt me-1 text-start"></i> Anantnag District</small>
-                                </div>
-                            </div>
-                            <div class="events-text p-4 border border-primary bg-white border-top-0 rounded-bottom">
-                                <a href="#" class="h4">Inter-School Sports Competitions</a>
-                                <p class="mb-0 mt-3">The Department of Youth Services and Sports organizes a dynamic calendar of sports events including football, volleyball, kabaddi, and martial arts tournaments for various age groups across the district. [3, 4]</p>
-                            </div>
-                        </div>
+    <div class="container-fluid events py-5 bg-light">
+        <div class="container py-5">
+            <div class="mx-auto text-center wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+                <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">Our Events</h4>
+                <h1 class="mb-5 display-3">School & Community Events</h1>
+            </div>
+            <!-- This row will be populated by Firebase -->
+            <div id="event-container" class="row g-5 justify-content-center">
+                 <div class="text-center">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
-                    <div class="col-md-6 col-lg-6 col-xl-4 wow fadeIn" data-wow-delay="0.3s">
-                        <div class="events-item bg-primary rounded">
-                            <div class="events-inner position-relative">
-                                <div class="events-img overflow-hidden rounded-circle position-relative">
-                                    <img src="img/school/RunForUnity 6.jpg" class="img-fluid w-100 rounded-circle" alt="Cultural Events">
-                                    <div class="event-overlay">
-                                        <a href="img/school/RunForUnity 6.jpg" data-lightbox="event-2"><i class="fas fa-search-plus text-white fa-2x"></i></a>
-                                    </div>
-                                </div>
-                                <div class="px-4 py-2 bg-secondary text-white text-center events-rate">Annual</div>
-                                <div class="d-flex justify-content-between px-4 py-2 bg-secondary">
-                                    <small class="text-white"><i class="fas fa-calendar me-1 text-start"></i> Various Dates</small>
-                                    <small class="text-white"><i class="fas fa-map-marker-alt me-1 text-start"></i> Anantnag District</small>
-                                </div>
-                            </div>
-                            <div class="events-text p-4 border border-primary bg-white border-top-0 rounded-bottom">
-                                <a href="#" class="h4">Cultural & Educational Fests</a>
-                                <p class="mb-0 mt-3">Schools across Anantnag participate in various cultural and educational programs like the 'Shanti Yatra' to promote peace and harmony, and 'Fit India' runs to encourage a healthy lifestyle. [5, 14]</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-4 wow fadeIn" data-wow-delay="0.5s">
-                        <div class="events-item bg-primary rounded">
-                            <div class="events-inner position-relative">
-                                <div class="events-img overflow-hidden rounded-circle position-relative">
-                                    <img src="img/event-3.jpg" class="img-fluid w-100 rounded-circle" alt="Awareness Programs">
-                                    <div class="event-overlay">
-                                        <a href="img/event-3.jpg" data-lightbox="event-3"><i class="fas fa-search-plus text-white fa-2x"></i></a>
-                                    </div>
-                                </div>
-                                <div class="px-4 py-2 bg-secondary text-white text-center events-rate">Periodic</div>
-                                <div class="d-flex justify-content-between px-4 py-2 bg-secondary">
-                                    <small class="text-white"><i class="fas fa-calendar me-1 text-start"></i> As Scheduled</small>
-                                    <small class="text-white"><i class="fas fa-map-marker-alt me-1 text-start"></i> Anantnag District</small>
-                                </div>
-                            </div>
-                            <div class="events-text p-4 border border-primary bg-white border-top-0 rounded-bottom">
-                                <a href="#" class="h4">Awareness & Enrollment Drives</a>
-                                <p class="mb-0 mt-3">The Chief Education Officer organizes Mega Enrollment Drives and SVEEP programs to promote education and electoral participation, with active involvement from local schools. [2, 4]</p>
-                            </div>
-                        </div>
-                    </div>
+                    <p class="mt-2">Loading events...</p>
                 </div>
             </div>
         </div>
-        <!-- Events End-->
+    </div>
+    <!-- Events End-->
 
 
         <!-- Footer Start -->
@@ -258,12 +206,12 @@
                                 <a href="https://maps.app.goo.gl/U5pmjifhstCcZTyA8" target="_blank" class="text-body mb-4"><img src="img/icons/location.png" alt="" >Larnoo, Kokarnag, Anantnag, J&K, India</a>
                                 <a href="tel:+917006485144" class="text-start rounded-0 text-body mb-4"><i class=" text-primary me-2"><img src="img/icons/call.png" alt=""  ></i> +91 70064 85144</a>
                                 <a href="mailto:workwithhsslarnoo@gmail.com" class="text-start rounded-0 text-body mb-4"><i class=" text-primary me-2"><img src="img/icons/mail.png"></i> workwithhsslarnoo@gmail.com</a>
-                                <a class="text-start rounded-0 text-body mb-4"><i class=" text-primary me-2"><img src="img/icons/clock.png" alt=""></i> 24/7 Hours Service</a>
+                                <a class="text-start rounded-0 text-body mb-4"><i class=" text-primary me-2"><img src="img/icons/clock.png" alt=""></i> 24/6 Hours Service</a>
                                 <div class="footer-icon d-flex">
-                                    <a class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" href=""><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" href=""><i class="fab fa-twitter"></i></a>
-                                    <a href="#" class="btn btn-primary btn-sm-square me-3 rounded-circle text-white"><i class="fab fa-instagram"></i></a>
-                                    <a href="#" class="btn btn-primary btn-sm-square rounded-circle text-white"><i class="fab fa-linkedin-in"></i></a>
+                                    <a class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" href="https://www.facebook.com/share/16EyXzNAKb/"><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" href="https://x.com/GHssLarnoo41"><i class="fab fa-twitter"></i></a>
+                                    <a href="https://www.instagram.com/govt_hss_larnoo?igsh=MTA0c2JwczB3aHVqbg==" class="btn btn-primary btn-sm-square me-3 rounded-circle text-white"><i class="fab fa-instagram"></i></a>
+                                    <a href="https://www.linkedin.com/in/work-with-ghss-larnoo-75b91b378?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="btn btn-primary btn-sm-square rounded-circle text-white"><i class="fab fa-linkedin-in"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -274,32 +222,32 @@
                             <div class="row g-3">
                                 <div class="col-4">
                                     <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="img/galary-1.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                        <img src="school/galery 1.jpg" class="img-fluid rounded-circle p-2" alt="">
                                     </div>
                                </div>
                                <div class="col-4">
                                     <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="img/galary-2.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                        <img src="school/galery 2.jpg" class="img-fluid rounded-circle p-2" alt="">
                                     </div>
                                </div>
                                 <div class="col-4">
                                     <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="img/galary-3.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                        <img src="school/galery 3.jpg" class="img-fluid rounded-circle p-2" alt="">
                                     </div>
                                </div>
                                 <div class="col-4">
                                     <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="img/galary-4.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                        <img src="school/galery 4.jpg" class="img-fluid rounded-circle p-2" alt="">
                                     </div>
                                </div>
                                 <div class="col-4">
                                     <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="img/galary-5.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                        <img src="school/galery 5.jpg" class="img-fluid rounded-circle p-2" alt="">
                                     </div>
                                </div>
                                 <div class="col-4">
                                     <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="img/galary-6.jpg" class="img-fluid rounded-circle p-2" alt="">
+                                        <img src="school/galery 6.jpg" class="img-fluid rounded-circle p-2" alt="">
                                     </div>
                                </div>
                             </div>
@@ -321,7 +269,7 @@
                         <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
                         <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
                         <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
-                        Designed By <a class="border-bottom" href="#">MD Colab</a>
+                        Designed By <a class="border-bottom" href="https://mujtabaalam.vercel.app">Mujtaba Alam</a>
                     </div>
                 </div>
             </div>
@@ -346,66 +294,59 @@
     <!-- UPDATED Firebase Logic for Contact Form -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
 
-        // This is your unified project configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU",
-            authDomain: "hss-larnoo-teachers.firebaseapp.com",
-            projectId: "hss-larnoo-teachers",
-            storageBucket: "hss-larnoo-teachers.appspot.com",
-            messagingSenderId: "143363278401",
-            appId: "1:143363278401:web:49d7fffbdf31ce073e68c0",
-            measurementId: "G-GHQLMME6PJ"
-        };
-
+        const firebaseConfig = { apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU", authDomain: "hss-larnoo-teachers.firebaseapp.com", projectId: "hss-larnoo-teachers", storageBucket: "hss-larnoo-teachers.appspot.com", messagingSenderId: "143363278401", appId: "1:143363278401:web:49d7fffbdf31ce073e68c0", measurementId: "G-GHQLMME6PJ" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- Form Submission Logic ---
-        const contactForm = document.getElementById('contactForm');
-        const formStatus = document.getElementById('form-status');
-        
-        contactForm.addEventListener('submit', async (e) => {
-            // Prevent the default form submission which reloads the page
-            e.preventDefault();
-
-            const submitBtn = contactForm.querySelector('button[type="submit"]');
-            
-            // Disable the button and show a "sending" message
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'Submitting...';
-            formStatus.textContent = ''; // Clear previous status messages
-
+        async function fetchAndDisplayEvents() {
+            const eventContainer = document.getElementById('event-container');
             try {
-                // Save the data to Firestore
-                await addDoc(collection(db, 'contact_messages'), {
-                    name: document.getElementById('contactName').value,
-                    email: document.getElementById('contactEmail').value,
-                    message: document.getElementById('contactMessage').value,
-                    timestamp: serverTimestamp() // Add a server-side timestamp for accurate sorting
-                });
-
-                // --- Success Feedback ---
-                formStatus.style.color = 'green';
-                formStatus.textContent = 'Message sent successfully! Thank you.';
+                const q = query(collection(db, "events"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
                 
-                // Reset the form fields after successful submission
-                contactForm.reset();
+                eventContainer.innerHTML = '';
+                if (querySnapshot.empty) {
+                    eventContainer.innerHTML = '<p class="text-center">No events scheduled at this time.</p>';
+                    return;
+                }
 
+                querySnapshot.forEach(doc => {
+                    const event = doc.data();
+                    const eventItem = document.createElement('div');
+                    eventItem.className = 'col-md-6 col-lg-6 col-xl-4 wow fadeIn';
+                    eventItem.innerHTML = `
+                        <div class="events-item bg-primary rounded">
+                            <div class="events-inner position-relative">
+                                <div class="events-img overflow-hidden rounded-circle position-relative">
+                                    <img src="${event.imageUrl}" class="img-fluid w-100 rounded-circle" alt="${event.title}">
+                                    <div class="event-overlay">
+                                        <a href="${event.imageUrl}" data-lightbox="event-${doc.id}"><i class="fas fa-search-plus text-white fa-2x"></i></a>
+                                    </div>
+                                </div>
+                                <div class="px-4 py-2 bg-secondary text-white text-center events-rate">${event.status}</div>
+                                <div class="d-flex justify-content-between px-4 py-2 bg-secondary">
+                                    <small class="text-white"><i class="fas fa-calendar me-1"></i> ${event.schedule}</small>
+                                    <small class="text-white"><i class="fas fa-map-marker-alt me-1"></i> ${event.location}</small>
+                                </div>
+                            </div>
+                            <div class="events-text p-4 border border-primary bg-white border-top-0 rounded-bottom">
+                                <a href="#" class="h4">${event.title}</a>
+                                <p class="mb-0 mt-3">${event.description}</p>
+                            </div>
+                        </div>
+                    `;
+                    eventContainer.appendChild(eventItem);
+                });
+                 // Re-initialize lightbox after adding dynamic content
+                lightbox.init();
             } catch (error) {
-                // --- Error Feedback ---
-                console.error("Error saving message to Firestore: ", error);
-                formStatus.style.color = 'red';
-                formStatus.textContent = 'An error occurred. Please try again later.';
-            } finally {
-                // Re-enable the button and reset its text after a short delay
-                setTimeout(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = 'Submit';
-                }, 2000); // Wait 2 seconds before resetting the button
+                console.error("Error fetching events: ", error);
+                eventContainer.innerHTML = '<p class="text-center">Could not load events. Please try again later.</p>';
             }
-        });
+        }
+        document.addEventListener('DOMContentLoaded', fetchAndDisplayEvents);
     </script>
     </body>
 </html>
