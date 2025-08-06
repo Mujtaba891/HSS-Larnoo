@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Futuristic Newsletter Builder - HSS Larnoo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+    <style>
+        :root {
+            --base-hue: 210;
+            --primary-color: hsl(var(--base-hue), 100%, 50%);
+            --primary-light: hsl(var(--base-hue), 100%, 95%);
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --bg-dark: #1a1c23;
+            --bg-med: #252830;
+            --bg-light: #313540;
+            --border-color: #444857;
+            --text-primary: #f0f2f5;
+            --text-secondary: #a0a8b4;
+            --accent-glow: 0 0 15px hsla(var(--base-hue), 100%, 50%, 0.5);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: var(--text-primary); overflow: hidden; }
+        .app-container { display: flex; height: 100vh; }
+
+        /* Panels */
+        .panel { display: flex; flex-direction: column; background-color: var(--bg-med); transition: width 0.3s ease; }
+        .panel-left { width: 280px; border-right: 1px solid var(--border-color); }
+        .panel-center { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--bg-dark); }
+        .panel-right { width: 350px; border-left: 1px solid var(--border-color); }
+        .panel-header { font-family: 'Inter', sans-serif; font-weight: 600; padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .panel-header i { color: var(--primary-color); text-shadow: var(--accent-glow); }
+        .panel-content { padding: 15px; overflow-y: auto; flex-grow: 1; }
+
+        /* Controls */
+        .control-btn { display: flex; align-items: center; width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 6px; background-color: var(--bg-light); color: var(--text-primary); font-size: 15px; cursor: pointer; transition: all 0.2s ease; }
+        .control-btn:hover { background-color: var(--primary-color); border-color: var(--primary-color); box-shadow: var(--accent-glow); }
+        .control-btn i { margin-right: 12px; width: 20px; text-align: center; }
+        .btn-success { background-color: var(--success-color); border-color: var(--success-color); }
+        .btn-success:hover { background-color: #218838; border-color: #1e7e34; }
+        
+        /* Canvas & Workspace */
+        .workspace-header { padding: 10px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
+        .device-toggle { display: flex; gap: 5px; background: var(--bg-light); padding: 5px; border-radius: 8px; }
+        .device-toggle button { background: transparent; border: none; color: var(--text-secondary); padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+        .device-toggle button.active { background: var(--primary-color); color: white; box-shadow: var(--accent-glow); }
+        .workspace { flex-grow: 1; padding: 25px; overflow-y: auto; display: flex; justify-content: center; }
+        #email-canvas { width: 100%; max-width: 800px; min-height: 100%; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: max-width 0.4s ease-in-out; }
+        #email-canvas.mobile-preview { max-width: 375px; }
+        .canvas-element { position: relative; cursor: grab; border: 1px dashed transparent; }
+        .canvas-element:hover { border-color: var(--primary-color); }
+        .element-toolbar { display: none; position: absolute; top: -15px; right: 5px; background: var(--primary-color); border-radius: 5px; padding: 4px; z-index: 20; box-shadow: var(--accent-glow); }
+        .canvas-element:hover .element-toolbar { display: flex; gap: 4px; }
+        .canvas-element.selected { box-shadow: inset 0 0 0 2px var(--primary-color); }
+
+        /* Right Panel Tabs */
+        .tabs { display: flex; border-bottom: 1px solid var(--border-color); }
+        .tab-button { flex: 1; padding: 12px; background: var(--bg-med); color: var(--text-secondary); border: none; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .tab-button.active { background: var(--bg-light); color: var(--text-primary); border-bottom: 2px solid var(--primary-color); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Form Groups */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-secondary); }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 15px; background: var(--bg-dark); color: var(--text-primary); }
+        #generated-code { height: 250px; font-family: 'Courier New', Courier, monospace; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- LEFT PANEL: Components -->
+        <div class="panel panel-left">
+            <div class="panel-header"><i class="fas fa-puzzle-piece"></i> Component Library</div>
+            <div class="panel-content">
+                <button class="control-btn" onclick="Components.add('heading')"><i class="fas fa-heading"></i> Heading</button>
+                <button class="control-btn" onclick="Components.add('paragraph')"><i class="fas fa-paragraph"></i> Paragraph</button>
+                <button class="control-btn" onclick="Components.add('image')"><i class="fas fa-image"></i> Image</button>
+                <button class="control-btn" onclick="Components.add('button')"><i class="fas fa-square-arrow-up-right"></i> Button</button>
+                <button class="control-btn" onclick="Components.add('divider')"><i class="fas fa-minus"></i> Divider</button>
+                <button class="control-btn" onclick="Components.add('layout-2-col')"><i class="fas fa-columns"></i> 2 Columns</button>
+                <button class="control-btn" onclick="Components.add('social')"><i class="fas fa-share-alt"></i> Social Links</button>
+                <hr style="border-color: var(--border-color); margin: 20px 0;">
+                <button class="control-btn" style="--danger-color: #e74c3c;" onclick="Components.clearCanvas()"><i class="fas fa-trash"></i> Clear Canvas</button>
+            </div>
+        </div>
+
+        <!-- CENTER PANEL: Canvas -->
+        <div class="panel panel-center">
+            <div class="workspace-header">
+                <h3><i class="fas fa-pen-ruler"></i> Design Canvas</h3>
+                <div class="device-toggle">
+                    <button id="desktop-btn" class="active" onclick="UI.setPreview('desktop')"><i class="fas fa-desktop"></i></button>
+                    <button id="mobile-btn" onclick="UI.setPreview('mobile')"><i class="fas fa-mobile-alt"></i></button>
+                </div>
+            </div>
+            <div class="workspace">
+                <div id="email-canvas" data-global-styles='{"pageBg":"#f0f2f5", "contentBg":"#ffffff", "textColor":"#333333"}'></div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: Properties, Styles, & Code Generator -->
+        <div id="panel-right" class="panel panel-right">
+            <div class="panel-header">
+                <i class="fas fa-cogs"></i><span id="right-panel-title">Settings & Code</span>
+            </div>
+            <div class="tabs">
+                <button class="tab-button active" onclick="UI.showTab('properties-view')">Properties</button>
+                <button class="tab-button" onclick="UI.showTab('styles-view')">Global Styles</button>
+            </div>
+            <div id="properties-view" class="panel-content tab-content active">
+                <!-- Properties will be injected here -->
+                <div id="properties-fields">
+                    <p style="color: var(--text-secondary); text-align: center;">Select an element on the canvas to edit its properties here.</p>
+                </div>
+            </div>
+            <div id="styles-view" class="panel-content tab-content">
+                <!-- Global Styles -->
+                <div class="form-group">
+                    <label for="global-page-bg">Page Background</label>
+                    <input type="color" id="global-page-bg" data-global-style="pageBg">
+                </div>
+                <div class="form-group">
+                    <label for="global-content-bg">Content Background</label>
+                    <input type="color" id="global-content-bg" data-global-style="contentBg">
+                </div>
+                <div class="form-group">
+                    <label for="global-text-color">Default Text Color</label>
+                    <input type="color" id="global-text-color" data-global-style="textColor">
+                </div>
+            </div>
+             <div class="panel-content" style="border-top: 1px solid var(--border-color);">
+                <textarea id="generated-code" readonly placeholder="Generated HTML will appear here..."></textarea>
+                <button class="control-btn" onclick="UI.generateAndCopy()"><i class="fas fa-copy"></i> Generate & Copy</button>
+                <button class="control-btn btn-success" onclick="UI.saveAndContinue()">
+                    <i class="fas fa-paper-plane"></i> Save & Continue to Sender
+                </button>
+                <p id="copy-feedback" style="text-align: center; font-weight: bold; margin-top: 10px;"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const G = { canvas: document.getElementById('email-canvas'), selectedElement: null };
+
+        const UI = {
+            showTab(tabId) {
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                document.querySelector(`.tab-button[onclick="UI.showTab('${tabId}')"]`).classList.add('active');
+            },
+            setPreview(device) {
+                G.canvas.className = device === 'mobile' ? 'mobile-preview' : '';
+                document.getElementById('desktop-btn').classList.toggle('active', device === 'desktop');
+                document.getElementById('mobile-btn').classList.toggle('active', device === 'mobile');
+            },
+            showPropertiesPanel(element) {
+                this.showTab('properties-view');
+                if (G.selectedElement) G.selectedElement.classList.remove('selected');
+                G.selectedElement = element;
+                G.selectedElement.classList.add('selected');
+                
+                const type = element.dataset.type;
+                const props = JSON.parse(element.dataset.props);
+                document.getElementById('properties-fields').innerHTML = this.getPropertyFieldsHtml(type, props);
+                this.attachPropertyListeners();
+            },
+            getPropertyFieldsHtml(type, props) {
+                // ... [Property fields HTML logic]
+                // This function would be quite long. For brevity, it's assumed to work similarly to your original, 
+                // generating input fields based on the component type (e.g., text for heading, URL for image).
+                 let fields = '';
+                switch (type) {
+                    case 'heading':
+                        fields = `<div class="form-group"><label for="prop-text">Text</label><input type="text" id="prop-text" data-prop="text" value="${props.text}"></div>`;
+                        break;
+                    case 'paragraph':
+                        fields = `<div class="form-group"><label for="prop-text">Text</label><textarea id="prop-text" data-prop="text">${props.text}</textarea></div>`;
+                        break;
+                    case 'image':
+                        fields = `<div class="form-group"><label for="prop-url">Image URL</label><input type="text" id="prop-url" data-prop="url" value="${props.url}"></div>`;
+                        break;
+                    case 'button':
+                        fields = `<div class="form-group"><label for="prop-text">Button Text</label><input type="text" id="prop-text" data-prop="text" value="${props.text}"></div>
+                                  <div class="form-group"><label for="prop-url">Link URL</label><input type="text" id="prop-url" data-prop="url" value="${props.url}"></div>`;
+                        break;
+                    case 'social':
+                         fields = `<div class="form-group"><label for="prop-facebook">Facebook URL</label><input type="text" id="prop-facebook" data-prop="facebook" value="${props.facebook || ''}"></div>
+                                   <div class="form-group"><label for="prop-twitter">Twitter URL</label><input type="text" id="prop-twitter" data-prop="twitter" value="${props.twitter || ''}"></div>
+                                   <div class="form-group"><label for="prop-instagram">Instagram URL</label><input type="text" id="prop-instagram" data-prop="instagram" value="${props.instagram || ''}"></div>`;
+                        break;
+                    case 'layout-2-col':
+                         return `<p>This is a structural element. Drag components into its columns.</p>`;
+                    default:
+                        fields = `<p style="color: var(--text-secondary); text-align: center;">This element has no editable properties.</p>`;
+                }
+                return fields;
+            },
+            attachPropertyListeners() {
+                document.querySelectorAll('#properties-fields [data-prop]').forEach(input => {
+                    input.addEventListener('input', () => {
+                        const props = JSON.parse(G.selectedElement.dataset.props);
+                        props[input.dataset.prop] = input.value;
+                        G.selectedElement.dataset.props = JSON.stringify(props);
+                        Components.render(G.selectedElement);
+                    });
+                });
+            },
+            generateAndCopy() {
+                const finalHtml = Components.generateFinalHtml();
+                if(!finalHtml) { alert("Canvas is empty!"); return; }
+
+                document.getElementById('generated-code').value = finalHtml;
+                navigator.clipboard.writeText(finalHtml).then(() => {
+                    document.getElementById('copy-feedback').textContent = 'Copied to clipboard!';
+                    setTimeout(() => document.getElementById('copy-feedback').textContent = '', 2000);
+                });
+            },
+            saveAndContinue() {
+                const finalHtml = Components.generateFinalHtml();
+                if(!finalHtml) {
+                    alert("Canvas is empty! Add some components before proceeding.");
+                    return;
+                }
+                localStorage.setItem('newsletterHtml', finalHtml);
+                window.location.href = 'event-sender.html';
+            }
+        };
+
+        const Components = {
+            add(type) {
+                const element = document.createElement('div');
+                element.className = 'canvas-element';
+                element.dataset.type = type;
+                element.dataset.props = JSON.stringify(this.getDefaultProps(type));
+                
+                if (type.includes('layout')) {
+                    element.innerHTML = this.getElementHtml(type, JSON.parse(element.dataset.props));
+                    G.canvas.appendChild(element);
+                    // Make columns sortable
+                    element.querySelectorAll('.dropzone').forEach(zone => {
+                        new Sortable(zone, { group: 'shared', animation: 150, ghostClass: 'sortable-ghost' });
+                    });
+                } else {
+                    this.render(element);
+                    G.canvas.appendChild(element);
+                }
+                UI.showPropertiesPanel(element);
+            },
+            render(element) {
+                const type = element.dataset.type;
+                const props = JSON.parse(element.dataset.props);
+                element.innerHTML = this.getToolbarHtml() + this.getElementHtml(type, props);
+            },
+            getElementHtml(type, props) {
+                 // Expanded to handle new components
+                switch (type) {
+                    case 'heading': return `<div style="padding:10px 25px;"><h1 style="font-family:'Inter',sans-serif;font-size:28px;color:#2c3e50;margin:0;">${props.text}</h1></div>`;
+                    case 'paragraph': return `<div style="padding:10px 25px;"><p style="font-family:'Inter',sans-serif;font-size:16px;color:#333;line-height:1.6;">${props.text.replace(/\n/g, '<br>')}</p></div>`;
+                    case 'image': return `<div style="padding:10px 25px;text-align:center;"><img src="${props.url}" alt="Image" style="max-width:100%;height:auto;border-radius:8px;"></div>`;
+                    case 'button': return `<div style="padding:20px 25px;text-align:center;"><a href="${props.url}" target="_blank" style="background-color:#007bff;color:#fff;padding:15px 30px;text-decoration:none;border-radius:5px;font-size:16px;">${props.text}</a></div>`;
+                    case 'divider': return `<div style="padding:15px 25px;"><hr style="border:none;border-top:1px solid #e0e0e0;"></div>`;
+                    case 'social':
+                        let links = '';
+                        if (props.facebook) links += `<a href="${props.facebook}" style="margin:0 10px;"><img src="https://th.bing.com/th/id/OIP.H-BQlWim3_zUDg9F5MOIswHaFC?w=214&h=180&c=7&r=0&o=7&pid=1.7&rm=3" width="32" alt="FB"></a>`;
+                        if (props.twitter) links += `<a href="${props.twitter}" style="margin:0 10px;"><img src="https://th.bing.com/th/id/OIP.FHcFkQSCnQBTV2eTmh0m9wHaGG?w=232&h=191&c=7&r=0&o=7&pid=1.7&rm=3" width="32" alt="TW"></a>`;
+                        if (props.instagram) links += `<a href="${props.instagram}" style="margin:0 10px;"><img src="https://th.bing.com/th/id/ODF.Tw-tjGfaKLIkitkJNlB7SA?w=32&h=32&qlt=90&pcl=fffffc&o=6&pid=1.2" width="31" alt="IG"></a>`;
+                        return `<div style="padding:20px 25px;text-align:center;">${links || 'Click to add social links'}</div>`;
+                    case 'layout-2-col':
+                         return `<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+                                    <td valign="top" width="50%"><div class="dropzone" style="min-height:100px; padding: 10px; border: 1px dashed #ccc;"></div></td>
+                                    <td valign="top" width="50%"><div class="dropzone" style="min-height:100px; padding: 10px; border: 1px dashed #ccc;"></div></td>
+                                 </tr></table>`;
+                    default: return '';
+                }
+            },
+            getToolbarHtml() {
+                return `<div class="element-toolbar">
+                          <button onclick="UI.showPropertiesPanel(this.closest('.canvas-element'))"><i class="fas fa-pencil-alt"></i></button>
+                          <button onclick="Components.remove(this.closest('.canvas-element'))"><i class="fas fa-trash"></i></button>
+                        </div>`;
+            },
+            getDefaultProps(type) {
+                switch (type) {
+                    case 'heading': return { text: "Your Main Headline" };
+                    case 'paragraph': return { text: "This is a new paragraph. Click to edit." };
+                    case 'image': return { url: "https://via.placeholder.com/600x300" };
+                    case 'button': return { text: "Click Here", url: "#" };
+                    case 'social': return { facebook: "#", twitter: "#", instagram: "#" };
+                    default: return {};
+                }
+            },
+            remove(element) {
+                element?.remove();
+                document.getElementById('properties-fields').innerHTML = '<p style="color: var(--text-secondary); text-align: center;">Select an element...</p>';
+            },
+            clearCanvas() {
+                if (confirm("Are you sure you want to clear the entire canvas?")) {
+                    G.canvas.innerHTML = '';
+                }
+            },
+             generateFinalHtml() {
+                let content = '';
+                const tempCanvas = G.canvas.cloneNode(true);
+                // Handle nested elements in layouts
+                tempCanvas.querySelectorAll('.dropzone').forEach(zone => {
+                    let columnContent = '';
+                    zone.querySelectorAll('.canvas-element').forEach(el => {
+                        const type = el.dataset.type;
+                        const props = JSON.parse(el.dataset.props);
+                        columnContent += this.getElementHtml(type, props);
+                    });
+                    zone.innerHTML = columnContent;
+                });
+
+                tempCanvas.querySelectorAll('.canvas-element').forEach(el => {
+                    const type = el.dataset.type;
+                    const props = JSON.parse(el.dataset.props);
+                    content += this.getElementHtml(type, props);
+                });
+                if(!content) return "";
+                const globalStyles = JSON.parse(G.canvas.dataset.globalStyles);
+                
+                return `<div style="background-color:${globalStyles.pageBg}; padding: 20px 0;">
+                        <div style="font-family:'Inter',sans-serif;line-height:1.6;color:${globalStyles.textColor};max-width:800px;margin:0 auto;background:${globalStyles.contentBg};border:1px solid #ddd;">
+                            ${content}
+                            <div style="background-color:#f8f9fa;padding:20px;text-align:center;color:#6c757d;font-size:12px;border-top:1px solid #eee;">
+                                <p style="margin:0;">Govt HSS Larnoo, Anantnag, J&K, India</p>
+                            </div>
+                        </div></div>`;
+            }
+        };
+
+        // --- APP INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            new Sortable(G.canvas, { animation: 150, group: 'shared', ghostClass: 'sortable-ghost' });
+            
+            // Init global style pickers
+            document.querySelectorAll('[data-global-style]').forEach(input => {
+                const styleProp = input.dataset.globalStyle;
+                const styles = JSON.parse(G.canvas.dataset.globalStyles);
+                input.value = styles[styleProp];
+
+                input.addEventListener('input', () => {
+                    const currentStyles = JSON.parse(G.canvas.dataset.globalStyles);
+                    currentStyles[styleProp] = input.value;
+                    G.canvas.dataset.globalStyles = JSON.stringify(currentStyles);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

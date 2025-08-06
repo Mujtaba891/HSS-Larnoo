@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | HSS Larnoo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin-style.css">
+</head>
+<body>
+    <div id="login-view" class="login-wrapper">
+        <div class="neumorphic-card login-box">
+            <img src="../img/logo3.png" alt="Logo">
+            <h2>Admin Panel</h2>
+            <p id="login-error" style="color: var(--danger); height: 20px;"></p>
+            <form id="login-form">
+                <div style="margin-bottom: 20px;">
+                    <input type="password" id="adminPassword" class="neumorphic-input" placeholder="Enter Password" required>
+                </div>
+                <button type="submit" class="neumorphic-btn primary" style="width: 100%;">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboard-view" class="admin-wrapper" style="display: none;">
+        <div id="content-overlay" class="content-overlay"></div>
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="../img/logo3.png" alt="HSS Larnoo Logo"><h3>HSS Larnoo</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="upload-blog.html"><i class="fas fa-pencil-alt"></i> Post Blog</a>
+                <a href="upload-event.html"><i class="fas fa-calendar-alt"></i> Post Event</a>
+                <a href="upload-program.html"><i class="fas fa-book"></i> Post Program</a>
+                <a href="contact-messages.html"><i class="fas fa-envelope-open-text"></i> Messages</a>
+                <a href="upload-notice.html"><i class="fas fa-bullhorn"></i> Post Notice</a>
+                <a href="upload-gallery.html"><i class="fas fa-images"></i> Upload to Gallery</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="main-header">
+                <button id="menu-toggle" class="menu-toggle"><i class="fas fa-bars"></i></button>
+                <h1>Dashboard</h1>
+                <div class="header-controls">
+                    <button id="logout-btn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </header>
+
+            <div class="dashboard-cards">
+                <div class="neumorphic-card dashboard-card">
+                    <i class="fas fa-pencil-alt"></i>
+                    <h2 class="count" id="blogs-count">...</h2><p>Blog Posts</p>
+                </div>
+                <div class="neumorphic-card dashboard-card">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h2 class="count" id="events-count">...</h2><p>Events</p>
+                </div>
+                <div class="neumorphic-card dashboard-card">
+                    <i class="fas fa-book"></i>
+                    <h2 class="count" id="programs-count">...</h2><p>Programs</p>
+                </div>
+                <div class="neumorphic-card dashboard-card">
+                    <i class="fas fa-envelope-open-text"></i>
+                    <h2 class="count" id="messages-count">...</h2><p>Contact Messages</p>
+                </div>
+                <div class="neumorphic-card dashboard-card">
+                    <i class="fas fa-images"></i>
+                    <h2 class="count" id="gallery-count">...</h2><p>Gallery Images</p>
+                </div>
+                <div class="neumorphic-card dashboard-card">
+                    <i class="fas fa-bullhorn"></i>
+                    <h2 class="count" id="notices-count">...</h2><p>Active Notices</p>
+                </div>
+                <div class="neumorphic-card dashboard-card">
+                    <i class="fas fa-users"></i>
+                    <h2 class="count" id="subscribers-count">...</h2><p>Newsletter Subscribers</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU", authDomain: "hss-larnoo-teachers.firebaseapp.com", projectId: "hss-larnoo-teachers", storageBucket: "hss-larnoo-teachers.appspot.com", messagingSenderId: "143363278401", appId: "1:143363278401:web:49d7fffbdf31ce073e68c0", measurementId: "G-GHQLMME6PJ" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const ADMIN_PASSWORD = "hsslarnoo@admin25"; // Updated admin password
+
+        const loginView = document.getElementById('login-view');
+        const dashboardView = document.getElementById('dashboard-view');
+        const loginForm = document.getElementById('login-form');
+        const passwordInput = document.getElementById('adminPassword');
+        const loginError = document.getElementById('login-error');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        function showDashboard() {
+            loginView.style.display = 'none';
+            dashboardView.style.display = 'flex';
+            fetchDashboardStats();
+            // Sidebar toggle logic
+            const sidebar = document.querySelector('#dashboard-view .sidebar');
+            const menuToggle = document.getElementById('menu-toggle');
+            const overlay = document.getElementById('content-overlay');
+            if (sidebar && menuToggle && overlay) {
+                menuToggle.addEventListener('click', () => { sidebar.classList.toggle('active'); overlay.classList.toggle('active'); });
+                overlay.addEventListener('click', () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+            }
+        }
+
+        function showLogin() { loginView.style.display = 'flex'; dashboardView.style.display = 'none'; }
+        
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (passwordInput.value === ADMIN_PASSWORD) { sessionStorage.setItem('isAdminLoggedIn', 'true'); showDashboard(); } 
+            else { loginError.textContent = 'Incorrect password.'; }
+        });
+
+        logoutBtn.addEventListener('click', () => { sessionStorage.removeItem('isAdminLoggedIn'); showLogin(); });
+
+        async function fetchDashboardStats() {
+            const fetchCount = async (name) => { try { return (await getDocs(collection(db, name))).size; } catch (e) { console.error(`Error fetching ${name}:`, e); return 'N/A'; } };
+            
+            document.getElementById('blogs-count').textContent = await fetchCount('blogs');
+            document.getElementById('events-count').textContent = await fetchCount('events');
+            document.getElementById('programs-count').textContent = await fetchCount('programs');
+            document.getElementById('messages-count').textContent = await fetchCount('contact_messages');
+            document.getElementById('gallery-count').textContent = await fetchCount('galleryImages');
+            document.getElementById('notices-count').textContent = await fetchCount('notices');
+            document.getElementById('subscribers-count').textContent = await fetchCount('newsletter_subscribers');
+        }
+
+        if (sessionStorage.getItem('isAdminLoggedIn') === 'true') { showDashboard(); } 
+        else { showLogin(); }
+    </script>
+</body>
+</html>

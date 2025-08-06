@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Notice | Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin-style.css">
+    <script type="module" src="js/admin-auth.js"></script>
+</head>
+<body>
+    <div id="content-overlay" class="content-overlay"></div>
+    <div class="admin-wrapper">
+        <!-- ... rest of your page content ... -->
+    <div class="admin-wrapper">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="../img/logo3.png" alt="HSS Larnoo Logo">
+                <h3>HSS Larnoo</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="contact-messages.html"><i class="fas fa-envelope-open-text"></i> Messages</a>
+                <a href="upload-notice.html" class="active"><i class="fas fa-bullhorn"></i> Post Notice</a>
+                <a href="upload-gallery.html"><i class="fas fa-images"></i> Upload to Gallery</a>
+                <a href="canvas.html"><i class="fas fa-paint-brush"></i> Email Builder</a>
+                <a href="email-sender.html"><i class="fas fa-paper-plane"></i> Email Sender</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <!-- NEW, RESPONSIVE HEADER -->
+<header class="main-header">
+    <button id="menu-toggle" class="menu-toggle"><i class="fas fa-bars"></i></button>
+    <h1>Post a New Notice</h1> <!-- Remember to change the title on each page -->
+    <div class="header-controls">
+        <button id="logout-btn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+</header>
+
+            <div class="neumorphic-card">
+                <p class="text-muted mb-4">This notice will be displayed on the website for all visitors.</p>
+                
+                <div id="statusMessage" class="alert d-none" role="alert"></div>
+
+                <form id="noticeForm">
+                    <div class="mb-4">
+                        <label for="noticeTitle" class="form-label fw-bold">Notice Title</label>
+                        <input type="text" id="noticeTitle" class="neumorphic-input" placeholder="e.g., Examination Schedule" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="noticeContent" class="form-label fw-bold">Notice Content</label>
+                        <textarea id="noticeContent" class="neumorphic-textarea" rows="8" placeholder="Enter the full details of the notice..." required></textarea>
+                    </div>
+                    <button id="submitBtn" type="submit" class="neumorphic-btn primary" style="width: 100%;">
+                        <i class="fas fa-paper-plane me-2"></i>Post Notice
+                    </button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU",
+            authDomain: "hss-larnoo-teachers.firebaseapp.com",
+            projectId: "hss-larnoo-teachers",
+            storageBucket: "hss-larnoo-teachers.appspot.com",
+            messagingSenderId: "143363278401",
+            appId: "1:143363278401:web:49d7fffbdf31ce073e68c0",
+            measurementId: "G-GHQLMME6PJ"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        const dom = {
+            noticeForm: document.getElementById('noticeForm'),
+            submitBtn: document.getElementById('submitBtn'),
+            statusMessage: document.getElementById('statusMessage'),
+            noticeTitle: document.getElementById('noticeTitle'),
+            noticeContent: document.getElementById('noticeContent'),
+        };
+
+        dom.noticeForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            setLoadingState(true);
+
+            const title = dom.noticeTitle.value.trim();
+            const content = dom.noticeContent.value.trim();
+
+            if (!title || !content) {
+                showStatusMessage('Title and Content fields cannot be empty.', 'alert-danger');
+                setLoadingState(false);
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "notices"), {
+                    title: title,
+                    content: content,
+                    timestamp: serverTimestamp()
+                });
+                showStatusMessage('Notice posted successfully! It is now live on the website.', 'alert-success');
+                dom.noticeForm.reset();
+                setTimeout(() => {
+                    dom.statusMessage.classList.add('d-none');
+                }, 4000);
+            } catch (error) {
+                console.error("Error posting notice:", error);
+                showStatusMessage(`An error occurred: ${error.message}. Please try again.`, 'alert-danger');
+            } finally {
+                setLoadingState(false);
+            }
+        });
+
+        function showStatusMessage(message, type) {
+            dom.statusMessage.textContent = message;
+            dom.statusMessage.className = `alert ${type}`;
+            dom.statusMessage.classList.remove('d-none');
+        }
+
+        function setLoadingState(isLoading) {
+            dom.submitBtn.disabled = isLoading;
+            dom.submitBtn.innerHTML = isLoading 
+                ? '<span class="spinner-border spinner-border-sm"></span> Posting...'
+                : '<i class="fas fa-paper-plane me-2"></i>Post Notice';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Messages | Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin-style.css">
+    <script type="module" src="js/admin-auth.js"></script>
+</head>
+<body>
+    <div id="content-overlay" class="content-overlay"></div>
+    <div class="admin-wrapper">
+        <aside class="sidebar">
+            <div class="logo"><img src="../img/logo3.png" alt="Logo"><h3>HSS Larnoo</h3></div>
+            <nav class="sidebar-nav">
+                <a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="contact-messages.html" class="active"><i class="fas fa-envelope-open-text"></i> Messages</a>
+                <a href="upload-notice.html"><i class="fas fa-bullhorn"></i> Post Notice</a>
+                <a href="upload-gallery.html"><i class="fas fa-images"></i> Upload to Gallery</a>
+                <a href="canvas.html"><i class="fas fa-paint-brush"></i> Email Builder</a>
+                <a href="email-sender.html"><i class="fas fa-paper-plane"></i> Email Sender</a>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <button id="menu-toggle" class="menu-toggle"><i class="fas fa-bars"></i></button>
+                <h1>Contact Form Messages</h1>
+                <div class="header-controls"><button id="logout-btn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button></div>
+            </header>
+            <div class="neumorphic-card">
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Message</th></tr></thead>
+                        <tbody id="messages-tbody">
+                            <tr><td colspan="4" style="text-align: center;">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+        ;const firebaseConfig = {
+            apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU",
+            authDomain: "hss-larnoo-teachers.firebaseapp.com",
+            projectId: "hss-larnoo-teachers",
+            storageBucket: "hss-larnoo-teachers.appspot.com",
+            messagingSenderId: "143363278401",
+            appId: "1:143363278401:web:49d7fffbdf31ce073e68c0",
+            measurementId: "G-GHQLMME6PJ"
+        };const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function fetchAndDisplayMessages() {
+            const tbody = document.getElementById('messages-tbody');
+            try {
+                const q = query(collection(db, "contact_messages"), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                tbody.innerHTML = '';
+                if (querySnapshot.empty) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No messages found.</td></tr>'; return; }
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const date = data.timestamp ? data.timestamp.toDate().toLocaleString() : 'N/A';
+                    const row = tbody.insertRow();
+                    row.innerHTML = `<td>${escape(date)}</td><td>${escape(data.name)}</td><td><a href="mailto:${escape(data.email)}">${escape(data.email)}</a></td><td>${escape(data.message)}</td>`;
+                });
+            } catch(error) { console.error(error); tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color: var(--danger);">Error loading messages.</td></tr>`; }
+        }
+        function escape(text) { const d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
+        fetchAndDisplayMessages();
+    </script>
+</body>
+</html>

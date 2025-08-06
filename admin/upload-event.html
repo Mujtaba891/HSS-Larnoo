@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Manage Events</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin-style.css">
+    <link rel="stylesheet" href="css/admin-manage.css">
+</head>
+<body>
+    <div class="admin-wrapper">
+        <div id="content-overlay" class="content-overlay"></div>
+        <aside class="sidebar">
+            <div class="logo"><img src="../img/logo3.png" alt="HSS Larnoo Logo"><h3>HSS Larnoo</h3></div>
+            <nav class="sidebar-nav">
+                <a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="upload-blog.html"><i class="fas fa-pencil-alt"></i> Manage Blogs</a>
+                <a href="upload-event.html" class="active"><i class="fas fa-calendar-alt"></i> Manage Events</a>
+                <a href="upload-program.html"><i class="fas fa-book"></i> Manage Programs</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="main-header">
+                <button id="menu-toggle" class="menu-toggle"><i class="fas fa-bars"></i></button>
+                <h1>Manage Events</h1>
+                <div class="header-controls"><button id="logout-btn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button></div>
+            </header>
+
+            <!-- Section to Add New Event -->
+            <div class="neumorphic-card section-card">
+                <h2><i class="fas fa-plus-circle"></i> Add New Event</h2>
+                <form id="add-event-form">
+                    <div class="form-group"><label for="title">Event Title</label><input type="text" id="title" class="neumorphic-input" required></div>
+                    <div class="form-group"><label for="imageUrl">Event Image (Max 900KB)</label><input type="file" id="imageUrl" class="neumorphic-input" accept="image/*" required></div>
+                    <div class="form-group"><label for="status">Status (e.g., Upcoming)</label><input type="text" id="status" class="neumorphic-input" required></div>
+                    <div class="form-group"><label for="schedule">Schedule (e.g., 25 Dec, 2025)</label><input type="text" id="schedule" class="neumorphic-input" required></div>
+                    <div class="form-group"><label for="location">Location</label><input type="text" id="location" class="neumorphic-input" required></div>
+                    <div class="form-group"><label for="description">Description</label><textarea id="description" class="neumorphic-textarea" rows="5" required></textarea></div>
+                    <button type="submit" id="submit-btn" class="neumorphic-btn primary">Publish Event</button>
+                    <p id="add-feedback-message" class="feedback-message"></p>
+                </form>
+            </div>
+
+            <!-- Section to Manage Existing Events -->
+            <div class="neumorphic-card section-card">
+                 <h2><i class="fas fa-edit"></i> Manage Existing Events</h2>
+                 <div id="manage-section">
+                     <p>Loading events...</p>
+                 </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content neumorphic-card">
+            <span class="close-btn">&times;</span>
+            <h2>Edit Event</h2>
+            <form id="edit-event-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-group"><label for="edit-title">Event Title</label><input type="text" id="edit-title" class="neumorphic-input" required></div>
+                <div class="form-group">
+                    <label for="edit-imageUrl">New Image (Optional)</label>
+                    <input type="file" id="edit-imageUrl" class="neumorphic-input" accept="image/*">
+                    <img id="edit-image-preview" src="" alt="Current Image" class="image-preview">
+                </div>
+                <div class="form-group"><label for="edit-status">Status</label><input type="text" id="edit-status" class="neumorphic-input" required></div>
+                <div class="form-group"><label for="edit-schedule">Schedule</label><input type="text" id="edit-schedule" class="neumorphic-input" required></div>
+                <div class="form-group"><label for="edit-location">Location</label><input type="text" id="edit-location" class="neumorphic-input" required></div>
+                <div class="form-group"><label for="edit-description">Description</label><textarea id="edit-description" class="neumorphic-textarea" rows="5" required></textarea></div>
+                <button type="submit" class="neumorphic-btn primary">Save Changes</button>
+                <p id="edit-feedback-message" class="feedback-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
+        import { Auth } from './js/admin-auth.js';
+        import { initializeDb, fetchDocs, addDocument, deleteDocument, updateDocument, getDocById, fileToBase64 } from './js/admin-firestore.js';
+
+        Auth.init();
+
+        const firebaseConfig = { apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU", authDomain: "hss-larnoo-teachers.firebaseapp.com", projectId: "hss-larnoo-teachers", storageBucket: "hss-larnoo-teachers.appspot.com", messagingSenderId: "143363278401", appId: "1:143363278401:web:49d7fffbdf31ce073e68c0", measurementId: "G-GHQLMME6PJ" };
+        const app = initializeApp(firebaseConfig);
+        initializeDb(app);
+
+        const addForm = document.getElementById('add-event-form');
+        const addFeedback = document.getElementById('add-feedback-message');
+        const manageSection = document.getElementById('manage-section');
+        const editModal = document.getElementById('edit-modal');
+        const editForm = document.getElementById('edit-event-form');
+        const editFeedback = document.getElementById('edit-feedback-message');
+        const closeModalBtn = document.querySelector('.close-btn');
+        const COLLECTION_NAME = 'events';
+
+        async function renderEvents() {
+            try {
+                const events = await fetchDocs(COLLECTION_NAME);
+                if (events.length === 0) {
+                    manageSection.innerHTML = '<p>No events found.</p>';
+                    return;
+                }
+                manageSection.innerHTML = `
+                    <ul class="manage-list">
+                        ${events.map(event => `
+                            <li data-id="${event.id}">
+                                <img src="${event.imageUrl}" alt="Event Image">
+                                <div class="item-details">
+                                    <strong>${event.title}</strong>
+                                    <span>${event.schedule} - ${event.location}</span>
+                                </div>
+                                <div class="item-actions">
+                                    <button class="edit-btn neumorphic-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="delete-btn neumorphic-btn danger"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </li>
+                        `).join('')}
+                    </ul>`;
+            } catch (error) {
+                manageSection.innerHTML = '<p class="error-message">Error loading events. Please refresh.</p>';
+                console.error("Render Error:", error);
+            }
+        }
+        
+        addForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Publishing...';
+            try {
+                const imageBase64 = await fileToBase64(addForm.imageUrl.files[0]);
+                await addDocument(COLLECTION_NAME, {
+                    title: addForm.title.value,
+                    status: addForm.status.value,
+                    schedule: addForm.schedule.value,
+                    location: addForm.location.value,
+                    description: addForm.description.value,
+                    imageUrl: imageBase64
+                });
+                addFeedback.textContent = 'Success! Event published.';
+                addFeedback.className = 'feedback-message success';
+                addForm.reset();
+                renderEvents();
+            } catch (error) {
+                addFeedback.textContent = 'Error: Could not publish event.';
+                addFeedback.className = 'feedback-message error';
+                console.error("Add Error:", error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Publish Event';
+            }
+        });
+
+        manageSection.addEventListener('click', async (e) => {
+            const target = e.target.closest('button');
+            if (!target) return;
+            const docId = target.closest('li').dataset.id;
+            
+            if (target.classList.contains('delete-btn')) {
+                if (confirm('Are you sure you want to delete this event?')) {
+                    try {
+                        await deleteDocument(COLLECTION_NAME, docId);
+                        target.closest('li').remove();
+                    } catch (error) { alert('Error deleting event.'); console.error("Delete Error:", error); }
+                }
+            }
+
+            if (target.classList.contains('edit-btn')) {
+                try {
+                    const event = await getDocById(COLLECTION_NAME, docId);
+                    document.getElementById('edit-id').value = event.id;
+                    document.getElementById('edit-title').value = event.title;
+                    document.getElementById('edit-status').value = event.status;
+                    document.getElementById('edit-schedule').value = event.schedule;
+                    document.getElementById('edit-location').value = event.location;
+                    document.getElementById('edit-description').value = event.description;
+                    document.getElementById('edit-image-preview').src = event.imageUrl;
+                    editModal.style.display = 'block';
+                } catch (error) { alert('Could not fetch event details.'); console.error("Edit Fetch Error:", error); }
+            }
+        });
+
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const docId = document.getElementById('edit-id').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+            try {
+                let imageUrl = document.getElementById('edit-image-preview').src;
+                if (editForm['edit-imageUrl'].files[0]) {
+                    imageUrl = await fileToBase64(editForm['edit-imageUrl'].files[0]);
+                }
+                const updatedData = {
+                    title: document.getElementById('edit-title').value,
+                    status: document.getElementById('edit-status').value,
+                    schedule: document.getElementById('edit-schedule').value,
+                    location: document.getElementById('edit-location').value,
+                    description: document.getElementById('edit-description').value,
+                    imageUrl: imageUrl
+                };
+                await updateDocument(COLLECTION_NAME, docId, updatedData);
+                editFeedback.textContent = 'Success! Event updated.';
+                editFeedback.className = 'feedback-message success';
+                renderEvents();
+                setTimeout(() => { editModal.style.display = 'none'; editFeedback.textContent = ''; }, 1500);
+            } catch (error) {
+                editFeedback.textContent = 'Error updating event.';
+                editFeedback.className = 'feedback-message error';
+                console.error("Update Error:", error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Save Changes';
+            }
+        });
+
+        closeModalBtn.onclick = () => { editModal.style.display = 'none'; };
+        window.onclick = (event) => { if (event.target == editModal) { editModal.style.display = 'none'; } };
+        
+        renderEvents();
+    </script>
+</body>
+</html>
