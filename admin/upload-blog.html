@@ -33,7 +33,6 @@
             <div class="neumorphic-card section-card">
                 <h2><i class="fas fa-plus-circle"></i> Add New Blog Post</h2>
                 <form id="add-blog-form">
-                    <!-- Form fields are identical to before -->
                     <div class="form-group"><label for="title">Blog Title</label><input type="text" id="title" class="neumorphic-input" required></div>
                     <div class="form-group"><label for="imageUrl">Main Image (Max 900KB)</label><input type="file" id="imageUrl" class="neumorphic-input" accept="image/*" required></div>
                     <div class="form-group"><label for="shortDesc">Short Description</label><textarea id="shortDesc" class="neumorphic-textarea" rows="3" required></textarea></div>
@@ -50,7 +49,7 @@
             <div class="neumorphic-card section-card">
                  <h2><i class="fas fa-edit"></i> Manage Existing Blogs</h2>
                  <div id="manage-section">
-                     <p>Loading blogs...</p>
+                     <div class="text-center"><p>Loading blogs...</p></div>
                  </div>
             </div>
         </main>
@@ -65,7 +64,7 @@
                 <input type="hidden" id="edit-id">
                 <div class="form-group"><label for="edit-title">Blog Title</label><input type="text" id="edit-title" class="neumorphic-input" required></div>
                 <div class="form-group">
-                    <label for="edit-imageUrl">New Main Image (Optional)</label>
+                    <label for="edit-imageUrl">New Main Image (Optional, Max 900KB)</label>
                     <input type="file" id="edit-imageUrl" class="neumorphic-input" accept="image/*">
                     <img id="edit-image-preview" src="" alt="Current Image" class="image-preview">
                 </div>
@@ -73,7 +72,7 @@
                 <div class="form-group"><label for="edit-fullContent">Full Content</label><textarea id="edit-fullContent" class="neumorphic-textarea" rows="8" required></textarea></div><hr>
                 <div class="form-group"><label for="edit-author">Author Name</label><input type="text" id="edit-author" class="neumorphic-input" required></div>
                  <div class="form-group">
-                    <label for="edit-authorImage">New Author Image (Optional)</label>
+                    <label for="edit-authorImage">New Author Image (Optional, Max 900KB)</label>
                     <input type="file" id="edit-authorImage" class="neumorphic-input" accept="image/*">
                     <img id="edit-author-image-preview" src="" alt="Current Author Image" class="image-preview">
                 </div>
@@ -85,52 +84,97 @@
         </div>
     </div>
 
+    <!-- ======================================================== -->
+    <!--          FULLY REVISED AND FUNCTIONAL SCRIPT             -->
+    <!-- ======================================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-        import { Auth } from './js/admin-auth.js';
-        import { initializeDb, fetchDocs, addDocument, deleteDocument, updateDocument, getDocById, fileToBase64 } from './js/admin-firestore.js';
+        import { getFirestore, collection, getDocs, doc, addDoc, deleteDoc, updateDoc, getDoc, serverTimestamp, orderBy, query } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
 
-        Auth.init();
+        // --- Basic Authentication & Session Handling ---
+        const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn') === 'true';
+        if (!isLoggedIn) {
+            window.location.href = 'index.html'; // Redirect to login page if not logged in
+        }
 
-        const firebaseConfig = { apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU", authDomain: "hss-larnoo-teachers.firebaseapp.com", projectId: "hss-larnoo-teachers", storageBucket: "hss-larnoo-teachers.appspot.com", messagingSenderId: "143363278401", appId: "1:143363278401:web:49d7fffbdf31ce073e68c0", measurementId: "G-GHQLMME6PJ" };
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            sessionStorage.removeItem('isAdminLoggedIn');
+            window.location.href = 'index.html';
+        });
+        
+        // --- Firebase Initialization ---
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU", 
+            authDomain: "hss-larnoo-teachers.firebaseapp.com", 
+            projectId: "hss-larnoo-teachers", 
+            storageBucket: "hss-larnoo-teachers.appspot.com", 
+            messagingSenderId: "143363278401", 
+            appId: "1:143363278401:web:49d7fffbdf31ce073e68c0", 
+            measurementId: "G-GHQLMME6PJ" 
+        };
         const app = initializeApp(firebaseConfig);
-        initializeDb(app); // Pass the app instance to the module
+        const db = getFirestore(app);
+        const COLLECTION_NAME = 'blogs';
 
+        // --- DOM Element References ---
         const addForm = document.getElementById('add-blog-form');
         const addFeedback = document.getElementById('add-feedback-message');
         const manageSection = document.getElementById('manage-section');
         const editModal = document.getElementById('edit-modal');
         const editForm = document.getElementById('edit-blog-form');
         const editFeedback = document.getElementById('edit-feedback-message');
-        const closeModalBtn = document.querySelector('.close-btn');
-        const COLLECTION_NAME = 'blogs';
+        const closeModalBtn = document.querySelector('.modal .close-btn');
+
+        // --- Reusable Utility Function ---
+        const fileToBase64 = (file) => new Promise((resolve, reject) => {
+            if (!file) {
+                resolve(null);
+                return;
+            }
+            // Image size validation
+            if (file.size > 900 * 1024) { // 900 KB limit
+                reject(new Error(`Image "${file.name}" is too large. Please select a file under 900KB.`));
+                return;
+            }
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
 
         // --- RENDER EXISTING BLOGS ---
         async function renderBlogs() {
+            manageSection.innerHTML = `<p>Loading blogs...</p>`;
             try {
-                const blogs = await fetchDocs(COLLECTION_NAME);
-                if (blogs.length === 0) {
-                    manageSection.innerHTML = '<p>No blog posts found.</p>';
+                const q = query(collection(db, COLLECTION_NAME), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    manageSection.innerHTML = '<p>No blog posts found. Add one using the form above!</p>';
                     return;
                 }
-                manageSection.innerHTML = `
-                    <ul class="manage-list">
-                        ${blogs.map(blog => `
-                            <li data-id="${blog.id}">
-                                <img src="${blog.imageUrl}" alt="Blog Image">
-                                <div class="item-details">
-                                    <strong>${blog.title}</strong>
-                                    <span>By ${blog.author}</span>
-                                </div>
-                                <div class="item-actions">
-                                    <button class="edit-btn neumorphic-btn"><i class="fas fa-edit"></i></button>
-                                    <button class="delete-btn neumorphic-btn danger"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </li>
-                        `).join('')}
-                    </ul>`;
+                
+                let blogsHtml = '<ul class="manage-list">';
+                querySnapshot.forEach(doc => {
+                    const blog = { id: doc.id, ...doc.data() };
+                    blogsHtml += `
+                        <li data-id="${blog.id}">
+                            <img src="${blog.imageUrl}" alt="Blog Image" onerror="this.style.display='none'">
+                            <div class="item-details">
+                                <strong>${blog.title}</strong>
+                                <span>By ${blog.author}</span>
+                            </div>
+                            <div class="item-actions">
+                                <button class="edit-btn neumorphic-btn"><i class="fas fa-edit"></i></button>
+                                <button class="delete-btn neumorphic-btn danger"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </li>`;
+                });
+                blogsHtml += '</ul>';
+                manageSection.innerHTML = blogsHtml;
+
             } catch (error) {
-                manageSection.innerHTML = '<p class="error-message">Error loading blogs. Please refresh.</p>';
+                manageSection.innerHTML = '<p class="feedback-message error">Error loading blogs. Please refresh the page.</p>';
                 console.error("Render Error:", error);
             }
         }
@@ -139,14 +183,27 @@
         addForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = e.target.querySelector('button[type="submit"]');
+            addFeedback.textContent = '';
+            addFeedback.className = 'feedback-message';
+
+            const mainImageFile = addForm.imageUrl.files[0];
+            const authorImageFile = addForm.authorImage.files[0];
+
+            if (!mainImageFile || !authorImageFile) {
+                addFeedback.textContent = 'Please select both a main image and an author image.';
+                addFeedback.className = 'feedback-message error';
+                return;
+            }
+
             submitBtn.disabled = true;
             submitBtn.textContent = 'Publishing...';
 
             try {
-                const mainImageBase64 = await fileToBase64(addForm.imageUrl.files[0]);
-                const authorImageBase64 = await fileToBase64(addForm.authorImage.files[0]);
+                // The fileToBase64 function now includes the size check
+                const mainImageBase64 = await fileToBase64(mainImageFile);
+                const authorImageBase64 = await fileToBase64(authorImageFile);
 
-                await addDocument(COLLECTION_NAME, {
+                const newBlogPost = {
                     title: addForm.title.value,
                     shortDesc: addForm.shortDesc.value,
                     fullContent: addForm.fullContent.value,
@@ -154,46 +211,57 @@
                     authorRole: addForm.authorRole.value,
                     imageUrl: mainImageBase64,
                     authorImage: authorImageBase64,
-                    comments: []
-                });
+                    comments: [],
+                    createdAt: serverTimestamp() // This is crucial for sorting
+                };
+
+                await addDoc(collection(db, COLLECTION_NAME), newBlogPost);
+                
                 addFeedback.textContent = 'Success! Blog post published.';
                 addFeedback.className = 'feedback-message success';
                 addForm.reset();
-                renderBlogs(); // Refresh list
+                await renderBlogs();
+
             } catch (error) {
-                addFeedback.textContent = 'Error: Could not publish blog.';
+                addFeedback.textContent = `Error: ${error.message}`;
                 addFeedback.className = 'feedback-message error';
-                console.error("Add Error:", error);
+                console.error("Add Blog Error:", error);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Publish Blog Post';
             }
         });
 
-        // --- DELETE & EDIT ---
+        // --- MANAGE SECTION (EDIT/DELETE) EVENT LISTENER ---
         manageSection.addEventListener('click', async (e) => {
             const target = e.target.closest('button');
             if (!target) return;
 
             const docId = target.closest('li').dataset.id;
             
-            // DELETE
+            // DELETE action
             if (target.classList.contains('delete-btn')) {
                 if (confirm('Are you sure you want to delete this blog post? This cannot be undone.')) {
                     try {
-                        await deleteDocument(COLLECTION_NAME, docId);
+                        await deleteDoc(doc(db, COLLECTION_NAME, docId));
                         target.closest('li').remove();
                     } catch (error) {
-                        alert('Error deleting post.');
+                        alert('Error deleting post. See console for details.');
                         console.error("Delete Error:", error);
                     }
                 }
             }
 
-            // EDIT (Open Modal)
+            // EDIT action (Opens Modal)
             if (target.classList.contains('edit-btn')) {
                 try {
-                    const blog = await getDocById(COLLECTION_NAME, docId);
+                    const docRef = doc(db, COLLECTION_NAME, docId);
+                    const docSnap = await getDoc(docRef);
+                    if (!docSnap.exists()) {
+                        throw new Error("Document not found");
+                    }
+                    const blog = { id: docSnap.id, ...docSnap.data() };
+
                     document.getElementById('edit-id').value = blog.id;
                     document.getElementById('edit-title').value = blog.title;
                     document.getElementById('edit-shortDesc').value = blog.shortDesc;
@@ -202,7 +270,9 @@
                     document.getElementById('edit-authorRole').value = blog.authorRole;
                     document.getElementById('edit-image-preview').src = blog.imageUrl;
                     document.getElementById('edit-author-image-preview').src = blog.authorImage;
+                    editForm.reset(); // Clear file inputs
                     editModal.style.display = 'block';
+
                 } catch (error) {
                     alert('Could not fetch blog details for editing.');
                     console.error("Edit Fetch Error:", error);
@@ -210,25 +280,30 @@
             }
         });
 
-        // --- UPDATE (Save Changes from Modal) ---
+        // --- UPDATE (SAVE CHANGES FROM MODAL) ---
         editForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const docId = document.getElementById('edit-id').value;
             const submitBtn = e.target.querySelector('button[type="submit"]');
+            
             submitBtn.disabled = true;
             submitBtn.textContent = 'Saving...';
+            editFeedback.textContent = '';
+            editFeedback.className = 'feedback-message';
             
             try {
-                let mainImageBase64 = document.getElementById('edit-image-preview').src;
-                let authorImageBase64 = document.getElementById('edit-author-image-preview').src;
+                // Get current images as fallback
+                let imageUrl = document.getElementById('edit-image-preview').src;
+                let authorImageUrl = document.getElementById('edit-author-image-preview').src;
 
-                // Check if a new main image was selected
-                if (editForm['edit-imageUrl'].files[0]) {
-                    mainImageBase64 = await fileToBase64(editForm['edit-imageUrl'].files[0]);
+                // Check for new files and convert them (with size check)
+                const newMainImageFile = editForm['edit-imageUrl'].files[0];
+                if (newMainImageFile) {
+                    imageUrl = await fileToBase64(newMainImageFile);
                 }
-                // Check for new author image
-                if (editForm['edit-authorImage'].files[0]) {
-                    authorImageBase64 = await fileToBase64(editForm['edit-authorImage'].files[0]);
+                const newAuthorImageFile = editForm['edit-authorImage'].files[0];
+                if (newAuthorImageFile) {
+                    authorImageUrl = await fileToBase64(newAuthorImageFile);
                 }
 
                 const updatedData = {
@@ -237,18 +312,23 @@
                     fullContent: document.getElementById('edit-fullContent').value,
                     author: document.getElementById('edit-author').value,
                     authorRole: document.getElementById('edit-authorRole').value,
-                    imageUrl: mainImageBase64,
-                    authorImage: authorImageBase64
+                    imageUrl: imageUrl,
+                    authorImage: authorImageUrl
                 };
 
-                await updateDocument(COLLECTION_NAME, docId, updatedData);
+                await updateDoc(doc(db, COLLECTION_NAME, docId), updatedData);
+                
                 editFeedback.textContent = 'Success! Post updated.';
                 editFeedback.className = 'feedback-message success';
-                renderBlogs(); // Refresh the list with new data
-                setTimeout(() => { editModal.style.display = 'none'; editFeedback.textContent = ''; }, 1500);
+                await renderBlogs(); 
+                
+                setTimeout(() => {
+                    editModal.style.display = 'none';
+                    editFeedback.textContent = '';
+                }, 1500);
 
             } catch (error) {
-                editFeedback.textContent = 'Error updating post.';
+                editFeedback.textContent = `Error: ${error.message}`;
                 editFeedback.className = 'feedback-message error';
                 console.error("Update Error:", error);
             } finally {
@@ -257,12 +337,13 @@
             }
         });
 
-        // Close modal logic
+        // --- MODAL VISIBILITY ---
         closeModalBtn.onclick = () => { editModal.style.display = 'none'; };
         window.onclick = (event) => { if (event.target == editModal) { editModal.style.display = 'none'; } };
         
-        // Initial render
+        // --- INITIAL RENDER ---
         renderBlogs();
+
     </script>
 </body>
 </html>

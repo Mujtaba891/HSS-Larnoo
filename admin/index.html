@@ -62,9 +62,9 @@ body {
 .sidebar-nav a i { width: 20px; margin-right: 15px; text-align: center; }
 
 /* --- Main Content --- */
-.main-content { 
-    flex-grow: 1; 
-    padding: 20px; 
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
     overflow-y: auto;
     margin-left: 260px;
     transition: margin-left 0.3s ease-in-out;
@@ -131,6 +131,8 @@ body {
 .dashboard-card { text-align: center; }
 .dashboard-card i { font-size: 3rem; color: var(--primary-accent); margin-bottom: 15px; }
 .dashboard-card .count { font-size: 2.5rem; font-weight: 700; color: #333; }
+#subscribers-card { cursor: pointer; }
+
 
 /* Table Styling */
 .table-container { overflow-x: auto; }
@@ -230,9 +232,9 @@ td:last-child { border-radius: 0 10px 10px 0; }
 
 /* --- Modal Styles --- */
 .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 2000; 
+    display: none;
+    position: fixed;
+    z-index: 2000;
     left: 0;
     top: 0;
     width: 100%;
@@ -313,6 +315,12 @@ td:last-child { border-radius: 0 10px 10px 0; }
                 <a href="contact-messages.html"><i class="fas fa-envelope-open-text"></i> Messages</a>
                 <a href="upload-notice.html"><i class="fas fa-bullhorn"></i> Post Notice</a>
                 <a href="upload-gallery.html"><i class="fas fa-images"></i> Upload to Gallery</a>
+                <hr>
+                <h2 style="color: rgba(2, 165, 177, 0.856);">Email Subscription</h2>
+
+                <a href="canvas.html"><i class="fas fa-pen-to-square"></i> Create Email</a>
+                <a href="event-sender.html"><i class="fas fa-paper-plane"></i> Send Email</a>
+
             </nav>
         </aside>
 
@@ -350,7 +358,7 @@ td:last-child { border-radius: 0 10px 10px 0; }
                     <i class="fas fa-bullhorn"></i>
                     <h2 class="count" id="notices-count">...</h2><p>Active Notices</p>
                 </div>
-                <div class="neumorphic-card dashboard-card">
+                <div id="subscribers-card" class="neumorphic-card dashboard-card">
                     <i class="fas fa-users"></i>
                     <h2 class="count" id="subscribers-count">...</h2><p>Newsletter Subscribers</p>
                 </div>
@@ -358,11 +366,42 @@ td:last-child { border-radius: 0 10px 10px 0; }
         </main>
     </div>
 
+    <!-- Subscribers Modal -->
+    <div id="subscribers-modal" class="modal">
+        <div class="modal-content neumorphic-card">
+            <span id="close-subscribers-modal" class="close-btn">&times;</span>
+            <div class="section-card">
+                <h2><i class="fas fa-users"></i> Manage Subscribers</h2>
+
+                <!-- Add Subscriber Form -->
+                <form id="add-subscriber-form" style="display: flex; gap: 15px; margin-bottom: 30px;">
+                    <input type="email" id="subscriber-email" class="neumorphic-input" placeholder="New subscriber email" required style="flex-grow: 1;">
+                    <button type="submit" class="neumorphic-btn primary">Add</button>
+                </form>
+                <div id="subscriber-feedback" class="feedback-message"></div>
+
+                <!-- Subscribers List -->
+                <ul id="subscribers-list" class="manage-list">
+                    <!-- Subscriber items will be dynamically inserted here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, deleteDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU", authDomain: "hss-larnoo-teachers.firebaseapp.com", projectId: "hss-larnoo-teachers", storageBucket: "hss-larnoo-teachers.appspot.com", messagingSenderId: "143363278401", appId: "1:143363278401:web:49d7fffbdf31ce073e68c0", measurementId: "G-GHQLMME6PJ" };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU", 
+            authDomain: "hss-larnoo-teachers.firebaseapp.com", 
+            projectId: "hss-larnoo-teachers", 
+            storageBucket: "hss-larnoo-teachers.appspot.com", 
+            messagingSenderId: "143363278401", 
+            appId: "1:143363278401:web:49d7fffbdf31ce073e68c0", 
+            measurementId: "G-GHQLMME6PJ" 
+        };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const ADMIN_PASSWORD = "hsslarnoo@admin25"; // Updated admin password
@@ -373,6 +412,16 @@ td:last-child { border-radius: 0 10px 10px 0; }
         const passwordInput = document.getElementById('adminPassword');
         const loginError = document.getElementById('login-error');
         const logoutBtn = document.getElementById('logout-btn');
+
+        // Subscribers Modal elements
+        const subscribersCard = document.getElementById('subscribers-card');
+        const subscribersModal = document.getElementById('subscribers-modal');
+        const closeSubscribersModalBtn = document.getElementById('close-subscribers-modal');
+        const subscribersList = document.getElementById('subscribers-list');
+        const addSubscriberForm = document.getElementById('add-subscriber-form');
+        const subscriberEmailInput = document.getElementById('subscriber-email');
+        const subscriberFeedback = document.getElementById('subscriber-feedback');
+
 
         function showDashboard() {
             loginView.style.display = 'none';
@@ -389,28 +438,138 @@ td:last-child { border-radius: 0 10px 10px 0; }
         }
 
         function showLogin() { loginView.style.display = 'flex'; dashboardView.style.display = 'none'; }
-        
+
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            if (passwordInput.value === ADMIN_PASSWORD) { sessionStorage.setItem('isAdminLoggedIn', 'true'); showDashboard(); } 
+            if (passwordInput.value === ADMIN_PASSWORD) { sessionStorage.setItem('isAdminLoggedIn', 'true'); showDashboard(); }
             else { loginError.textContent = 'Incorrect password.'; }
         });
 
         logoutBtn.addEventListener('click', () => { sessionStorage.removeItem('isAdminLoggedIn'); showLogin(); });
 
+        /**
+         * PERFORMANCE FIX: Fetches all collection counts in parallel for faster loading.
+         */
         async function fetchDashboardStats() {
-            const fetchCount = async (name) => { try { return (await getDocs(collection(db, name))).size; } catch (e) { console.error(`Error fetching ${name}:`, e); return 'N/A'; } };
-            
-            document.getElementById('blogs-count').textContent = await fetchCount('blogs');
-            document.getElementById('events-count').textContent = await fetchCount('events');
-            document.getElementById('programs-count').textContent = await fetchCount('programs');
-            document.getElementById('messages-count').textContent = await fetchCount('contact_messages');
-            document.getElementById('gallery-count').textContent = await fetchCount('galleryImages');
-            document.getElementById('notices-count').textContent = await fetchCount('notices');
-            document.getElementById('subscribers-count').textContent = await fetchCount('newsletter_subscribers');
+            const collections = ['blogs', 'events', 'programs', 'contact_messages', 'galleryImages', 'notices', 'newsletter_subscribers'];
+            const promises = collections.map(name => getDocs(collection(db, name)).then(snapshot => snapshot.size).catch(e => {
+                console.error(`Error fetching ${name}:`, e);
+                return 'N/A';
+            }));
+
+            const [blogs, events, programs, messages, gallery, notices, subscribers] = await Promise.all(promises);
+
+            document.getElementById('blogs-count').textContent = blogs;
+            document.getElementById('events-count').textContent = events;
+            document.getElementById('programs-count').textContent = programs;
+            document.getElementById('messages-count').textContent = messages;
+            document.getElementById('gallery-count').textContent = gallery;
+            document.getElementById('notices-count').textContent = notices;
+            document.getElementById('subscribers-count').textContent = subscribers;
         }
 
-        if (sessionStorage.getItem('isAdminLoggedIn') === 'true') { showDashboard(); } 
+        // --- SUBSCRIBERS MODAL LOGIC ---
+
+        // Function to render the list of subscribers
+        async function renderSubscribers() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "newsletter_subscribers"));
+                subscribersList.innerHTML = ''; // Clear existing list
+                if (querySnapshot.empty) {
+                    subscribersList.innerHTML = '<p>No subscribers yet.</p>';
+                    return;
+                }
+                querySnapshot.forEach((doc) => {
+                    const subscriber = doc.data();
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <div class="item-details">
+                            <strong>${subscriber.email}</strong>
+                        </div>
+                        <div class="item-actions">
+                            <button class="neumorphic-btn danger remove-subscriber-btn" data-id="${doc.id}">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    `;
+                    subscribersList.appendChild(li);
+                });
+
+                // Add event listeners to the new remove buttons
+                document.querySelectorAll('.remove-subscriber-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const docId = e.currentTarget.dataset.id;
+                        if (confirm('Are you sure you want to remove this subscriber?')) {
+                            await deleteSubscriber(docId);
+                        }
+                    });
+                });
+
+            } catch (error) {
+                console.error("Error fetching subscribers:", error);
+                subscribersList.innerHTML = '<p style="color: var(--danger);">Error loading subscribers.</p>';
+            }
+        }
+
+        // Function to delete a subscriber
+        async function deleteSubscriber(docId) {
+            try {
+                await deleteDoc(doc(db, "newsletter_subscribers", docId));
+                subscriberFeedback.textContent = 'Subscriber removed successfully.';
+                subscriberFeedback.className = 'feedback-message success';
+                renderSubscribers(); // Refresh the list
+                fetchDashboardStats(); // Update dashboard count
+            } catch (error) {
+                console.error("Error removing subscriber: ", error);
+                subscriberFeedback.textContent = 'Failed to remove subscriber.';
+                subscriberFeedback.className = 'feedback-message error';
+            }
+        }
+
+        // Handle Add Subscriber form submission
+        addSubscriberForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = subscriberEmailInput.value.trim();
+            if (!email) return;
+
+            try {
+                await addDoc(collection(db, "newsletter_subscribers"), {
+                    email: email,
+                    subscribedAt: serverTimestamp()
+                });
+                subscriberFeedback.textContent = 'Subscriber added successfully.';
+                subscriberFeedback.className = 'feedback-message success';
+                addSubscriberForm.reset();
+                renderSubscribers(); // Refresh the list
+                fetchDashboardStats(); // Update dashboard count
+            } catch (error) {
+                console.error("Error adding subscriber: ", error);
+                subscriberFeedback.textContent = 'Failed to add subscriber.';
+                subscriberFeedback.className = 'feedback-message error';
+            }
+        });
+
+
+        // Show/Hide Modal
+        subscribersCard.addEventListener('click', () => {
+            subscribersModal.style.display = 'block';
+            subscriberFeedback.textContent = ''; // Clear feedback message
+            renderSubscribers();
+        });
+
+        closeSubscribersModalBtn.addEventListener('click', () => {
+            subscribersModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == subscribersModal) {
+                subscribersModal.style.display = 'none';
+            }
+        });
+
+
+        // Initial Check
+        if (sessionStorage.getItem('isAdminLoggedIn') === 'true') { showDashboard(); }
         else { showLogin(); }
     </script>
 </body>

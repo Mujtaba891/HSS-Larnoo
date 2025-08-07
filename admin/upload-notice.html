@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Post Notice | Admin Panel</title>
+    <title>Manage Notices | Admin Panel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/admin-style.css">
-    <script type="module" src="js/admin-auth.js"></script>
+    <!-- Using admin-manage.css for list styling consistency -->
+    <link rel="stylesheet" href="css/admin-manage.css">
 </head>
 <body>
-    <div id="content-overlay" class="content-overlay"></div>
     <div class="admin-wrapper">
-        <!-- ... rest of your page content ... -->
-    <div class="admin-wrapper">
+        <div id="content-overlay" class="content-overlay"></div>
         <aside class="sidebar">
             <div class="logo">
                 <img src="../img/logo3.png" alt="HSS Larnoo Logo">
@@ -21,114 +20,273 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="upload-blog.html"><i class="fas fa-pencil-alt"></i> Manage Blogs</a>
+                <a href="upload-event.html"><i class="fas fa-calendar-alt"></i> Manage Events</a>
+                <a href="upload-program.html"><i class="fas fa-book"></i> Manage Programs</a>
                 <a href="contact-messages.html"><i class="fas fa-envelope-open-text"></i> Messages</a>
-                <a href="upload-notice.html" class="active"><i class="fas fa-bullhorn"></i> Post Notice</a>
+                <a href="upload-notice.html" class="active"><i class="fas fa-bullhorn"></i> Manage Notices</a>
                 <a href="upload-gallery.html"><i class="fas fa-images"></i> Upload to Gallery</a>
-                <a href="canvas.html"><i class="fas fa-paint-brush"></i> Email Builder</a>
-                <a href="email-sender.html"><i class="fas fa-paper-plane"></i> Email Sender</a>
+                <hr>
+                <h2 style="color: rgba(2, 165, 177, 0.856);">Email Subscription</h2>
+                <a href="canvas.html"><i class="fas fa-pen-to-square"></i> Create Email</a>
+                <a href="event-sender.html"><i class="fas fa-paper-plane"></i> Send Email</a>
             </nav>
         </aside>
 
         <main class="main-content">
-            <!-- NEW, RESPONSIVE HEADER -->
-<header class="main-header">
-    <button id="menu-toggle" class="menu-toggle"><i class="fas fa-bars"></i></button>
-    <h1>Post a New Notice</h1> <!-- Remember to change the title on each page -->
-    <div class="header-controls">
-        <button id="logout-btn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
-    </div>
-</header>
+            <header class="main-header">
+                <button id="menu-toggle" class="menu-toggle"><i class="fas fa-bars"></i></button>
+                <h1>Manage Notices</h1>
+                <div class="header-controls">
+                    <button id="logout-btn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </header>
 
-            <div class="neumorphic-card">
+            <!-- ADD NOTICE SECTION -->
+            <div class="neumorphic-card section-card">
+                 <h2><i class="fas fa-plus-circle"></i> Post a New Notice</h2>
                 <p class="text-muted mb-4">This notice will be displayed on the website for all visitors.</p>
-                
-                <div id="statusMessage" class="alert d-none" role="alert"></div>
-
                 <form id="noticeForm">
-                    <div class="mb-4">
-                        <label for="noticeTitle" class="form-label fw-bold">Notice Title</label>
+                    <div class="form-group">
+                        <label for="noticeTitle">Notice Title</label>
                         <input type="text" id="noticeTitle" class="neumorphic-input" placeholder="e.g., Examination Schedule" required>
                     </div>
-                    <div class="mb-4">
-                        <label for="noticeContent" class="form-label fw-bold">Notice Content</label>
-                        <textarea id="noticeContent" class="neumorphic-textarea" rows="8" placeholder="Enter the full details of the notice..." required></textarea>
+                    <div class="form-group">
+                        <label for="noticeContent">Notice Content</label>
+                        <textarea id="noticeContent" class="neumorphic-textarea" rows="6" placeholder="Enter the full details of the notice..." required></textarea>
                     </div>
-                    <button id="submitBtn" type="submit" class="neumorphic-btn primary" style="width: 100%;">
-                        <i class="fas fa-paper-plane me-2"></i>Post Notice
+                    <button id="submitBtn" type="submit" class="neumorphic-btn primary">
+                        <i class="fas fa-paper-plane"></i> Post Notice
                     </button>
+                     <p id="add-feedback-message" class="feedback-message"></p>
                 </form>
+            </div>
+
+            <!-- MANAGE NOTICES SECTION -->
+            <div class="neumorphic-card section-card">
+                <h2><i class="fas fa-edit"></i> Existing Notices</h2>
+                <div id="manage-section">
+                    <p>Loading notices...</p>
+                </div>
             </div>
         </main>
     </div>
 
+    <!-- EDIT NOTICE MODAL -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content neumorphic-card">
+            <span class="close-btn">&times;</span>
+            <h2>Edit Notice</h2>
+            <form id="edit-notice-form">
+                <input type="hidden" id="edit-notice-id">
+                <div class="form-group">
+                    <label for="edit-title">Notice Title</label>
+                    <input type="text" id="edit-title" class="neumorphic-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-content">Notice Content</label>
+                    <textarea id="edit-content" class="neumorphic-textarea" rows="8" required></textarea>
+                </div>
+                <button type="submit" class="neumorphic-btn primary">Save Changes</button>
+                <p id="edit-feedback-message" class="feedback-message"></p>
+            </form>
+        </div>
+    </div>
+
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, orderBy, doc, deleteDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
 
+        // --- Basic Authentication & UI Setup ---
+        const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn') === 'true';
+        if (!isLoggedIn) { window.location.href = 'index.html'; }
+        
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            sessionStorage.removeItem('isAdminLoggedIn');
+            window.location.href = 'index.html';
+        });
+
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('content-overlay');
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+
+        // --- Firebase Initialization ---
         const firebaseConfig = {
             apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU",
             authDomain: "hss-larnoo-teachers.firebaseapp.com",
             projectId: "hss-larnoo-teachers",
             storageBucket: "hss-larnoo-teachers.appspot.com",
             messagingSenderId: "143363278401",
-            appId: "1:143363278401:web:49d7fffbdf31ce073e68c0",
-            measurementId: "G-GHQLMME6PJ"
+            appId: "1:143363278401:web:49d7fffbdf31ce073e68c0"
         };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        
-        const dom = {
-            noticeForm: document.getElementById('noticeForm'),
-            submitBtn: document.getElementById('submitBtn'),
-            statusMessage: document.getElementById('statusMessage'),
-            noticeTitle: document.getElementById('noticeTitle'),
-            noticeContent: document.getElementById('noticeContent'),
-        };
+        const COLLECTION_NAME = "notices";
 
-        dom.noticeForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            setLoadingState(true);
+        // --- DOM Element References ---
+        const addNoticeForm = document.getElementById('noticeForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const addFeedback = document.getElementById('add-feedback-message');
+        const manageSection = document.getElementById('manage-section');
+        const editModal = document.getElementById('edit-modal');
+        const editForm = document.getElementById('edit-notice-form');
+        const editFeedback = document.getElementById('edit-feedback-message');
+        const closeModalBtn = document.querySelector('#edit-modal .close-btn');
 
-            const title = dom.noticeTitle.value.trim();
-            const content = dom.noticeContent.value.trim();
-
-            if (!title || !content) {
-                showStatusMessage('Title and Content fields cannot be empty.', 'alert-danger');
-                setLoadingState(false);
-                return;
-            }
-
+        // --- RENDER NOTICES ---
+        async function renderNotices() {
+            manageSection.innerHTML = `<p>Loading notices...</p>`;
             try {
-                await addDoc(collection(db, "notices"), {
-                    title: title,
-                    content: content,
+                const q = query(collection(db, COLLECTION_NAME), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    manageSection.innerHTML = `<p>No notices found. Post one above!</p>`;
+                    return;
+                }
+
+                let noticesHtml = '<ul class="manage-list">';
+                querySnapshot.forEach(doc => {
+                    const notice = { id: doc.id, ...doc.data() };
+                    const postDate = notice.timestamp ? notice.timestamp.toDate().toLocaleDateString() : 'N/A';
+                    noticesHtml += `
+                        <li data-id="${notice.id}">
+                            <div class="item-details">
+                                <strong>${notice.title}</strong>
+                                <span>Posted on: ${postDate}</span>
+                            </div>
+                            <div class="item-actions">
+                                <button class="edit-btn neumorphic-btn"><i class="fas fa-edit"></i></button>
+                                <button class="delete-btn neumorphic-btn danger"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </li>`;
+                });
+                noticesHtml += '</ul>';
+                manageSection.innerHTML = noticesHtml;
+            } catch (error) {
+                manageSection.innerHTML = `<p class="feedback-message error">Could not load notices.</p>`;
+                console.error("Render Error:", error);
+            }
+        }
+
+        // --- ADD NOTICE ---
+        addNoticeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Posting...`;
+            addFeedback.textContent = '';
+            
+            try {
+                await addDoc(collection(db, COLLECTION_NAME), {
+                    title: addNoticeForm.noticeTitle.value.trim(),
+                    content: addNoticeForm.noticeContent.value.trim(),
                     timestamp: serverTimestamp()
                 });
-                showStatusMessage('Notice posted successfully! It is now live on the website.', 'alert-success');
-                dom.noticeForm.reset();
-                setTimeout(() => {
-                    dom.statusMessage.classList.add('d-none');
-                }, 4000);
+                addFeedback.textContent = 'Notice posted successfully!';
+                addFeedback.className = 'feedback-message success';
+                addNoticeForm.reset();
+                await renderNotices();
             } catch (error) {
-                console.error("Error posting notice:", error);
-                showStatusMessage(`An error occurred: ${error.message}. Please try again.`, 'alert-danger');
+                addFeedback.textContent = 'Error posting notice.';
+                addFeedback.className = 'feedback-message error';
+                console.error("Add Notice Error:", error);
             } finally {
-                setLoadingState(false);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Post Notice`;
             }
         });
 
-        function showStatusMessage(message, type) {
-            dom.statusMessage.textContent = message;
-            dom.statusMessage.className = `alert ${type}`;
-            dom.statusMessage.classList.remove('d-none');
-        }
+        // --- EVENT LISTENER FOR EDIT/DELETE BUTTONS ---
+        manageSection.addEventListener('click', async (e) => {
+            const target = e.target.closest('button');
+            if (!target) return;
 
-        function setLoadingState(isLoading) {
-            dom.submitBtn.disabled = isLoading;
-            dom.submitBtn.innerHTML = isLoading 
-                ? '<span class="spinner-border spinner-border-sm"></span> Posting...'
-                : '<i class="fas fa-paper-plane me-2"></i>Post Notice';
-        }
+            const docId = target.closest('li').dataset.id;
+            
+            // DELETE ACTION
+            if (target.classList.contains('delete-btn')) {
+                if (confirm('Are you sure you want to delete this notice?')) {
+                    try {
+                        await deleteDoc(doc(db, COLLECTION_NAME, docId));
+                        await renderNotices(); // Refresh the list
+                    } catch (error) {
+                        alert('Error deleting notice.');
+                        console.error("Delete Error:", error);
+                    }
+                }
+            }
+            
+            // EDIT ACTION (Open Modal)
+            if (target.classList.contains('edit-btn')) {
+                try {
+                    const docRef = doc(db, COLLECTION_NAME, docId);
+                    const docSnap = await getDoc(docRef);
+                    const notice = docSnap.data();
+                    
+                    document.getElementById('edit-notice-id').value = docId;
+                    document.getElementById('edit-title').value = notice.title;
+                    document.getElementById('edit-content').value = notice.content;
+                    
+                    editModal.style.display = 'block';
+                } catch (error) {
+                    alert('Could not fetch notice details.');
+                    console.error("Edit Fetch Error:", error);
+                }
+            }
+        });
+
+        // --- SAVE CHANGES FROM EDIT MODAL ---
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const docId = document.getElementById('edit-notice-id').value;
+            const submitBtn = editForm.querySelector('button[type="submit"]');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Saving...";
+            editFeedback.textContent = '';
+
+            try {
+                const docRef = doc(db, COLLECTION_NAME, docId);
+                await updateDoc(docRef, {
+                    title: document.getElementById('edit-title').value,
+                    content: document.getElementById('edit-content').value
+                });
+
+                editFeedback.textContent = 'Notice updated successfully!';
+                editFeedback.className = 'feedback-message success';
+                await renderNotices();
+
+                setTimeout(() => {
+                    editModal.style.display = 'none';
+                    editFeedback.textContent = '';
+                }, 1500);
+
+            } catch (error) {
+                editFeedback.textContent = 'Error updating notice.';
+                editFeedback.className = 'feedback-message error';
+                console.error("Update Error:", error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Save Changes";
+            }
+        });
+
+        // --- MODAL VISIBILITY ---
+        closeModalBtn.onclick = () => { editModal.style.display = 'none'; };
+        window.onclick = (event) => { if (event.target == editModal) { editModal.style.display = 'none'; } };
+
+        // --- INITIAL RENDER ---
+        renderNotices();
     </script>
 </body>
 </html>

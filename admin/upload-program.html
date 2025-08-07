@@ -35,14 +35,14 @@
                 <form id="add-program-form">
                     <div class="form-group"><label for="title">Program Title</label><input type="text" id="title" class="neumorphic-input" required></div>
                     <div class="form-group"><label for="imageUrl">Program Image (Max 900KB)</label><input type="file" id="imageUrl" class="neumorphic-input" accept="image/*" required></div>
-                    <div class="form-group"><label for="tagline">Tagline</label><input type="text" id="tagline" class="neumorphic-input" required></div>
+                    <div class="form-group"><label for="tagline">Tagline (e.g., "Holistic Education")</label><input type="text" id="tagline" class="neumorphic-input" required></div>
                     <div class="form-group"><label for="description">Description</label><textarea id="description" class="neumorphic-textarea" rows="4" required></textarea></div><hr>
                     <div class="form-group"><label for="teacherName">Teacher Name</label><input type="text" id="teacherName" class="neumorphic-input" required></div>
-                    <div class="form-group"><label for="teacherRole">Teacher Role</label><input type="text" id="teacherRole" class="neumorphic-input" required></div>
+                    <div class="form-group"><label for="teacherRole">Teacher Role (e.g., "Head Teacher")</label><input type="text" id="teacherRole" class="neumorphic-input" required></div>
                     <div class="form-group"><label for="teacherImageUrl">Teacher Image (Max 900KB)</label><input type="file" id="teacherImageUrl" class="neumorphic-input" accept="image/*" required></div><hr>
-                    <div class="form-group"><label for="footer1">Feature 1</label><input type="text" id="footer1" class="neumorphic-input" required></div>
-                    <div class="form-group"><label for="footer2">Feature 2</label><input type="text" id="footer2" class="neumorphic-input" required></div>
-                    <div class="form-group"><label for="footer3">Feature 3</label><input type="text" id="footer3" class="neumorphic-input" required></div>
+                    <div class="form-group"><label for="footer1">Feature 1 (e.g., "Grades 9-12")</label><input type="text" id="footer1" class="neumorphic-input" required></div>
+                    <div class="form-group"><label for="footer2">Feature 2 (e.g., "Co-educational")</label><input type="text" id="footer2" class="neumorphic-input" required></div>
+                    <div class="form-group"><label for="footer3">Feature 3 (e.g., "Rural Setting")</label><input type="text" id="footer3" class="neumorphic-input" required></div>
                     <button type="submit" class="neumorphic-btn primary">Publish Program</button>
                     <p id="add-feedback-message" class="feedback-message"></p>
                 </form>
@@ -67,7 +67,7 @@
                 <input type="hidden" id="edit-id">
                 <div class="form-group"><label for="edit-title">Program Title</label><input type="text" id="edit-title" class="neumorphic-input" required></div>
                 <div class="form-group">
-                    <label for="edit-imageUrl">New Program Image (Optional)</label>
+                    <label for="edit-imageUrl">New Program Image (Optional, Max 900KB)</label>
                     <input type="file" id="edit-imageUrl" class="neumorphic-input" accept="image/*">
                     <img id="edit-image-preview" src="" alt="Current Program Image" class="image-preview">
                 </div>
@@ -76,7 +76,7 @@
                 <div class="form-group"><label for="edit-teacherName">Teacher Name</label><input type="text" id="edit-teacherName" class="neumorphic-input" required></div>
                 <div class="form-group"><label for="edit-teacherRole">Teacher Role</label><input type="text" id="edit-teacherRole" class="neumorphic-input" required></div>
                 <div class="form-group">
-                    <label for="edit-teacherImageUrl">New Teacher Image (Optional)</label>
+                    <label for="edit-teacherImageUrl">New Teacher Image (Optional, Max 900KB)</label>
                     <input type="file" id="edit-teacherImageUrl" class="neumorphic-input" accept="image/*">
                     <img id="edit-teacher-image-preview" src="" alt="Current Teacher Image" class="image-preview">
                 </div><hr>
@@ -89,64 +89,126 @@
         </div>
     </div>
 
+    <!-- ======================================================== -->
+    <!--          FULLY REVISED AND FUNCTIONAL SCRIPT             -->
+    <!-- ======================================================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-        import { Auth } from './js/admin-auth.js';
-        import { initializeDb, fetchDocs, addDocument, deleteDocument, updateDocument, getDocById, fileToBase64 } from './js/admin-firestore.js';
+        import { getFirestore, collection, getDocs, doc, addDoc, deleteDoc, updateDoc, getDoc, serverTimestamp, orderBy, query } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
 
-        Auth.init();
+        // --- Basic Authentication & Session Handling ---
+        const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn') === 'true';
+        if (!isLoggedIn) {
+            window.location.href = 'index.html'; // Redirect to login if not authenticated
+        }
 
-        const firebaseConfig = { apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU", authDomain: "hss-larnoo-teachers.firebaseapp.com", projectId: "hss-larnoo-teachers", storageBucket: "hss-larnoo-teachers.appspot.com", messagingSenderId: "143363278401", appId: "1:143363278401:web:49d7fffbdf31ce073e68c0", measurementId: "G-GHQLMME6PJ" };
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            sessionStorage.removeItem('isAdminLoggedIn');
+            window.location.href = 'index.html';
+        });
+
+        // --- Firebase Initialization ---
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU", 
+            authDomain: "hss-larnoo-teachers.firebaseapp.com", 
+            projectId: "hss-larnoo-teachers", 
+            storageBucket: "hss-larnoo-teachers.appspot.com", 
+            messagingSenderId: "143363278401", 
+            appId: "1:143363278401:web:49d7fffbdf31ce073e68c0", 
+            measurementId: "G-GHQLMME6PJ" 
+        };
         const app = initializeApp(firebaseConfig);
-        initializeDb(app);
+        const db = getFirestore(app);
+        const COLLECTION_NAME = 'programs';
 
+        // --- DOM Element References ---
         const addForm = document.getElementById('add-program-form');
         const addFeedback = document.getElementById('add-feedback-message');
         const manageSection = document.getElementById('manage-section');
         const editModal = document.getElementById('edit-modal');
         const editForm = document.getElementById('edit-program-form');
         const editFeedback = document.getElementById('edit-feedback-message');
-        const closeModalBtn = document.querySelector('.close-btn');
-        const COLLECTION_NAME = 'programs';
+        const closeModalBtn = document.querySelector('.modal .close-btn');
 
+        // --- Reusable Utility for File-to-Base64 Conversion with Size Check ---
+        const fileToBase64 = (file) => new Promise((resolve, reject) => {
+            if (!file) {
+                resolve(null);
+                return;
+            }
+            // CRUCIAL: Image size validation
+            if (file.size > 900 * 1024) { // 900 KB limit
+                reject(new Error(`Image "${file.name}" is too large. Please select a file under 900KB.`));
+                return;
+            }
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        // --- RENDER EXISTING PROGRAMS ---
         async function renderPrograms() {
+            manageSection.innerHTML = `<p>Loading programs...</p>`;
             try {
-                const programs = await fetchDocs(COLLECTION_NAME);
-                if (programs.length === 0) {
-                    manageSection.innerHTML = '<p>No programs found.</p>';
+                const q = query(collection(db, COLLECTION_NAME), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    manageSection.innerHTML = '<p>No programs found. Add one using the form above.</p>';
                     return;
                 }
-                manageSection.innerHTML = `
-                    <ul class="manage-list">
-                        ${programs.map(p => `
-                            <li data-id="${p.id}">
-                                <img src="${p.imageUrl}" alt="Program Image">
-                                <div class="item-details">
-                                    <strong>${p.title}</strong>
-                                    <span>Taught by ${p.teacherName}</span>
-                                </div>
-                                <div class="item-actions">
-                                    <button class="edit-btn neumorphic-btn"><i class="fas fa-edit"></i></button>
-                                    <button class="delete-btn neumorphic-btn danger"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </li>
-                        `).join('')}
-                    </ul>`;
+
+                let programsHtml = '<ul class="manage-list">';
+                querySnapshot.forEach(doc => {
+                    const program = { id: doc.id, ...doc.data() };
+                    programsHtml += `
+                        <li data-id="${program.id}">
+                            <img src="${program.imageUrl}" alt="Program Image" onerror="this.style.display='none'">
+                            <div class="item-details">
+                                <strong>${program.title}</strong>
+                                <span>Taught by ${program.teacherName}</span>
+                            </div>
+                            <div class="item-actions">
+                                <button class="edit-btn neumorphic-btn"><i class="fas fa-edit"></i></button>
+                                <button class="delete-btn neumorphic-btn danger"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </li>`;
+                });
+                programsHtml += '</ul>';
+                manageSection.innerHTML = programsHtml;
+
             } catch (error) {
-                manageSection.innerHTML = '<p class="error-message">Error loading programs.</p>';
+                manageSection.innerHTML = '<p class="feedback-message error">Error loading programs. Please refresh the page.</p>';
                 console.error("Render Error:", error);
             }
         }
-        
+
+        // --- ADD NEW PROGRAM ---
         addForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = e.target.querySelector('button[type="submit"]');
+            addFeedback.textContent = '';
+            addFeedback.className = 'feedback-message';
+            
+            const programImageFile = addForm.imageUrl.files[0];
+            const teacherImageFile = addForm.teacherImageUrl.files[0];
+
+            if (!programImageFile || !teacherImageFile) {
+                addFeedback.textContent = 'Please select both a program image and a teacher image.';
+                addFeedback.className = 'feedback-message error';
+                return;
+            }
+
             submitBtn.disabled = true;
             submitBtn.textContent = 'Publishing...';
+
             try {
-                const programImageBase64 = await fileToBase64(addForm.imageUrl.files[0]);
-                const teacherImageBase64 = await fileToBase64(addForm.teacherImageUrl.files[0]);
-                await addDocument(COLLECTION_NAME, {
+                // The size check is now inside fileToBase64
+                const programImageBase64 = await fileToBase64(programImageFile);
+                const teacherImageBase64 = await fileToBase64(teacherImageFile);
+
+                const newProgram = {
                     title: addForm.title.value,
                     tagline: addForm.tagline.value,
                     description: addForm.description.value,
@@ -157,69 +219,101 @@
                     footer3: addForm.footer3.value,
                     imageUrl: programImageBase64,
                     teacherImageUrl: teacherImageBase64,
-                });
+                    createdAt: serverTimestamp() // ESSENTIAL for sorting
+                };
+                
+                await addDoc(collection(db, COLLECTION_NAME), newProgram);
+
                 addFeedback.textContent = 'Success! Program published.';
                 addFeedback.className = 'feedback-message success';
                 addForm.reset();
-                renderPrograms();
+                await renderPrograms();
+
             } catch (error) {
-                addFeedback.textContent = 'Error: Could not publish program.';
+                addFeedback.textContent = `Error: ${error.message}`;
                 addFeedback.className = 'feedback-message error';
-                console.error("Add Error:", error);
+                console.error("Add Program Error:", error);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Publish Program';
             }
         });
 
+        // --- MANAGE SECTION (EDIT/DELETE) EVENT LISTENER ---
         manageSection.addEventListener('click', async (e) => {
             const target = e.target.closest('button');
             if (!target) return;
+
             const docId = target.closest('li').dataset.id;
             
+            // DELETE action
             if (target.classList.contains('delete-btn')) {
                 if (confirm('Are you sure you want to delete this program?')) {
                     try {
-                        await deleteDocument(COLLECTION_NAME, docId);
+                        await deleteDoc(doc(db, COLLECTION_NAME, docId));
                         target.closest('li').remove();
-                    } catch (error) { alert('Error deleting program.'); console.error("Delete Error:", error); }
+                    } catch (error) {
+                        alert('Error deleting program. See console for details.');
+                        console.error("Delete Error:", error);
+                    }
                 }
             }
 
+            // EDIT action (Opens Modal)
             if (target.classList.contains('edit-btn')) {
                 try {
-                    const p = await getDocById(COLLECTION_NAME, docId);
-                    document.getElementById('edit-id').value = p.id;
-                    document.getElementById('edit-title').value = p.title;
-                    document.getElementById('edit-tagline').value = p.tagline;
-                    document.getElementById('edit-description').value = p.description;
-                    document.getElementById('edit-teacherName').value = p.teacherName;
-                    document.getElementById('edit-teacherRole').value = p.teacherRole;
-                    document.getElementById('edit-footer1').value = p.footer1;
-                    document.getElementById('edit-footer2').value = p.footer2;
-                    document.getElementById('edit-footer3').value = p.footer3;
-                    document.getElementById('edit-image-preview').src = p.imageUrl;
-                    document.getElementById('edit-teacher-image-preview').src = p.teacherImageUrl;
+                    const docRef = doc(db, COLLECTION_NAME, docId);
+                    const docSnap = await getDoc(docRef);
+                    if (!docSnap.exists()) {
+                        throw new Error("Document not found");
+                    }
+                    const program = { id: docSnap.id, ...docSnap.data() };
+
+                    document.getElementById('edit-id').value = program.id;
+                    document.getElementById('edit-title').value = program.title;
+                    document.getElementById('edit-tagline').value = program.tagline;
+                    document.getElementById('edit-description').value = program.description;
+                    document.getElementById('edit-teacherName').value = program.teacherName;
+                    document.getElementById('edit-teacherRole').value = program.teacherRole;
+                    document.getElementById('edit-footer1').value = program.footer1;
+                    document.getElementById('edit-footer2').value = program.footer2;
+                    document.getElementById('edit-footer3').value = program.footer3;
+                    document.getElementById('edit-image-preview').src = program.imageUrl;
+                    document.getElementById('edit-teacher-image-preview').src = program.teacherImageUrl;
+                    editForm.reset(); // Clear file inputs
                     editModal.style.display = 'block';
-                } catch (error) { alert('Could not fetch program details.'); console.error("Edit Fetch Error:", error); }
+
+                } catch (error) {
+                    alert('Could not fetch program details for editing.');
+                    console.error("Edit Fetch Error:", error);
+                }
             }
         });
 
+        // --- UPDATE (SAVE CHANGES FROM MODAL) ---
         editForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const docId = document.getElementById('edit-id').value;
             const submitBtn = e.target.querySelector('button[type="submit"]');
+            
             submitBtn.disabled = true;
             submitBtn.textContent = 'Saving...';
+            editFeedback.textContent = '';
+            editFeedback.className = 'feedback-message';
+            
             try {
                 let imageUrl = document.getElementById('edit-image-preview').src;
                 let teacherImageUrl = document.getElementById('edit-teacher-image-preview').src;
-                if (editForm['edit-imageUrl'].files[0]) {
-                    imageUrl = await fileToBase64(editForm['edit-imageUrl'].files[0]);
+
+                const newProgramImageFile = editForm['edit-imageUrl'].files[0];
+                if (newProgramImageFile) {
+                    imageUrl = await fileToBase64(newProgramImageFile);
                 }
-                if (editForm['edit-teacherImageUrl'].files[0]) {
-                    teacherImageUrl = await fileToBase64(editForm['edit-teacherImageUrl'].files[0]);
+                const newTeacherImageFile = editForm['edit-teacherImageUrl'].files[0];
+                if (newTeacherImageFile) {
+                    teacherImageUrl = await fileToBase64(newTeacherImageFile);
                 }
+
                 const updatedData = {
                     title: document.getElementById('edit-title').value,
                     tagline: document.getElementById('edit-tagline').value,
@@ -232,13 +326,20 @@
                     imageUrl: imageUrl,
                     teacherImageUrl: teacherImageUrl
                 };
-                await updateDocument(COLLECTION_NAME, docId, updatedData);
+                
+                await updateDoc(doc(db, COLLECTION_NAME, docId), updatedData);
+                
                 editFeedback.textContent = 'Success! Program updated.';
                 editFeedback.className = 'feedback-message success';
-                renderPrograms();
-                setTimeout(() => { editModal.style.display = 'none'; editFeedback.textContent = ''; }, 1500);
+                await renderPrograms();
+                
+                setTimeout(() => {
+                    editModal.style.display = 'none';
+                    editFeedback.textContent = '';
+                }, 1500);
+
             } catch (error) {
-                editFeedback.textContent = 'Error updating program.';
+                editFeedback.textContent = `Error: ${error.message}`;
                 editFeedback.className = 'feedback-message error';
                 console.error("Update Error:", error);
             } finally {
@@ -247,10 +348,13 @@
             }
         });
 
+        // --- MODAL VISIBILITY ---
         closeModalBtn.onclick = () => { editModal.style.display = 'none'; };
         window.onclick = (event) => { if (event.target == editModal) { editModal.style.display = 'none'; } };
         
+        // --- INITIAL RENDER ---
         renderPrograms();
+
     </script>
 </body>
 </html>
