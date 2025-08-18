@@ -19,24 +19,48 @@
     <link href="css/style.css" rel="stylesheet">
 
     <style>
+        /* --- Gallery & Grid Styles --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+        }
+
         .gallery-item-dynamic {
             overflow: hidden;
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px M5px rgba(0,0,0,0.1);
             position: relative;
             cursor: pointer;
-            aspect-ratio: 1 / 1;
+            height: auto; /* Default height */
         }
+
+        /* --- Grid Span Variations --- */
+        .grid-item-wide {
+            grid-column: span 2;
+        }
+        .grid-item-tall {
+            grid-row: span 2;
+            height: calc(200px * 2 + 1.5rem); /* Double height + gap */
+        }
+        .grid-item-large {
+            grid-column: span 2;
+            grid-row: span 2;
+            height: calc(200px * 2 + 1.5rem);
+        }
+
         .gallery-item-dynamic img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.4s ease, filter 0.4s ease;
         }
+
         .gallery-item-dynamic:hover img {
             transform: scale(1.1);
             filter: brightness(0.7);
         }
+
         .gallery-caption {
             position: absolute;
             bottom: 0;
@@ -51,12 +75,46 @@
             transition: opacity 0.4s ease, transform 0.4s ease;
             font-size: 0.9rem;
         }
+
         .gallery-item-dynamic:hover .gallery-caption {
             opacity: 1;
             transform: translateY(0);
         }
+
         .gallery-section {
             margin-bottom: 4rem;
+        }
+        
+        /* --- Mobile Responsiveness for Grid --- */
+        @media (max-width: 768px) {
+            .gallery-grid {
+                display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+            /* Reset all spans on mobile */
+            .grid-item-wide, .grid-item-tall, .grid-item-large {
+                grid-column: span 1;
+                grid-row: span 1;
+                height: auto; /* Revert to default height */
+            }
+        }
+
+        /* --- Skeleton Loader Styles --- */
+        .skeleton {
+            animation: skeleton-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            background-color: #e2e8f0; /* Light gray */
+            border-radius: 8px;
+        }
+
+        @keyframes skeleton-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .skeleton-header {
+            height: 40px;
+            width: 250px;
+            margin: 0 auto 2.5rem auto;
         }
     </style>
 </head>
@@ -159,7 +217,7 @@
     <!-- Page Header Start -->
     <div class="container-fluid page-header py-5 wow fadeIn" data-wow-delay="0.1s">
         <div class="container text-center py-5">
-            <h1 class="display-2 text-white mb-4">Our Staff & Committees</h1>
+            <h1 class="display-2 text-white mb-4">Our Gallery</h1>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb justify-content-center mb-0">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -182,11 +240,17 @@
             </div>
             
             <div id="gallery-container">
-                <div id="loading-message" class="col-12 text-center py-5">
-                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                <!-- Skeleton Loader Structure -->
+                <div id="skeleton-loader" class="gallery-section">
+                    <div class="skeleton skeleton-header"></div>
+                    <div class="gallery-grid">
+                        <div class="skeleton gallery-item-dynamic"></div>
+                        <div class="skeleton gallery-item-dynamic grid-item-large"></div>
+                        <div class="skeleton gallery-item-dynamic"></div>
+                        <div class="skeleton gallery-item-dynamic"></div>
+                        <div class="skeleton gallery-item-dynamic"></div>
+                        <div class="skeleton gallery-item-dynamic grid-item-wide"></div>
                     </div>
-                    <p class="mt-3">Loading Gallery Images...</p>
                 </div>
             </div>
         </div>
@@ -284,8 +348,6 @@
                 </div>
             </div>
         </div>
-
-
         <!-- Copyright Start -->
         <div class="container-fluid copyright bg-dark py-4">
             <div class="container">
@@ -294,9 +356,6 @@
                         <span class="text-light"><a href="#">2025 <i class="fas fa-copyright text-light me-2"></i>Govt. HSS Larnoo</a>, All right reserved.</span>
                     </div>
                     <div class="col-md-6 my-auto text-center text-md-end text-white">
-                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
-                        <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
-                        <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
                         Designed By <a class="border-bottom" href="https://mujtabaalam.vercel.app">Mujtaba Alam</a>
                     </div>
                 </div>
@@ -314,6 +373,7 @@
     <script src="lib/wow/wow.min.js"></script>
     <script src="lib/lightbox/js/lightbox.min.js"></script>
     <script src="js/main.js"></script>
+    <script type="module" src="js/newsletter.js"></script>
     
     <!-- Firebase and Dynamic Gallery Logic -->
     <script type="module">
@@ -334,18 +394,18 @@
 
         async function displayGallery() {
             const galleryContainer = document.getElementById('gallery-container');
-            const loadingMessage = document.getElementById('loading-message');
+            const skeletonLoader = document.getElementById('skeleton-loader');
 
             try {
                 const q = query(collection(db, "galleryImages"), orderBy("timestamp", "desc"));
                 const querySnapshot = await getDocs(q);
 
-                if (loadingMessage) loadingMessage.remove(); 
                 if (querySnapshot.empty) {
                     galleryContainer.innerHTML = '<p class="col-12 text-center">The gallery is empty. Be the first to upload a photo!</p>';
                     return;
                 }
                 
+                // Group images by category
                 const groupedImages = {};
                 querySnapshot.forEach(doc => {
                     const data = doc.data();
@@ -354,21 +414,23 @@
                     groupedImages[category].push(data);
                 });
                 
+                // Clear container for new content
                 galleryContainer.innerHTML = '';
                 const sortedCategories = Object.keys(groupedImages).sort((a, b) => a.localeCompare(b));
+                let itemCounter = 0; // To apply varied grid classes
 
                 sortedCategories.forEach(category => {
                     const sectionDiv = document.createElement('div');
-                    sectionDiv.className = 'gallery-section wow fadeIn';
-                    sectionDiv.setAttribute('data-wow-delay', '0.1s');
+                    sectionDiv.className = 'gallery-section';
 
                     const header = `<div class="text-center mx-auto mb-5"><h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">${category}</h4></div>`;
                     
                     const gridDiv = document.createElement('div');
-                    gridDiv.className = 'row g-4';
+                    gridDiv.className = 'gallery-grid';
                     
                     groupedImages[category].forEach(imageData => {
-                        gridDiv.appendChild(createGalleryItem(imageData, category));
+                        gridDiv.appendChild(createGalleryItem(imageData, category, itemCounter));
+                        itemCounter++;
                     });
 
                     sectionDiv.innerHTML = header;
@@ -376,28 +438,37 @@
                     galleryContainer.appendChild(sectionDiv);
                 });
 
+                // Re-initialize WOW.js if needed after dynamic content is added
                 if (typeof WOW === 'function') new WOW().init();
 
             } catch (error) {
                 console.error("Error fetching gallery images:", error);
                 galleryContainer.innerHTML = '<p class="col-12 text-center text-danger">Could not load the gallery. Please try again.</p>';
+            } finally {
+                if (skeletonLoader) skeletonLoader.remove();
             }
         }
 
-        function createGalleryItem(data, category) {
+        function createGalleryItem(data, category, index) {
             const { caption, imageBase64 } = data;
-            const colDiv = document.createElement('div');
-            colDiv.className = 'col-md-6 col-lg-4 wow fadeIn';
-            colDiv.setAttribute('data-wow-delay', '0.2s');
             
-            colDiv.innerHTML = `
+            // Determine grid classes for varied layout
+            let gridClasses = '';
+            if (index % 7 === 1) gridClasses = 'grid-item-large';
+            else if (index % 5 === 2) gridClasses = 'grid-item-wide';
+            else if (index % 9 === 3) gridClasses = 'grid-item-tall';
+
+            const itemWrapper = document.createElement('div');
+            if(gridClasses) itemWrapper.className = gridClasses;
+
+            itemWrapper.innerHTML = `
                 <a href="${imageBase64}" data-lightbox="${category.replace(/\s+/g, '-')}" data-title="${caption}">
                     <div class="gallery-item-dynamic">
-                        <img src="${imageBase64}" alt="${caption}">
+                        <img src="${imageBase64}" alt="${caption}" loading="lazy">
                         <div class="gallery-caption">${caption}</div>
                     </div>
                 </a>`;
-            return colDiv;
+            return itemWrapper;
         }
 
         document.addEventListener('DOMContentLoaded', displayGallery);
