@@ -8,6 +8,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/admin-style.css">
     <link rel="stylesheet" href="css/admin-manage.css">
+    <style>
+        /* Additional styles for comment management */
+        .item-actions .info { background-color: #3498db; }
+        .item-actions .info:hover { box-shadow: inset 2px 2px 5px #2980b9, inset -2px -2px 5px #3fa0f7; }
+        .comment-author { color: #333; font-weight: bold; }
+        .comment-text { display: block; margin: 4px 0; color: #555; font-size: 0.95em; }
+        .item-details small { font-size: 0.8em; color: #777; }
+        #comments-modal .modal-content { max-width: 700px; }
+        #edit-comment-form { border-top: 1px solid #d1d9e6; padding-top: 20px; margin-top: 20px; }
+    </style>
 </head>
 <body>
     <div class="admin-wrapper">
@@ -55,7 +65,7 @@
         </main>
     </div>
 
-    <!-- Edit Modal -->
+    <!-- Edit Blog Modal -->
     <div id="edit-modal" class="modal">
         <div class="modal-content neumorphic-card">
             <span class="close-btn">&times;</span>
@@ -80,6 +90,34 @@
 
                 <button type="submit" class="neumorphic-btn primary">Save Changes</button>
                 <p id="edit-feedback-message" class="feedback-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- NEW: Comments Modal -->
+    <div id="comments-modal" class="modal">
+        <div class="modal-content neumorphic-card">
+            <span class="close-btn">&times;</span>
+            <h2>Manage Comments for "<span id="comments-blog-title"></span>"</h2>
+            <div id="comments-list-container">
+                <!-- Comments will be dynamically loaded here -->
+            </div>
+            
+            <form id="edit-comment-form" style="display:none;">
+                <h3>Edit Comment</h3>
+                <input type="hidden" id="edit-comment-blogId">
+                <input type="hidden" id="edit-comment-id">
+                <div class="form-group">
+                    <label for="edit-comment-author">Author</label>
+                    <input type="text" id="edit-comment-author" class="neumorphic-input" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="edit-comment-text">Comment Text</label>
+                    <textarea id="edit-comment-text" class="neumorphic-textarea" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="neumorphic-btn primary">Save Comment</button>
+                <button type="button" id="cancel-edit-comment" class="neumorphic-btn">Cancel</button>
+                <p id="edit-comment-feedback" class="feedback-message"></p>
             </form>
         </div>
     </div>
@@ -120,22 +158,25 @@
         const addForm = document.getElementById('add-blog-form');
         const addFeedback = document.getElementById('add-feedback-message');
         const manageSection = document.getElementById('manage-section');
+        
         const editModal = document.getElementById('edit-modal');
         const editForm = document.getElementById('edit-blog-form');
         const editFeedback = document.getElementById('edit-feedback-message');
-        const closeModalBtn = document.querySelector('.modal .close-btn');
+        const closeEditModalBtn = document.querySelector('#edit-modal .close-btn');
+
+        const commentsModal = document.getElementById('comments-modal');
+        const commentsBlogTitle = document.getElementById('comments-blog-title');
+        const commentsListContainer = document.getElementById('comments-list-container');
+        const closeCommentsModalBtn = document.querySelector('#comments-modal .close-btn');
+        const editCommentForm = document.getElementById('edit-comment-form');
+        const cancelEditCommentBtn = document.getElementById('cancel-edit-comment');
+        const editCommentFeedback = document.getElementById('edit-comment-feedback');
+
 
         // --- Reusable Utility Function ---
         const fileToBase64 = (file) => new Promise((resolve, reject) => {
-            if (!file) {
-                resolve(null);
-                return;
-            }
-            // Image size validation
-            if (file.size > 900 * 1024) { // 900 KB limit
-                reject(new Error(`Image "${file.name}" is too large. Please select a file under 900KB.`));
-                return;
-            }
+            if (!file) { resolve(null); return; }
+            if (file.size > 900 * 1024) { reject(new Error(`Image "${file.name}" is too large. Max 900KB.`)); return; }
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => resolve(reader.result);
@@ -165,6 +206,7 @@
                                 <span>By ${blog.author}</span>
                             </div>
                             <div class="item-actions">
+                                <button class="comments-btn neumorphic-btn info"><i class="fas fa-comments"></i></button>
                                 <button class="edit-btn neumorphic-btn"><i class="fas fa-edit"></i></button>
                                 <button class="delete-btn neumorphic-btn danger"><i class="fas fa-trash"></i></button>
                             </div>
@@ -199,20 +241,14 @@
             submitBtn.textContent = 'Publishing...';
 
             try {
-                // The fileToBase64 function now includes the size check
                 const mainImageBase64 = await fileToBase64(mainImageFile);
                 const authorImageBase64 = await fileToBase64(authorImageFile);
 
                 const newBlogPost = {
-                    title: addForm.title.value,
-                    shortDesc: addForm.shortDesc.value,
-                    fullContent: addForm.fullContent.value,
-                    author: addForm.author.value,
-                    authorRole: addForm.authorRole.value,
-                    imageUrl: mainImageBase64,
-                    authorImage: authorImageBase64,
-                    comments: [],
-                    createdAt: serverTimestamp() // This is crucial for sorting
+                    title: addForm.title.value, shortDesc: addForm.shortDesc.value,
+                    fullContent: addForm.fullContent.value, author: addForm.author.value,
+                    authorRole: addForm.authorRole.value, imageUrl: mainImageBase64,
+                    authorImage: authorImageBase64, comments: [], createdAt: serverTimestamp()
                 };
 
                 await addDoc(collection(db, COLLECTION_NAME), newBlogPost);
@@ -225,44 +261,38 @@
             } catch (error) {
                 addFeedback.textContent = `Error: ${error.message}`;
                 addFeedback.className = 'feedback-message error';
-                console.error("Add Blog Error:", error);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Publish Blog Post';
             }
         });
-
-        // --- MANAGE SECTION (EDIT/DELETE) EVENT LISTENER ---
+        
+        // --- MANAGE SECTION (EDIT/DELETE/COMMENTS) EVENT LISTENER ---
         manageSection.addEventListener('click', async (e) => {
             const target = e.target.closest('button');
             if (!target) return;
 
-            const docId = target.closest('li').dataset.id;
+            const li = target.closest('li');
+            const docId = li.dataset.id;
             
             // DELETE action
             if (target.classList.contains('delete-btn')) {
                 if (confirm('Are you sure you want to delete this blog post? This cannot be undone.')) {
                     try {
                         await deleteDoc(doc(db, COLLECTION_NAME, docId));
-                        target.closest('li').remove();
-                    } catch (error) {
-                        alert('Error deleting post. See console for details.');
-                        console.error("Delete Error:", error);
-                    }
+                        li.remove();
+                    } catch (error) { alert('Error deleting post.'); console.error("Delete Error:", error); }
                 }
             }
 
             // EDIT action (Opens Modal)
             if (target.classList.contains('edit-btn')) {
                 try {
-                    const docRef = doc(db, COLLECTION_NAME, docId);
-                    const docSnap = await getDoc(docRef);
-                    if (!docSnap.exists()) {
-                        throw new Error("Document not found");
-                    }
-                    const blog = { id: docSnap.id, ...docSnap.data() };
+                    const docSnap = await getDoc(doc(db, COLLECTION_NAME, docId));
+                    if (!docSnap.exists()) { throw new Error("Document not found"); }
+                    const blog = docSnap.data();
 
-                    document.getElementById('edit-id').value = blog.id;
+                    document.getElementById('edit-id').value = docId;
                     document.getElementById('edit-title').value = blog.title;
                     document.getElementById('edit-shortDesc').value = blog.shortDesc;
                     document.getElementById('edit-fullContent').value = blog.fullContent;
@@ -270,76 +300,158 @@
                     document.getElementById('edit-authorRole').value = blog.authorRole;
                     document.getElementById('edit-image-preview').src = blog.imageUrl;
                     document.getElementById('edit-author-image-preview').src = blog.authorImage;
-                    editForm.reset(); // Clear file inputs
+                    editForm.reset();
                     editModal.style.display = 'block';
 
-                } catch (error) {
-                    alert('Could not fetch blog details for editing.');
-                    console.error("Edit Fetch Error:", error);
-                }
+                } catch (error) { alert('Could not fetch blog details for editing.'); console.error("Edit Fetch Error:", error); }
+            }
+
+            // VIEW COMMENTS action
+            if (target.classList.contains('comments-btn')) {
+                const blogTitle = li.querySelector('.item-details strong').textContent;
+                await renderComments(docId, blogTitle);
+                commentsModal.style.display = 'block';
             }
         });
 
-        // --- UPDATE (SAVE CHANGES FROM MODAL) ---
+        // --- UPDATE BLOG (SAVE CHANGES FROM MODAL) ---
         editForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const docId = document.getElementById('edit-id').value;
             const submitBtn = e.target.querySelector('button[type="submit"]');
-            
             submitBtn.disabled = true;
             submitBtn.textContent = 'Saving...';
             editFeedback.textContent = '';
-            editFeedback.className = 'feedback-message';
             
             try {
-                // Get current images as fallback
                 let imageUrl = document.getElementById('edit-image-preview').src;
                 let authorImageUrl = document.getElementById('edit-author-image-preview').src;
 
-                // Check for new files and convert them (with size check)
                 const newMainImageFile = editForm['edit-imageUrl'].files[0];
-                if (newMainImageFile) {
-                    imageUrl = await fileToBase64(newMainImageFile);
-                }
+                if (newMainImageFile) { imageUrl = await fileToBase64(newMainImageFile); }
                 const newAuthorImageFile = editForm['edit-authorImage'].files[0];
-                if (newAuthorImageFile) {
-                    authorImageUrl = await fileToBase64(newAuthorImageFile);
-                }
+                if (newAuthorImageFile) { authorImageUrl = await fileToBase64(newAuthorImageFile); }
 
                 const updatedData = {
-                    title: document.getElementById('edit-title').value,
-                    shortDesc: document.getElementById('edit-shortDesc').value,
-                    fullContent: document.getElementById('edit-fullContent').value,
-                    author: document.getElementById('edit-author').value,
-                    authorRole: document.getElementById('edit-authorRole').value,
-                    imageUrl: imageUrl,
-                    authorImage: authorImageUrl
+                    title: document.getElementById('edit-title').value, shortDesc: document.getElementById('edit-shortDesc').value,
+                    fullContent: document.getElementById('edit-fullContent').value, author: document.getElementById('edit-author').value,
+                    authorRole: document.getElementById('edit-authorRole').value, imageUrl: imageUrl, authorImage: authorImageUrl
                 };
 
                 await updateDoc(doc(db, COLLECTION_NAME, docId), updatedData);
-                
                 editFeedback.textContent = 'Success! Post updated.';
                 editFeedback.className = 'feedback-message success';
-                await renderBlogs(); 
-                
-                setTimeout(() => {
-                    editModal.style.display = 'none';
-                    editFeedback.textContent = '';
-                }, 1500);
+                await renderBlogs();
+                setTimeout(() => { editModal.style.display = 'none'; editFeedback.textContent = ''; }, 1500);
 
             } catch (error) {
                 editFeedback.textContent = `Error: ${error.message}`;
                 editFeedback.className = 'feedback-message error';
-                console.error("Update Error:", error);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Save Changes';
             }
         });
 
+        // --- COMMENT MANAGEMENT FUNCTIONS & LISTENERS ---
+        async function renderComments(blogId, blogTitle) {
+            commentsBlogTitle.textContent = blogTitle.length > 30 ? blogTitle.substring(0, 30) + '...' : blogTitle;
+            commentsListContainer.innerHTML = `<p>Loading comments...</p>`;
+            editCommentForm.style.display = 'none';
+
+            try {
+                const commentsQuery = query(collection(db, 'blogs', blogId, 'comments'), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(commentsQuery);
+                
+                if (querySnapshot.empty) { commentsListContainer.innerHTML = '<p>No comments found for this post.</p>'; return; }
+
+                let commentsHtml = '<ul class="manage-list">';
+                querySnapshot.forEach(doc => {
+                    const comment = { id: doc.id, ...doc.data() };
+                    commentsHtml += `
+                        <li data-id="${comment.id}" data-blog-id="${blogId}">
+                            <div class="item-details">
+                                <span class="comment-author">${comment.name}</span>
+                                <p class="comment-text">${comment.text}</p>
+                                <small>${comment.createdAt ? new Date(comment.createdAt.seconds * 1000).toLocaleString() : 'Date not available'}</small>
+                            </div>
+                            <div class="item-actions">
+                                <button class="edit-comment-btn neumorphic-btn"><i class="fas fa-edit"></i></button>
+                                <button class="delete-comment-btn neumorphic-btn danger"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </li>`;
+                });
+                commentsListContainer.innerHTML = commentsHtml + '</ul>';
+            } catch (error) {
+                commentsListContainer.innerHTML = '<p class="feedback-message error">Could not load comments.</p>';
+                console.error("Render Comments Error:", error);
+            }
+        }
+
+        commentsListContainer.addEventListener('click', async (e) => {
+            const target = e.target.closest('button');
+            if (!target) return;
+
+            const li = target.closest('li');
+            const commentId = li.dataset.id;
+            const blogId = li.dataset.blogId;
+
+            if (target.classList.contains('delete-comment-btn')) {
+                if (confirm('Are you sure you want to delete this comment permanently?')) {
+                    try {
+                        await deleteDoc(doc(db, 'blogs', blogId, 'comments', commentId));
+                        await renderComments(blogId, commentsBlogTitle.textContent);
+                    } catch (error) { alert('Error deleting comment.'); console.error("Delete Comment Error:", error); }
+                }
+            }
+
+            if (target.classList.contains('edit-comment-btn')) {
+                const author = li.querySelector('.comment-author').textContent;
+                const text = li.querySelector('.comment-text').textContent;
+                
+                document.getElementById('edit-comment-blogId').value = blogId;
+                document.getElementById('edit-comment-id').value = commentId;
+                document.getElementById('edit-comment-author').value = author;
+                document.getElementById('edit-comment-text').value = text;
+                editCommentForm.style.display = 'block';
+            }
+        });
+
+        editCommentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const blogId = document.getElementById('edit-comment-blogId').value;
+            const commentId = document.getElementById('edit-comment-id').value;
+            const newText = document.getElementById('edit-comment-text').value;
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+            editCommentFeedback.textContent = '';
+
+            try {
+                await updateDoc(doc(db, 'blogs', blogId, 'comments', commentId), { text: newText });
+                editCommentFeedback.className = 'feedback-message success';
+                editCommentFeedback.textContent = 'Comment updated successfully!';
+                await renderComments(blogId, commentsBlogTitle.textContent);
+                setTimeout(() => { editCommentForm.style.display = 'none'; editCommentFeedback.textContent = ''; }, 1500);
+            } catch (error) {
+                editCommentFeedback.className = 'feedback-message error';
+                editCommentFeedback.textContent = 'Error updating comment.';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Save Comment';
+            }
+        });
+
+        cancelEditCommentBtn.addEventListener('click', () => { editCommentForm.style.display = 'none'; });
+
         // --- MODAL VISIBILITY ---
-        closeModalBtn.onclick = () => { editModal.style.display = 'none'; };
-        window.onclick = (event) => { if (event.target == editModal) { editModal.style.display = 'none'; } };
+        closeEditModalBtn.onclick = () => { editModal.style.display = 'none'; };
+        closeCommentsModalBtn.onclick = () => { commentsModal.style.display = 'none'; };
+        window.onclick = (event) => { 
+            if (event.target == editModal) { editModal.style.display = 'none'; }
+            if (event.target == commentsModal) { commentsModal.style.display = 'none'; }
+        };
         
         // --- INITIAL RENDER ---
         renderBlogs();
