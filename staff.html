@@ -338,6 +338,26 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Define the desired order of designations
+        const designationSortOrder = [
+            'HOI',
+            'VICE HOI',
+            'ENGLISH LITERATURE',
+            'IT/ITES',
+            'TOURISM & HOSPITALITY',
+            'SOCIOLOGY',
+            'SOCIAL STUDIES',
+            'ZOOLOGY',
+            'BOTANY',
+            'PHYSICS',
+            'CHEMISTRY',
+            'MATHEMATICS',
+            'HISTORY',
+            'POLITICAL SCIENCE',
+            'ECONOMICS',
+            'MTS'
+        ];
+
         function createTeacherCard(teacher) {
             const name = teacher.name || "N/A";
             const designation = teacher.designation || "N/A";
@@ -364,17 +384,34 @@
             const loadingMessage = document.getElementById('loading-message');
             
             try {
-                const teachersQuery = query(collection(db, "teachers"), orderBy("createdAt", "asc"));
+                const teachersQuery = query(collection(db, "teachers"));
                 const querySnapshot = await getDocs(teachersQuery);
 
                 if (loadingMessage) loadingMessage.style.display = 'none';
 
                 if (querySnapshot.empty) {
                      teamContainer.innerHTML += '<p class="text-center col-12">No additional staff members found.</p>';
+                     return;
                 }
                 
-                querySnapshot.forEach((doc) => {
-                    const teacherData = doc.data();
+                // Convert snapshot to an array
+                const teachers = [];
+                querySnapshot.forEach(doc => teachers.push(doc.data()));
+
+                // Sort the array based on the custom order
+                teachers.sort((a, b) => {
+                    const posA = designationSortOrder.indexOf(a.designation.toUpperCase());
+                    const posB = designationSortOrder.indexOf(b.designation.toUpperCase());
+
+                    // If a designation is not in our list, push it to the end
+                    if (posA === -1) return 1;
+                    if (posB === -1) return -1;
+
+                    return posA - posB;
+                });
+
+                // Display the sorted teachers
+                teachers.forEach((teacherData) => {
                     // Exclude the Principal as he is hardcoded
                     if (teacherData && teacherData.name && teacherData.designation.toUpperCase() !== 'HOI') {
                         const teacherCard = createTeacherCard(teacherData);

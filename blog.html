@@ -44,30 +44,175 @@
             width: 100%; max-height: 450px; object-fit: cover;
             border-radius: 8px; margin-bottom: 20px;
         }
-        .blog-overlay-close {
+        .blog-overlay-close  {
             position: absolute; top: 15px; right: 25px;
-            font-size: 40px; color: #fff; cursor: pointer; line-height: 1;
+            font-size: 40px; color: #75e011; cursor: pointer; line-height: 1;
+            background: #75e011; border-radius: 100%;
         }
-        .blog-overlay-content p { white-space: pre-wrap; /* To respect newlines in content */ }
-            .blog-overlay-comments {
-                margin-top: 30px;
-                border-top: 1px solid #555;
-                padding-top: 20px;
-            }
-            .blog-overlay-comment {
-                margin-bottom: 15px;
-                padding-bottom: 15px;
-                border-bottom: 1px solid #444;
-            }
-             .blog-overlay-comment:last-child {
-                border-bottom: none;
-            }
-            .blog-overlay-comment p {
-                margin-bottom: 5px;
-            }
-            .blog-overlay-comment small {
-                color: #ccc;
-            }
+        /* --- Start of Neumorphic Comment Section Styles --- */
+
+/* Define variables for easy theme changes */
+:root {
+    --neo-bg-color: #e0e5ec; /* The base background color */
+    --neo-light-shadow: #ffffff; /* The light shadow color */
+    --neo-dark-shadow: #a3b1c6; /* The dark shadow color */
+    --neo-text-color: #3d4a5e; /* Primary text color for contrast */
+    --neo-accent-color: #6d5dfc; /* An accent color for headings and buttons */
+}
+
+/* Main container for the entire comments section */
+.blog-overlay-comments {
+    margin-top: 40px;
+    padding: 30px;
+    border-radius: 20px;
+    background: var(--neo-bg-color);
+    box-shadow: 
+        9px 9px 16px var(--neo-dark-shadow),
+        -9px -9px 16px var(--neo-light-shadow);
+}
+
+.blog-overlay-comments h4 {
+    margin-bottom: 25px;
+    color: var(--neo-accent-color);
+    font-size: 1.6em;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* Styling for each individual comment card */
+.blog-overlay-comment {
+    margin-bottom: 25px;
+    padding: 20px;
+    border-radius: 15px;
+    background: var(--neo-bg-color);
+    /* The classic neumorphic extruded shadow */
+    box-shadow: 
+        5px 5px 10px var(--neo-dark-shadow),
+        -5px -5px 10px var(--neo-light-shadow);
+    transition: all 0.3s ease;
+}
+
+.blog-overlay-comment:hover {
+    /* Slightly lift the card on hover */
+    transform: translateY(-2px);
+}
+
+.blog-overlay-comment p {
+    margin-bottom: 5px;
+    color: var(--neo-text-color);
+}
+
+/* Style for the commenter's name */
+.blog-overlay-comment p strong {
+    color: var(--neo-text-color);
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+/* Timestamp styling */
+.blog-overlay-comment small {
+    display: block; /* Make it a block to easily align it */
+    text-align: right;
+    color: #8c96a5;
+    font-size: 0.75em;
+    margin-top: 8px;
+}
+
+/* Comment form styling */
+#comment-form {
+    margin-top: 30px;
+}
+
+#comment-form h5 {
+    margin-bottom: 20px;
+    color: var(--neo-accent-color);
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+/* Common styles for form inputs and textareas */
+.neo-input, 
+#commenter-name, 
+#comment-text {
+    width: 100%;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    background-color: var(--neo-bg-color);
+    color: var(--neo-text-color);
+    /* The "pressed" or "inset" neumorphic shadow */
+    box-shadow: 
+        inset 4px 4px 8px var(--neo-dark-shadow),
+        inset -4px -4px 8px var(--neo-light-shadow);
+    transition: box-shadow 0.3s ease;
+}
+
+.neo-input::placeholder,
+#commenter-name::placeholder, 
+#comment-text::placeholder {
+    color: #8c96a5;
+}
+
+.neo-input:focus,
+#commenter-name:focus, 
+#comment-text:focus {
+    outline: none;
+    box-shadow: 
+        inset 6px 6px 10px var(--neo-dark-shadow),
+        inset -6px -6px 10px var(--neo-light-shadow);
+}
+
+/* Neumorphic button for submitting the form */
+#comment-form button[type="submit"] {
+    margin-top: 15px;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 10px;
+    background: var(--neo-bg-color);
+    color: var(--neo-accent-color);
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 
+        5px 5px 10px var(--neo-dark-shadow),
+        -5px -5px 10px var(--neo-light-shadow);
+    transition: all 0.2s ease-in-out;
+}
+
+#comment-form button[type="submit"]:hover {
+    color: #4a3bde; /* Darken accent color on hover */
+}
+
+#comment-form button[type="submit"]:active {
+    /* Press the button in on click */
+    box-shadow: 
+        inset 4px 4px 8px var(--neo-dark-shadow),
+        inset -4px -4px 8px var(--neo-light-shadow);
+    transform: translateY(1px);
+}
+
+/* Other general styles to ensure things look good */
+.blog-overlay-content p { 
+    white-space: pre-wrap; /* To respect newlines in content */ 
+    color: var(--neo-text-color);
+}
+
+/* Adjustments for the main content inside the overlay to match the new style */
+.blog-overlay-content {
+    background: var(--neo-bg-color);
+    color: var(--neo-text-color);
+}
+.blog-overlay-content h2 {
+    color: #333; /* Make title darker for contrast */
+}
+.blog-overlay-close {
+    color: var(--neo-text-color);
+}
+.blog-overlay-close:hover {
+    color: #000;
+}
+
+/* --- End of Neumorphic Comment Section Styles --- */
         </style>
 
     </head>
@@ -346,7 +491,7 @@
     <!-- =============================================== -->
      <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
         
         const firebaseConfig = { apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU", authDomain: "hss-larnoo-teachers.firebaseapp.com", projectId: "hss-larnoo-teachers", storageBucket: "hss-larnoo-teachers.appspot.com", messagingSenderId: "143363278401", appId: "1:143363278401:web:49d7fffbdf31ce073e68c0", measurementId: "G-GHQLMME6PJ" };
         const app = initializeApp(firebaseConfig);
@@ -354,6 +499,84 @@
 
         const blogContainer = document.getElementById('blog-container');
         let blogDataCache = [];
+
+        async function handleCommentSubmit(e, blogId) {
+            e.preventDefault();
+            const nameInput = document.getElementById('commenter-name');
+            const commentInput = document.getElementById('comment-text');
+            const statusDiv = document.getElementById('comment-status');
+            const submitBtn = e.target.querySelector('button');
+
+            const name = nameInput.value.trim();
+            const text = commentInput.value.trim();
+
+            if (!name || !text) {
+                statusDiv.textContent = 'Please fill out both name and comment fields.';
+                statusDiv.style.color = 'yellow';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Posting...';
+            statusDiv.textContent = '';
+
+            try {
+                await addDoc(collection(db, "blogs", blogId, "comments"), {
+                    name: name,
+                    text: text,
+                    createdAt: serverTimestamp()
+                });
+                nameInput.value = '';
+                commentInput.value = '';
+                statusDiv.textContent = 'Comment posted successfully!';
+                statusDiv.style.color = 'lightgreen';
+                fetchAndDisplayComments(blogId);
+
+            } catch (error) {
+                console.error("Error adding comment: ", error);
+                statusDiv.textContent = 'Failed to post comment. Please try again.';
+                statusDiv.style.color = 'red';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Post Comment';
+                setTimeout(() => statusDiv.textContent = '', 4000);
+            }
+        }
+        
+        async function fetchAndDisplayComments(blogId) {
+            const commentsList = document.getElementById('comments-list');
+            const commentCountSpan = document.getElementById('comment-count');
+            commentsList.innerHTML = '<p>Loading comments...</p>';
+
+            try {
+                const commentsQuery = query(collection(db, "blogs", blogId, "comments"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(commentsQuery);
+                
+                commentsList.innerHTML = ''; 
+
+                if (querySnapshot.empty) {
+                    commentsList.innerHTML = '<p>Be the first to comment!</p>';
+                    commentCountSpan.textContent = 0;
+                    return;
+                }
+
+                commentCountSpan.textContent = querySnapshot.size;
+                querySnapshot.forEach(doc => {
+                    const comment = doc.data();
+                    const commentDiv = document.createElement('div');
+                    commentDiv.className = 'blog-overlay-comment';
+                    commentDiv.innerHTML = `
+                        <p><strong>${comment.name}</strong></p>
+                        <p>${comment.text}</p>
+                        <small>${comment.createdAt ? new Date(comment.createdAt.seconds * 1000).toLocaleString() : 'Just now'}</small>
+                    `;
+                    commentsList.appendChild(commentDiv);
+                });
+            } catch (error) {
+                console.error("Error fetching comments: ", error);
+                commentsList.innerHTML = '<p>Could not load comments.</p>';
+            }
+        }
 
         function openBlogOverlay(blogId) {
             const blog = blogDataCache.find(b => b.id === blogId);
@@ -367,12 +590,29 @@
                 <p><em>By ${blog.author} on ${new Date(blog.createdAt.seconds * 1000).toLocaleDateString()}</em></p>
                 <hr style="border-color: #555;">
                 <p>${blog.fullContent}</p>
+                
+                <div class="blog-overlay-comments">
+                    <h4>Comments (<span id="comment-count">0</span>)</h4>
+                    <div id="comments-list"><p>Loading comments...</p></div>
+                    <form id="comment-form" class="mt-4">
+                        <h5>Leave a Comment</h5>
+                        <div class="mb-3">
+                            <input type="text" id="commenter-name" class="form-control" placeholder="Your Name" required style="background: #fff; color: #212529; border: 1px solid #ced4da;">
+                        </div>
+                        <div class="mb-3">
+                            <textarea id="comment-text" class="form-control" rows="3" placeholder="Your Comment" required style="background: #fff; color: #212529; border: 1px solid #ced4da;"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Post Comment</button>
+                        <div id="comment-status" class="mt-2" style="font-size: 0.9em; color: lightgreen;"></div>
+                    </form>
+                </div>
             `;
             
             document.getElementById('blog-overlay').style.display = 'flex';
             document.body.style.overflow = 'hidden';
-
             overlayContent.querySelector('.blog-overlay-close').onclick = closeBlogOverlay;
+            fetchAndDisplayComments(blogId);
+            document.getElementById('comment-form').addEventListener('submit', (e) => handleCommentSubmit(e, blogId));
         }
 
         function closeBlogOverlay() {
@@ -385,7 +625,7 @@
                 const q = query(collection(db, "blogs"), orderBy("createdAt", "desc"));
                 const querySnapshot = await getDocs(q);
                 
-                blogContainer.innerHTML = ''; // Clear spinner
+                blogContainer.innerHTML = '';
                 if (querySnapshot.empty) {
                     blogContainer.innerHTML = '<p class="text-center">No blog posts found.</p>';
                     return;
@@ -404,7 +644,7 @@
                             </div>
                             <div class="d-flex justify-content-between px-4 py-3 bg-light border-bottom border-primary">
                                 <small class="text-dark"><i class="fas fa-calendar me-1"></i> ${new Date(blog.createdAt.seconds * 1000).toLocaleDateString()}</small>
-                                <small class="text-dark"><i class="fas fa-comment-alt me-1"></i> Comments (${blog.comments.length})</small>
+                                <small class="text-dark"><i class="fas fa-comment-alt me-1"></i> View Comments</small>
                             </div>
                             <div class="blog-content d-flex align-items-center px-4 py-3 bg-light">
                                 <div class="overflow-hidden rounded-circle border border-primary">
