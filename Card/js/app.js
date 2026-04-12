@@ -20,19 +20,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ---- Tab Navigation Logic ----
+    // ---- Tab Navigation Logic (with Hash Persistence) ----
     const navLinks = document.querySelectorAll('.nav-link');
     const views    = document.querySelectorAll('.view');
 
-    function switchView(viewId) {
+    async function switchView(viewId) {
+        // Stop scanners or listeners if moving away
+        if (window.stopAttendanceScanner) await window.stopAttendanceScanner();
+
         views.forEach(v => v.classList.remove('active'));
         navLinks.forEach(l => l.classList.remove('active'));
 
-        document.getElementById(`${viewId}-view`).classList.add('active');
-        document.getElementById(`nav-${viewId}`).classList.add('active');
+        const targetView = document.getElementById(`${viewId}-view`);
+        const targetNav  = document.getElementById(`nav-${viewId}`);
 
-        // Scroll to top on switch
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (targetView && targetNav) {
+            targetView.classList.add('active');
+            targetNav.classList.add('active');
+            window.location.hash = viewId;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Trigger module specific setups
+            if (viewId === 'admin' && window.setupAdminView) window.setupAdminView();
+            if (viewId === 'attendance' && window.setupAttendanceView) window.setupAttendanceView();
+            if (viewId === 'reports' && window.setupReportsView) window.setupReportsView();
+        }
     }
 
     navLinks.forEach(link => {
@@ -42,6 +54,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    function handleRouting() {
+        const hash = window.location.hash.replace('#', '') || 'student';
+        switchView(hash);
+    }
+
+    window.addEventListener('hashchange', handleRouting);
+    
+    // ---- Initialize Modules ----
+    initStudentModule();
+    initAdminModule();
+    initAttendanceModule();
+    initReportsModule();
+    initBulkModule();
+
+    // Initial Route
+    setTimeout(handleRouting, 100); // Small delay to let modules init
+    
     // ---- Modal Global Close Logic ----
     window.onclick = (event) => {
         if (event.target.classList.contains('modal')) {
@@ -53,11 +82,4 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.closest('.modal').style.display = 'none';
         };
     });
-
-    // ---- Initialize Modules ----
-    initStudentModule();
-    initAdminModule();
-    initAttendanceModule();
-    initReportsModule();
-    initBulkModule();
 });

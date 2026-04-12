@@ -11,14 +11,6 @@ import {
     signInWithEmailAndPassword, onAuthStateChanged, signOut
 } from './firebase-config.js';
 
-// Expose setupAttendanceView & setupReportsView (set by their modules)
-// They are called here when auth state changes
-let _setupAttendanceView = null;
-let _setupReportsView    = null;
-
-export function registerAttendanceSetup(fn) { _setupAttendanceView = fn; }
-export function registerReportsSetup(fn)    { _setupReportsView    = fn; }
-
 export function initAdminModule() {
 
     const loginForm          = document.getElementById('loginForm');
@@ -34,6 +26,15 @@ export function initAdminModule() {
     const modalCardContainer = document.getElementById('modal-card-container');
     const editFormContainer  = document.getElementById('editForm');
 
+    let studentDataUnsubscribe = null;
+
+    // ---- Setup View ----
+    window.setupAdminView = () => {
+        if (auth.currentUser) {
+            listenForDataChanges();
+        }
+    };
+
     // ---- Auth State ----
     onAuthStateChanged(auth, user => {
         const isAdmin = !!user;
@@ -48,13 +49,40 @@ export function initAdminModule() {
 
         if (isAdmin) {
             listenForDataChanges();
-            if (state.currentView === 'attendance' && _setupAttendanceView) _setupAttendanceView();
-            if (state.currentView === 'reports'    && _setupReportsView)    _setupReportsView();
         } else {
+            if (studentDataUnsubscribe) studentDataUnsubscribe();
             state.allStudents = [];
             renderTable([]);
         }
     });
+
+    // ---- Firestore Listener ----
+    function listenForDataChanges() {
+        if (studentDataUnsubscribe) return; // Already listening
+
+        loadingIndicator.style.display = 'block';
+        const q = query(collection(db, 'students'), orderBy('createdAt', 'desc'));
+        
+        studentDataUnsubscribe = onSnapshot(q, snapshot => {
+            state.allStudents = snapshot.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+            
+            renderClassFilterButtons();
+            const activeFilter = document.querySelector('.class-filter-buttons .btn.active')?.dataset.class || 'All';
+            filterAndRenderTable(activeFilter);
+            renderDashboardChart();
+            
+            loadingIndicator.style.display = 'none';
+
+            // Refresh other modules if they are active
+            const hash = window.location.hash.replace('#', '');
+            if (hash === 'attendance' && window.setupAttendanceView) window.setupAttendanceView();
+            if (hash === 'reports' && window.setupReportsView) window.setupReportsView();
+            
+        }, err => {
+            console.error(err);
+            loadingIndicator.textContent = 'Error loading data. Please refresh.';
+        });
+    }
 
     // ---- Login / Logout ----
     loginForm.addEventListener('submit', (e) => {
@@ -108,26 +136,6 @@ export function initAdminModule() {
         });
     }
 
-    // ---- Firestore Listener ----
-    let studentDataUnsubscribe = null;
-
-    function listenForDataChanges() {
-        if (studentDataUnsubscribe) studentDataUnsubscribe();
-        const q = query(collection(db, 'students'), orderBy('createdAt', 'desc'));
-        studentDataUnsubscribe = onSnapshot(q, snapshot => {
-            loadingIndicator.style.display = 'block';
-            state.allStudents = snapshot.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
-            renderClassFilterButtons();
-            const activeFilter = document.querySelector('.class-filter-buttons .btn.active')?.dataset.class || 'All';
-            filterAndRenderTable(activeFilter);
-            renderDashboardChart();
-            loadingIndicator.style.display = 'none';
-        }, err => {
-            console.error(err);
-            loadingIndicator.textContent = 'Error loading data.';
-        });
-    }
-
     // ---- Filter Buttons ----
     function renderClassFilterButtons() {
         const classes = [...new Set(state.allStudents.map(s => s.class))].sort((a,b) => a - b);
@@ -147,16 +155,17 @@ export function initAdminModule() {
     });
 
     searchInput.addEventListener('keyup', () => {
-        const activeBtn = document.querySelector('.class-filter-buttons .btn.active');
-        if (activeBtn) activeBtn.classList.remove('active');
-        const allBtn = document.querySelector('.class-filter-buttons .btn[data-class="All"]');
-        if (allBtn) allBtn.classList.add('active');
-
         const term = searchInput.value.toLowerCase().trim();
-        if (!term) { renderTable(state.allStudents); return; }
+        if (!term) { 
+            const activeFilter = document.querySelector('.class-filter-buttons .btn.active')?.dataset.class || 'All';
+            filterAndRenderTable(activeFilter);
+            return; 
+        }
 
         renderTable(state.allStudents.filter(s =>
-            Object.values(s).some(v => String(v).toLowerCase().includes(term))
+            s.name.toLowerCase().includes(term) || 
+            s.customId.toLowerCase().includes(term) ||
+            s.roll.toLowerCase().includes(term)
         ));
     });
 
@@ -192,14 +201,6 @@ export function initAdminModule() {
         });
     }
 
-    // ---- Modal Helpers ----
-    function openModal(modal)  { modal.style.display = 'block'; }
-    function closeModal(modal) { modal.style.display = 'none';  }
-
-    document.querySelectorAll('.close-btn').forEach(btn =>
-        btn.addEventListener('click', (e) => closeModal(e.target.closest('.modal')))
-    );
-
     // ---- View Card Modal ----
     function populateCardInModal(student) {
         modalCardContainer.innerHTML = document.getElementById('student-card-preview').innerHTML;
@@ -221,7 +222,7 @@ export function initAdminModule() {
         if (sessionEl) sessionEl.textContent = student.session || '2025-26';
 
         generateQrCode(card.querySelector('.card-qr-code'), student.customId);
-        openModal(viewModal);
+        viewModal.style.display = 'block';
     }
 
     // ---- Edit Modal ----
@@ -275,12 +276,6 @@ export function initAdminModule() {
         const editPhotoInput   = editFormContainer.querySelector('#editPhoto');
         const editPhotoPreview = editFormContainer.querySelector('#editPhotoPreview');
 
-        // Pre-fill values
-        editFormContainer.querySelector('input[name="name"]').value        = student.name || '';
-        editFormContainer.querySelector('input[name="parentage"]').value   = student.parentage || '';
-        editFormContainer.querySelector('input[name="roll"]').value        = student.roll || '';
-        editFormContainer.querySelector('input[name="phone"]').value       = student.phone || '';
-        editFormContainer.querySelector('textarea[name="address"]').value  = student.address || '';
         editClassSelect.value = student.class || '';
 
         const updateEditDynamicFields = () => {
@@ -309,13 +304,10 @@ export function initAdminModule() {
                     state.editModalPhotoData = res;
                     editPhotoPreview.src = res;
                 });
-            } else {
-                state.editModalPhotoData = student.photo;
-                editPhotoPreview.src = student.photo || 'profile.png';
             }
         });
 
-        openModal(editModal);
+        editModal.style.display = 'block';
     }
 
     // ---- Edit form submit ----
@@ -326,14 +318,15 @@ export function initAdminModule() {
         updateBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
 
         const formData    = new FormData(e.target);
-        const updatedData = {};
-        updatedData.name      = formData.get('name');
-        updatedData.parentage = formData.get('parentage');
-        updatedData.class     = formData.get('class');
-        updatedData.roll      = formData.get('roll');
-        updatedData.phone     = formData.get('phone');
-        updatedData.address   = formData.get('address');
-        updatedData.session   = formData.get('session') || '2025-26';
+        const updatedData = {
+            name:      formData.get('name'),
+            parentage: formData.get('parentage'),
+            class:     formData.get('class'),
+            roll:      formData.get('roll'),
+            phone:     formData.get('phone'),
+            address:   formData.get('address'),
+            session:   formData.get('session') || '2025-26'
+        };
 
         if (['9','10'].includes(updatedData.class)) {
             updatedData.gender = formData.get('dynamicField');
@@ -341,19 +334,16 @@ export function initAdminModule() {
         } else if (['11','12'].includes(updatedData.class)) {
             updatedData.stream = formData.get('dynamicField');
             updatedData.gender = null;
-        } else {
-            updatedData.stream = null;
-            updatedData.gender = null;
         }
+
         if (state.editModalPhotoData) updatedData.photo = state.editModalPhotoData;
 
         try {
             await updateDoc(doc(db, 'students', formData.get('firestoreId')), updatedData);
             alert('Record Updated Successfully!');
-            closeModal(editModal);
+            editModal.style.display = 'none';
         } catch (err) {
             alert(`Update failed: ${err.message}`);
-            console.error(err);
         } finally {
             updateBtn.disabled = false;
             updateBtn.innerHTML = `<i class="fa-solid fa-save"></i> Save Changes`;
@@ -376,22 +366,21 @@ export function initAdminModule() {
             openEditModal(student);
         } else if (button.classList.contains('delete-card-btn')) {
             if (confirm(`Delete record for ${student.name}? This is permanent.`)) {
-                deleteDoc(doc(db, 'students', button.dataset.id))
-                    .catch(err => alert('Delete failed: ' + err.message));
+                deleteDoc(doc(db, 'students', button.dataset.id));
             }
         }
     });
 
-    // ---- View modal action buttons ----
-    document.getElementById('editFromViewBtn').addEventListener('click', (e) => {
+    // Modal action buttons
+    document.getElementById('editFromViewBtn').onclick = (e) => {
         const student = state.allStudents.find(s => s.firestoreId === e.target.dataset.id);
-        if (student) { closeModal(viewModal); openEditModal(student); }
-    });
+        if (student) { viewModal.style.display = 'none'; openEditModal(student); }
+    };
 
-    document.getElementById('downloadFromViewBtn').addEventListener('click', (e) => {
+    document.getElementById('downloadFromViewBtn').onclick = (e) => {
         const student = state.allStudents.find(s => s.firestoreId === e.target.dataset.id);
         if (student) {
-            html2canvas(document.querySelector('#modal-card-container #idCard'), { scale: 4, useCORS: true, backgroundColor: null })
+            html2canvas(document.querySelector('#modal-card-container #idCard'), { scale: 4, useCORS: true })
                 .then(canvas => {
                     const link = document.createElement('a');
                     link.download = `ID-Card_${student.name.replace(/\s+/g,'_')}.png`;
@@ -399,23 +388,5 @@ export function initAdminModule() {
                     link.click();
                 });
         }
-    });
-
-    document.getElementById('shareFromViewBtn').addEventListener('click', async (e) => {
-        const student = state.allStudents.find(s => s.firestoreId === e.target.dataset.id);
-        if (!student) return;
-        if (navigator.share) {
-            try {
-                const canvas = await html2canvas(document.querySelector('#modal-card-container #idCard'), { scale: 4, useCORS: true, backgroundColor: null });
-                const blob   = await new Promise(r => canvas.toBlob(r, 'image/png'));
-                const file   = new File([blob], `ID-Card_${student.name.replace(/\s+/g,'_')}.png`, { type: 'image/png' });
-                await navigator.share({ files: [file], title: `${student.name}'s ID Card`, text: `ID card for ${student.name}.` });
-            } catch (err) {
-                if (err.name !== 'AbortError') alert('Could not share the ID card.');
-            }
-        } else {
-            alert('Web Share not supported. Use Download instead.');
-            document.getElementById('downloadFromViewBtn').click();
-        }
-    });
+    };
 }

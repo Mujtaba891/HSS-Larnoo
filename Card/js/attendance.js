@@ -16,13 +16,16 @@ export function initAttendanceModule() {
     const scannerContainer       = document.getElementById('scanner-container');
     const scanResultEl           = document.getElementById('scan-result');
 
+    let qrScanner = null;
+
     // ---- Setup (called when switching to this view) ----
-    function setupAttendanceView() {
-        startScanner();
+    async function setupAttendanceView() {
+        if (!auth.currentUser) return;
         renderAttendanceForSelectedDate();
+        await startScanner();
     }
 
-    // Expose so admin.js can call it on auth state change
+    // Expose so app.js can call it
     window.setupAttendanceView = setupAttendanceView;
 
     // ---- Date Navigation ----
@@ -67,7 +70,6 @@ export function initAttendanceModule() {
             return;
         }
 
-        // Group by class + section
         const sections = {};
         presentStudents.forEach(student => {
             const key = student.stream
@@ -125,7 +127,7 @@ export function initAttendanceModule() {
 
         const student = state.allStudents.find(s => s.customId === decodedText);
         let feedbackClass = 'result-error';
-        let feedbackText  = `Error: Student ID ${decodedText} not found.`;
+        let feedbackText  = `Error: ID ${decodedText} not found.`;
 
         if (student) {
             const today = new Date().toISOString().split('T')[0];
@@ -163,29 +165,36 @@ export function initAttendanceModule() {
             scannerContainer.classList.remove('scanner-success', 'scanner-error');
             scanResultEl.className   = 'result-info';
             scanResultEl.textContent = 'Awaiting Scan...';
-        }, 2500);
+        }, 3000);
     }
 
     // ---- Start QR Scanner ----
-    function startScanner() {
-        if (state.currentView !== 'attendance' || !auth.currentUser) return;
+    async function startScanner() {
         const qrReaderElement = document.getElementById('qr-reader');
         if (!qrReaderElement) return;
 
-        if (!state.qrScanner) {
-            state.qrScanner = new Html5Qrcode('qr-reader', {
-                formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
-            });
+        // Stop existing scanner if running
+        if (qrScanner) {
+            try { await qrScanner.stop(); } catch(e) {}
         }
 
-        if (state.qrScanner.isScanning) return;
-
-        scannerContainer.classList.remove('scanner-success', 'scanner-error');
-        scanResultEl.className   = 'result-info';
-        scanResultEl.textContent = 'Awaiting Scan...';
-
+        qrScanner = new Html5Qrcode("qr-reader");
         const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-        state.qrScanner.start({ facingMode: 'environment' }, config, onScanSuccess, () => {})
-            .catch(err => console.error('Scanner start error:', err));
+
+        try {
+            await qrScanner.start({ facingMode: "environment" }, config, onScanSuccess);
+            scanResultEl.textContent = 'Scanner Ready. Please point at QR Code.';
+        } catch (err) {
+            console.error("Camera start error:", err);
+            scanResultEl.className = 'result-error';
+            scanResultEl.textContent = 'Camera permission denied or not found.';
+        }
     }
+
+    // Stop scanner when leaving view
+    window.stopAttendanceScanner = async () => {
+        if (qrScanner) {
+            try { await qrScanner.stop(); qrScanner = null; } catch(e) {}
+        }
+    };
 }

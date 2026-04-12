@@ -1,0 +1,92 @@
+/* =====================================================
+   HSS Larnoo ID System — responsive.css
+   Mobile-first design adjustments
+   ===================================================== */
+
+@media (max-width: 768px) {
+    .page-container { padding: 10px; }
+    
+    #app-header {
+        padding: 10px 15px;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    #app-header h1 { font-size: 1.2rem; }
+    
+    #app-header nav {
+        justify-content: center;
+        width: 100%;
+        margin-top: 10px;
+        gap: 5px;
+    }
+    
+    #app-header nav a {
+        margin: 0;
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    .main-content { gap: 20px; }
+    
+    .form-section, .card-section, .data-section, .report-card {
+        padding: 15px;
+        min-width: 100%;
+    }
+
+    .section-title { font-size: 1.2rem; margin-bottom: 15px; }
+
+    /* Admin Table Responsive */
+    .table-container {
+        margin-top: 10px;
+        border-radius: 8px;
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+    }
+    
+    .data-table { font-size: 12px; }
+    .data-table th, .data-table td { padding: 8px 10px; }
+
+    /* Attendance Scanner */
+    #scanner-container { max-width: 100%; }
+    #qr-reader { width: 100% !important; }
+
+    /* Reports Grid */
+    .report-stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    
+    .stat-box h3 { font-size: 20px; }
+    
+    .report-chart-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Modal Mobile Fix */
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    #idCard {
+        transform: scale(0.85);
+        margin-left: -25px; /* Centers the scaled card */
+    }
+    
+    .card-section {
+        overflow: hidden;
+        padding-bottom: 40px;
+    }
+
+    .class-filter-buttons {
+        justify-content: center;
+    }
+    
+    .class-filter-buttons .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
