@@ -63,6 +63,7 @@
             background:#fff; border-radius:20px; padding:18px 24px;
             box-shadow:0 8px 30px rgba(0,0,0,.08);
             position:sticky; top:10px; z-index:100;
+            overflow: hidden; overflow-y: auto; overflow-x: auto; 
         }
         .search-box { position:relative; flex:1; min-width:180px; }
         .search-box input {
@@ -74,7 +75,7 @@
         .search-box input:focus { border-color:var(--bs-primary); background:#fff; }
         .search-box i { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:#bbb; font-size:.85rem; }
 
-        .filter-chips { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+        .filter-chips { display:flex; flex-wrap:wrap; gap:8px; align-items:center; overflow: hidden; overflow-y: auto; overflow-x: auto; }
         .chip {
             display:inline-flex; align-items:center; gap:5px;
             padding:6px 14px; border-radius:50px;
@@ -392,7 +393,9 @@
                 <div class="row g-3">
                     <div class="col-4 stat-item">
                         <div class="stat-number" id="stat-total">—</div>
-                        <div class="stat-label">Total Photos</div>
+                        <div class="stat-label">Total 
+                            
+                        </div>
                     </div>
                     <div class="col-4 stat-item">
                         <div class="stat-number" id="stat-cats">—</div>
