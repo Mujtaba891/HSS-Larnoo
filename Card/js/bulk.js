@@ -39,15 +39,32 @@ export function initBulkModule() {
     // EXCEL TEMPLATE DOWNLOAD
     // =====================================================
     function downloadTemplate() {
-        const templateData = [{
-            name: 'Mohammad Ali', parentage: 'Abdul Rashid', class: '10',
-            gender: 'Boys', stream: '', roll: '1', phone: '9876543210',
-            address: 'Larnoo, Anantnag', session: '2025-26'
-        }];
+        const templateData = [
+            {
+                'Name': 'Mohammad Ali', 'Parentage': 'Abdul Rashid', 'Class': '10',
+                'Gender': 'Boys', 'Stream': '', 'Roll No': '1', 'Phone': '9876543210',
+                'Address': 'Larnoo, Anantnag', 'Session': '2025-26'
+            },
+            {
+                'Name': 'Zahida Bano', 'Parentage': 'Ghulam Hassan', 'Class': '12',
+                'Gender': '', 'Stream': 'Arts', 'Roll No': '15', 'Phone': '7006001122',
+                'Address': 'Kokarnag, Anantnag', 'Session': '2025-26'
+            },
+            {
+                'Name': 'Aamir Khan', 'Parentage': 'Bashir Ahmed', 'Class': '11',
+                'Gender': '', 'Stream': 'Medical', 'Roll No': '22', 'Phone': '9149000000',
+                'Address': 'Dandipora, Larnoo', 'Session': '2025-26'
+            },
+            {
+                'Name': 'Suhail Ahmad', 'Parentage': 'Mushtaq Ahmad', 'Class': '9',
+                'Gender': 'Boys', 'Stream': '', 'Roll No': '5', 'Phone': '6005004433',
+                'Address': 'Larnoo, Anantnag', 'Session': '2025-26'
+            }
+        ];
         const ws = XLSX.utils.json_to_sheet(templateData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Students');
-        XLSX.writeFile(wb, 'Import-Template.xlsx');
+        XLSX.writeFile(wb, 'HSS-Larnoo-Import-Template.xlsx');
     }
 
     document.getElementById('downloadTemplateBtn').addEventListener('click', (e) => {
@@ -137,8 +154,11 @@ export function initBulkModule() {
             importProgressLabel.textContent    = `Importing row ${i + 1} of ${rows.length}...`;
 
             try {
-                const cls = String(row.class || '').replace('th', '').trim();
-                if (!row.name || !cls) throw new Error('Missing name or class');
+                // Read using Capitalized keys
+                const name = String(row.Name || row.name || '').trim();
+                const cls  = String(row.Class || row.class || '').replace('th', '').trim();
+                
+                if (!name || !cls) throw new Error('Missing Name or Class');
 
                 const newId = await runTransaction(db, async (transaction) => {
                     const year       = new Date().getFullYear().toString().slice(-2);
@@ -151,25 +171,25 @@ export function initBulkModule() {
 
                 await addDoc(collection(db, 'students'), {
                     customId:  newId,
-                    name:      String(row.name      || '').trim(),
-                    parentage: String(row.parentage || '').trim(),
+                    name:      name,
+                    parentage: String(row.Parentage || row.parentage || '').trim(),
                     class:     cls,
-                    gender:    ['9','10'].includes(cls)  ? String(row.gender || '').trim() : null,
-                    stream:    ['11','12'].includes(cls) ? String(row.stream || '').trim() : null,
-                    roll:      String(row.roll      || '').trim(),
-                    phone:     String(row.phone     || '').trim(),
-                    address:   String(row.address   || '').trim(),
-                    session:   String(row.session   || '2025-26').trim(),
+                    gender:    ['9','10'].includes(cls)  ? String(row.Gender || row.gender || '').trim() : null,
+                    stream:    ['11','12'].includes(cls) ? String(row.Stream || row.stream || '').trim() : null,
+                    roll:      String(row['Roll No'] || row.roll || '').trim(),
+                    phone:     String(row.Phone || row.phone || '').trim(),
+                    address:   String(row.Address || row.address || '').trim(),
+                    session:   String(row.Session || row.session || '2025-26').trim(),
                     photo:     'profile.png',
                     createdAt: serverTimestamp(),
                 });
 
                 successCount++;
-                importLog.innerHTML += `<p class="log-ok">✓ Row ${i+1}: ${row.name} → ID: ${newId}</p>`;
+                importLog.innerHTML += `<p class="log-ok">✓ Row ${i+1}: ${name} → ID: ${newId}</p>`;
 
             } catch (err) {
                 errorCount++;
-                importLog.innerHTML += `<p class="log-error">✗ Row ${i+1}: ${row.name || '?'} — ${err.message}</p>`;
+                importLog.innerHTML += `<p class="log-error">✗ Row ${i+1}: ${row.Name || row.name || '?'} — ${err.message}</p>`;
             }
 
             importLog.scrollTop = importLog.scrollHeight;

@@ -1,7 +1,7 @@
 // =====================================================
 // admin.js  —  Admin Panel Module
 // Handles: login/logout, student table, edit/view/delete,
-//          dashboard chart, auth state management
+//          dashboard chart, auth state management, tabs
 // =====================================================
 
 import {
@@ -21,6 +21,7 @@ export function initAdminModule() {
     const loadingIndicator   = document.getElementById('loading-indicator');
     const searchInput        = document.getElementById('searchInput');
     const classFilterContainer = document.getElementById('class-filter-buttons');
+    const sessionFilterSelect  = document.getElementById('sessionFilterSelect');
     const viewModal          = document.getElementById('view-modal');
     const editModal          = document.getElementById('edit-modal');
     const modalCardContainer = document.getElementById('modal-card-container');
@@ -28,12 +29,21 @@ export function initAdminModule() {
 
     let studentDataUnsubscribe = null;
 
-    // ---- Setup View ----
-    window.setupAdminView = () => {
-        if (auth.currentUser) {
-            listenForDataChanges();
-        }
-    };
+    // ── Tab Switching Logic ──
+    const tabBtns     = document.querySelectorAll('.admin-tab-btn');
+    const tabContents = document.querySelectorAll('.admin-tab-content');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-tab');
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === target) content.classList.add('active');
+            });
+        });
+    });
 
     // ---- Auth State ----
     onAuthStateChanged(auth, user => {
@@ -58,7 +68,7 @@ export function initAdminModule() {
 
     // ---- Firestore Listener ----
     function listenForDataChanges() {
-        if (studentDataUnsubscribe) return; // Already listening
+        if (studentDataUnsubscribe) return;
 
         loadingIndicator.style.display = 'block';
         const q = query(collection(db, 'students'), orderBy('createdAt', 'desc'));
@@ -67,20 +77,13 @@ export function initAdminModule() {
             state.allStudents = snapshot.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
             
             renderClassFilterButtons();
-            const activeFilter = document.querySelector('.class-filter-buttons .btn.active')?.dataset.class || 'All';
-            filterAndRenderTable(activeFilter);
+            applyFiltersAndRender();
             renderDashboardChart();
             
             loadingIndicator.style.display = 'none';
-
-            // Refresh other modules if they are active
-            const hash = window.location.hash.replace('#', '');
-            if (hash === 'attendance' && window.setupAttendanceView) window.setupAttendanceView();
-            if (hash === 'reports' && window.setupReportsView) window.setupReportsView();
-            
         }, err => {
             console.error(err);
-            loadingIndicator.textContent = 'Error loading data. Please refresh.';
+            loadingIndicator.textContent = 'Error loading data.';
         });
     }
 
@@ -100,20 +103,16 @@ export function initAdminModule() {
     // ---- Dashboard Chart ----
     function renderDashboardChart() {
         if (!state.allStudents?.length) return;
-
         const classCounts = state.allStudents.reduce((acc, s) => {
             const key = `${s.class}th`;
             acc[key] = (acc[key] || 0) + 1;
             return acc;
         }, {});
-
         const labels = Object.keys(classCounts).sort((a,b) => parseInt(a) - parseInt(b));
         const data   = labels.map(l => classCounts[l]);
         const ctx    = document.getElementById('classDistributionChart')?.getContext('2d');
         if (!ctx) return;
-
         if (state.classChart) state.classChart.destroy();
-
         state.classChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -121,27 +120,21 @@ export function initAdminModule() {
                 datasets: [{
                     label: '# of Students',
                     data,
-                    backgroundColor: 'rgba(26, 83, 92, 0.7)',
-                    borderColor:     'rgba(26, 83, 92, 1)',
-                    borderWidth: 1,
+                    backgroundColor: '#0d2c54',
                     borderRadius: 5
                 }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
-                plugins: { legend: { display: false } }
-            }
+            options: { responsive: true, maintainAspectRatio: false }
         });
     }
 
-    // ---- Filter Buttons ----
+    // ---- Filters ----
     function renderClassFilterButtons() {
         const classes = [...new Set(state.allStudents.map(s => s.class))].sort((a,b) => a - b);
-        classFilterContainer.innerHTML = '<button class="btn active" data-class="All">All</button>';
+        const currentActive = document.querySelector('.class-filter-buttons .btn.active')?.dataset.class || 'All';
+        classFilterContainer.innerHTML = `<button class="btn ${currentActive === 'All' ? 'active' : ''}" data-class="All">All Classes</button>`;
         classes.forEach(c => {
-            classFilterContainer.innerHTML += `<button class="btn" data-class="${c}">${c}th</button>`;
+            classFilterContainer.innerHTML += `<button class="btn ${currentActive === c ? 'active' : ''}" data-class="${c}">${c}th</button>`;
         });
     }
 
@@ -149,38 +142,35 @@ export function initAdminModule() {
         if (e.target.tagName === 'BUTTON') {
             document.querySelectorAll('.class-filter-buttons .btn').forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
-            searchInput.value = '';
-            filterAndRenderTable(e.target.dataset.class);
+            applyFiltersAndRender();
         }
     });
 
-    searchInput.addEventListener('keyup', () => {
+    sessionFilterSelect.addEventListener('change', applyFiltersAndRender);
+    searchInput.addEventListener('keyup', applyFiltersAndRender);
+
+    function applyFiltersAndRender() {
+        const selectedClass = document.querySelector('.class-filter-buttons .btn.active')?.dataset.class || 'All';
+        const selectedSession = sessionFilterSelect.value;
         const term = searchInput.value.toLowerCase().trim();
-        if (!term) { 
-            const activeFilter = document.querySelector('.class-filter-buttons .btn.active')?.dataset.class || 'All';
-            filterAndRenderTable(activeFilter);
-            return; 
+
+        let data = state.allStudents;
+        if (selectedClass !== 'All') data = data.filter(s => s.class === selectedClass);
+        if (selectedSession !== 'All') data = data.filter(s => s.session === selectedSession);
+        if (term) {
+            data = data.filter(s =>
+                (s.name || '').toLowerCase().includes(term) || 
+                (s.customId || '').toLowerCase().includes(term) ||
+                (s.roll || '').toLowerCase().includes(term)
+            );
         }
-
-        renderTable(state.allStudents.filter(s =>
-            s.name.toLowerCase().includes(term) || 
-            s.customId.toLowerCase().includes(term) ||
-            s.roll.toLowerCase().includes(term)
-        ));
-    });
-
-    function filterAndRenderTable(selectedClass) {
-        const data = selectedClass === 'All'
-            ? state.allStudents
-            : state.allStudents.filter(s => s.class === selectedClass);
         renderTable(data);
     }
 
-    // ---- Render Table ----
     function renderTable(dataToRender) {
         tableBody.innerHTML = '';
         if (!dataToRender.length) {
-            tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">No records found.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:40px; color:#999;">No records found.</td></tr>`;
             return;
         }
         dataToRender.forEach(student => {
@@ -205,23 +195,20 @@ export function initAdminModule() {
     function populateCardInModal(student) {
         modalCardContainer.innerHTML = document.getElementById('student-card-preview').innerHTML;
         const card = modalCardContainer.querySelector('#idCard');
-        card.querySelector('.displayPhoto').src          = student.photo;
+        card.querySelector('.displayPhoto').src          = student.photo || 'profile.png';
         card.querySelector('.displayName').textContent   = student.name;
         card.querySelector('.displayParentage').textContent = `: ${student.parentage}`;
         card.querySelector('.displayPhone').textContent  = student.phone;
-        card.querySelector('.displayId').textContent     = student.customId;
+        card.querySelector('.displayId').textContent     = student.customId || '';
         card.querySelector('.displayRoll').textContent   = student.roll;
-
         const classText = student.stream
             ? `${student.class}th (${student.stream})`
             : (student.gender ? `${student.class}th (${student.gender})` : `${student.class}th`);
         card.querySelector('.displayClass').textContent   = classText;
         card.querySelector('.displayAddress').textContent = student.address;
-
         const sessionEl = card.querySelector('.displaySession');
         if (sessionEl) sessionEl.textContent = student.session || '2025-26';
-
-        generateQrCode(card.querySelector('.card-qr-code'), student.customId);
+        generateQrCode(card.querySelector('.card-qr-code'), student.customId || student.roll || 'N/A');
         viewModal.style.display = 'block';
     }
 
@@ -229,7 +216,6 @@ export function initAdminModule() {
     function openEditModal(student) {
         state.currentlyEditingId = student.firestoreId;
         state.editModalPhotoData = student.photo;
-
         editFormContainer.innerHTML = `
             <input type="hidden" name="firestoreId" value="${student.firestoreId}">
             <div class="form-group"><label>Full Name</label><input type="text" name="name" value="${student.name || ''}" required></div>
@@ -263,21 +249,18 @@ export function initAdminModule() {
             <div class="form-group">
                 <label>Current Photo</label>
                 <div class="current-photo-preview"><img id="editPhotoPreview" src="${student.photo || 'profile.png'}" alt="Photo"></div>
-                <label for="editPhoto">Upload New Photo (Optional)</label>
+                <label for="editPhoto">Upload New Photo</label>
                 <input type="file" id="editPhoto" name="newPhoto" accept="image/jpeg, image/png">
             </div>
-            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Save Changes</button>
+            <button type="submit" class="btn btn-primary" style="width:100%"><i class="fa-solid fa-save"></i> Save Changes</button>
         `;
-
         const editClassSelect  = editFormContainer.querySelector('#editClass');
         const editDynamicGroup = editFormContainer.querySelector('#edit-dynamic-group');
         const editDynamicLabel = editFormContainer.querySelector('#edit-dynamic-label');
         const editDynamicSelect= editFormContainer.querySelector('#edit-dynamic-select');
         const editPhotoInput   = editFormContainer.querySelector('#editPhoto');
         const editPhotoPreview = editFormContainer.querySelector('#editPhotoPreview');
-
         editClassSelect.value = student.class || '';
-
         const updateEditDynamicFields = () => {
             const sel = editClassSelect.value;
             editDynamicSelect.innerHTML = '';
@@ -294,10 +277,8 @@ export function initAdminModule() {
                 editDynamicGroup.style.display = 'block';
             }
         };
-
         editClassSelect.addEventListener('change', updateEditDynamicFields);
         updateEditDynamicFields();
-
         editPhotoInput.addEventListener('change', (e) => {
             if (e.target.files[0]) {
                 compressImage(e.target.files[0], 400, (res) => {
@@ -306,72 +287,45 @@ export function initAdminModule() {
                 });
             }
         });
-
         editModal.style.display = 'block';
     }
 
-    // ---- Edit form submit ----
     editFormContainer.addEventListener('submit', async (e) => {
         e.preventDefault();
         const updateBtn = e.target.querySelector('button');
         updateBtn.disabled = true;
-        updateBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
-
         const formData    = new FormData(e.target);
         const updatedData = {
-            name:      formData.get('name'),
-            parentage: formData.get('parentage'),
-            class:     formData.get('class'),
-            roll:      formData.get('roll'),
-            phone:     formData.get('phone'),
-            address:   formData.get('address'),
-            session:   formData.get('session') || '2025-26'
+            name:formData.get('name'), parentage:formData.get('parentage'), class:formData.get('class'),
+            roll:formData.get('roll'), phone:formData.get('phone'), address:formData.get('address'),
+            session:formData.get('session') || '2025-26'
         };
-
-        if (['9','10'].includes(updatedData.class)) {
-            updatedData.gender = formData.get('dynamicField');
-            updatedData.stream = null;
-        } else if (['11','12'].includes(updatedData.class)) {
-            updatedData.stream = formData.get('dynamicField');
-            updatedData.gender = null;
-        }
-
+        if (['9','10'].includes(updatedData.class)) { updatedData.gender = formData.get('dynamicField'); updatedData.stream = null; }
+        else if (['11','12'].includes(updatedData.class)) { updatedData.stream = formData.get('dynamicField'); updatedData.gender = null; }
         if (state.editModalPhotoData) updatedData.photo = state.editModalPhotoData;
-
         try {
             await updateDoc(doc(db, 'students', formData.get('firestoreId')), updatedData);
-            alert('Record Updated Successfully!');
             editModal.style.display = 'none';
-        } catch (err) {
-            alert(`Update failed: ${err.message}`);
-        } finally {
-            updateBtn.disabled = false;
-            updateBtn.innerHTML = `<i class="fa-solid fa-save"></i> Save Changes`;
-        }
+        } catch (err) { alert(`Update failed: ${err.message}`); }
+        finally { updateBtn.disabled = false; }
     });
 
-    // ---- Table action buttons ----
     adminContainer.addEventListener('click', (e) => {
         const button = e.target.closest('button.action-btn');
         if (!button) return;
         const student = state.allStudents.find(s => s.firestoreId === button.dataset.id);
         if (!student) return;
-
         if (button.classList.contains('view-card-btn')) {
-            document.getElementById('editFromViewBtn').dataset.id     = button.dataset.id;
+            document.getElementById('editFromViewBtn').dataset.id = button.dataset.id;
             document.getElementById('downloadFromViewBtn').dataset.id = button.dataset.id;
-            document.getElementById('shareFromViewBtn').dataset.id    = button.dataset.id;
             populateCardInModal(student);
         } else if (button.classList.contains('edit-card-btn')) {
             openEditModal(student);
         } else if (button.classList.contains('delete-card-btn')) {
-            if (confirm(`Delete record for ${student.name}? This is permanent.`)) {
-                deleteDoc(doc(db, 'students', button.dataset.id));
-            }
+            if (confirm(`Delete record for ${student.name}?`)) deleteDoc(doc(db, 'students', button.dataset.id));
         }
     });
 
-    // Modal action buttons
     document.getElementById('editFromViewBtn').onclick = (e) => {
         const student = state.allStudents.find(s => s.firestoreId === e.target.dataset.id);
         if (student) { viewModal.style.display = 'none'; openEditModal(student); }

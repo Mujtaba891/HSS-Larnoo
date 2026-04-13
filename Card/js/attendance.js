@@ -173,28 +173,43 @@ export function initAttendanceModule() {
         const qrReaderElement = document.getElementById('qr-reader');
         if (!qrReaderElement) return;
 
-        // Stop existing scanner if running
+        // If scanner instance already exists, check its state
         if (qrScanner) {
+            const scannerState = qrScanner.getState();
+            if (scannerState === 2) { // 2 means SCANNING
+                return; // Already running, no need to start again
+            }
+            // If it's in another state (stopped/paused), we might need to clear it or restart
             try { await qrScanner.stop(); } catch(e) {}
+        } else {
+            qrScanner = new Html5Qrcode("qr-reader");
         }
 
-        qrScanner = new Html5Qrcode("qr-reader");
         const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
         try {
             await qrScanner.start({ facingMode: "environment" }, config, onScanSuccess);
             scanResultEl.textContent = 'Scanner Ready. Please point at QR Code.';
+            scanResultEl.className = 'result-info';
         } catch (err) {
             console.error("Camera start error:", err);
             scanResultEl.className = 'result-error';
-            scanResultEl.textContent = 'Camera permission denied or not found.';
+            scanResultEl.textContent = 'Camera permission denied or camera already in use.';
         }
     }
 
     // Stop scanner when leaving view
     window.stopAttendanceScanner = async () => {
         if (qrScanner) {
-            try { await qrScanner.stop(); qrScanner = null; } catch(e) {}
+            try {
+                const scannerState = qrScanner.getState();
+                if (scannerState === 2) { // SCANNING
+                    await qrScanner.stop();
+                }
+                // We keep the instance but it's stopped
+            } catch(e) {
+                console.error("Error stopping scanner:", e);
+            }
         }
     };
 }

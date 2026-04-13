@@ -216,53 +216,91 @@
                     </button>
                 </div>
 
-                <!-- Bulk Action Buttons -->
-                <div class="admin-action-row">
-                    <button id="exportExcelBtn" class="btn btn-success btn-sm">
-                        <i class="fa-solid fa-file-excel"></i> Export to Excel
+                <!-- Admin Tab Navigation -->
+                <div class="admin-tabs">
+                    <button class="admin-tab-btn active" data-tab="admin-tab-dashboard">
+                        <i class="fa-solid fa-chart-line"></i> Dashboard
                     </button>
-                    <button id="importExcelBtn" class="btn btn-warning btn-sm">
-                        <i class="fa-solid fa-file-import"></i> Bulk Import Excel
+                    <button class="admin-tab-btn" data-tab="admin-tab-students">
+                        <i class="fa-solid fa-users-gear"></i> Manage Students
                     </button>
-                    <button id="bulkPrintBtn" class="btn btn-info btn-sm">
-                        <i class="fa-solid fa-print"></i> Bulk Print ID Cards
+                    <button class="admin-tab-btn" data-tab="admin-tab-bulk">
+                        <i class="fa-solid fa-layer-group"></i> Bulk Actions
                     </button>
-                    <a id="downloadTemplateBtn" class="btn btn-sm" href="#"
-                       style="background:#e0e0e0; color:#333; text-decoration:none;">
-                        <i class="fa-solid fa-download"></i> Download Excel Template
-                    </a>
                 </div>
 
-                <!-- Dashboard Chart -->
-                <div class="dashboard-grid">
-                    <div class="data-section">
-                        <h2 class="section-title" style="border:none; padding:0; margin-bottom:15px;">Students by Class</h2>
-                        <div class="chart-container">
-                            <canvas id="classDistributionChart"></canvas>
+                <!-- TAB 1: DASHBOARD -->
+                <div id="admin-tab-dashboard" class="admin-tab-content active">
+                    <div class="dashboard-grid">
+                        <div class="data-section">
+                            <h2 class="section-title" style="border:none; padding:0; margin-bottom:15px;">Students by Class</h2>
+                            <div class="chart-container">
+                                <canvas id="classDistributionChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Student Records Table -->
-                <div class="data-section">
-                    <div class="data-header">
-                        <h2 class="section-title" style="border:none; padding:0; margin:0;">Student Records</h2>
-                        <input type="text" id="searchInput" placeholder="Search records...">
-                    </div>
-                    <div id="class-filter-buttons" class="class-filter-buttons"></div>
-                    <div class="table-container">
-                        <p id="loading-indicator">Loading data...</p>
-                        <table id="studentDataTable" class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th><th>Photo</th><th>Name</th><th>Parentage</th>
-                                    <th>Class</th><th>Stream/Gender</th><th>Roll No</th><th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                <!-- TAB 2: MANAGE STUDENTS -->
+                <div id="admin-tab-students" class="admin-tab-content">
+                    <div class="data-section">
+                        <div class="data-header" style="margin-bottom:20px;">
+                            <div style="display:flex; flex-wrap:wrap; gap:15px; align-items:center; flex:1;">
+                                <div class="search-wrapper" style="flex:1; min-width:250px; position:relative;">
+                                    <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#aaa;"></i>
+                                    <input type="text" id="searchInput" placeholder="Search by name, ID or roll..." style="padding-left:35px; width:100%;">
+                                </div>
+                                <div class="custom-select-wrapper" style="width:160px;">
+                                    <select id="sessionFilterSelect">
+                                        <option value="All">All Sessions</option>
+                                        <option value="2024-25">2024-25</option>
+                                        <option value="2025-26" selected>2025-26</option>
+                                        <option value="2026-27">2026-27</option>
+                                        <option value="2027-28">2027-28</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="class-filter-buttons" class="class-filter-buttons"></div>
+                        
+                        <div class="table-container">
+                            <p id="loading-indicator">Loading data...</p>
+                            <table id="studentDataTable" class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th><th>Photo</th><th>Name</th><th>Parentage</th>
+                                        <th>Class</th><th>Stream/Gender</th><th>Roll No</th><th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+
+                <!-- TAB 3: BULK ACTIONS -->
+                <div id="admin-tab-bulk" class="admin-tab-content">
+                    <div class="data-section">
+                        <h2 class="section-title" style="border:none; padding:0; margin-bottom:20px;">Bulk Operations Tools</h2>
+                        <div class="admin-action-row" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:15px;">
+                            <button id="exportExcelBtn" class="btn btn-success" style="height:100px; flex-direction:column;">
+                                <i class="fa-solid fa-file-excel" style="font-size:24px;"></i> Export to Excel
+                            </button>
+                            <button id="importExcelBtn" class="btn btn-warning" style="height:100px; flex-direction:column;">
+                                <i class="fa-solid fa-file-import" style="font-size:24px;"></i> Bulk Import Excel
+                            </button>
+                            <button id="bulkPrintBtn" class="btn btn-info" style="height:100px; flex-direction:column;">
+                                <i class="fa-solid fa-print" style="font-size:24px;"></i> Bulk Print ID Cards
+                            </button>
+                            <a id="downloadTemplateBtn" class="btn" href="#"
+                               style="background:#e0e0e0; color:#333; text-decoration:none; height:100px; display:flex; flex-direction:column;">
+                                <i class="fa-solid fa-download" style="font-size:24px;"></i> Download Excel Template
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -403,7 +441,7 @@
             </div>
             <p style="font-size:13px; color:#666; margin-bottom:15px;">
                 Upload an Excel file (.xlsx) with columns:
-                <strong>name, parentage, class, gender, stream, roll, phone, address, session</strong>.
+                <strong>Name, Parentage, Class, Gender, Stream, Roll No, Phone, Address, Session</strong>.
                 Photos cannot be bulk imported.
                 <a id="dlTemplateLink" href="#" style="color:var(--primary-color); font-weight:600;">
                     Download Template first →
@@ -436,7 +474,42 @@
 
     <!-- Bulk Print Modal -->
     <div id="print-modal" class="modal">
-        ...
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="section-title" style="border:none;padding:0;margin:0;">
+                    <i class="fa-solid fa-print"></i> Bulk Print Settings
+                </h2>
+                <span class="close-btn">×</span>
+            </div>
+            <div class="form-group">
+                <label for="print-class-select">Select Class</label>
+                <div class="custom-select-wrapper">
+                    <select id="print-class-select">
+                        <option value="all">All Classes</option>
+                        <option value="9">Class 9th</option>
+                        <option value="10">Class 10th</option>
+                        <option value="11">Class 11th</option>
+                        <option value="12">Class 12th</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="print-cards-per-page">Cards Per Page (A4)</label>
+                <div class="custom-select-wrapper">
+                    <select id="print-cards-per-page">
+                        <option value="4">4 Cards (2x2)</option>
+                        <option value="6">6 Cards (2x3)</option>
+                        <option value="8" selected>8 Cards (2x4)</option>
+                        <option value="10">10 Cards (2x5)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="generatePdfBtn" class="btn btn-primary">
+                    <i class="fa-solid fa-file-pdf"></i> Generate PDF
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Find ID Modal -->
