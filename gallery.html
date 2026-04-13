@@ -2,476 +2,881 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Gallery | Govt HSS Larnoo</title>
+    <title>Gallery | Govt. HSS Larnoo</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="GHSS Larnoo Gallery, School Photos, Events, Campus Images, Student Life" name="keywords">
-    <meta content="Visual gallery of Govt. HSS Larnoo, showcasing our campus, labs, sports, events, and student life." name="description">
+    <meta content="GHSS Larnoo Gallery, School Photos, Events Gallery" name="keywords">
+    <meta content="Explore the vibrant gallery of Government Higher Secondary School, Larnoo." name="description">
     <link rel="Icon" href="/img/logo3.png">
 
-    <!-- Stylesheets -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+
+    <!-- Icon Fonts -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries -->
     <link href="lib/animate/animate.min.css" rel="stylesheet">
-    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 
     <style>
-        /* --- Gallery & Grid Styles --- */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .gallery-item-dynamic {
-            overflow: hidden;
-            border-radius: 8px;
-            box-shadow: 0 4px M5px rgba(0,0,0,0.1);
+        /* ── Page Header ── */
+        .gallery-page-header {
+            background: linear-gradient(135deg,rgba(0,0,0,.65) 0%,rgba(0,0,0,.2) 100%),
+                        url(school/school\ pic\ 4.jpg) center/cover no-repeat;
+            padding: 110px 0 80px;
             position: relative;
-            cursor: pointer;
-            height: auto; /* Default height */
+            overflow: hidden;
+        }
+        .gallery-page-header::after {
+            content:''; position:absolute; bottom:-2px; left:0; right:0;
+            height:60px; background:#f8f9fa;
+            clip-path:ellipse(55% 100% at 50% 100%);
+        }
+        .gallery-page-header .breadcrumb-item a { color:var(--bs-secondary); }
+        .gallery-page-header .breadcrumb-item.active { color:#fff; }
+        .gallery-page-header .breadcrumb-item+.breadcrumb-item::before { color:rgba(255,255,255,.6); }
+
+        /* ── Stats Bar ── */
+        .gallery-stats {
+            background:linear-gradient(135deg,var(--bs-primary) 0%,#3a56e8 100%);
+            border-radius:20px; padding:22px 30px; margin-top:-30px;
+            position:relative; z-index:10;
+            box-shadow:0 15px 40px rgba(77,101,249,.35);
+        }
+        .stat-item { text-align:center; }
+        .stat-number {
+            font-family:'Fredoka',sans-serif; font-size:2rem; font-weight:700;
+            color:var(--bs-secondary); line-height:1;
+        }
+        .stat-label {
+            font-size:.72rem; color:rgba(255,255,255,.8);
+            letter-spacing:.5px; text-transform:uppercase;
+            font-family:'Montserrat',sans-serif;
         }
 
-        /* --- Grid Span Variations --- */
-        .grid-item-wide {
-            grid-column: span 2;
+        /* ── Filter Bar ── */
+        .filter-bar {
+            background:#fff; border-radius:20px; padding:18px 24px;
+            box-shadow:0 8px 30px rgba(0,0,0,.08);
+            position:sticky; top:10px; z-index:100;
         }
-        .grid-item-tall {
-            grid-row: span 2;
-            height: calc(200px * 2 + 1.5rem); /* Double height + gap */
+        .search-box { position:relative; flex:1; min-width:180px; }
+        .search-box input {
+            border:2px solid #eee; border-radius:50px;
+            padding:10px 20px 10px 44px;
+            font-family:'Montserrat',sans-serif; font-size:.88rem;
+            width:100%; transition:border-color .3s; outline:none; background:#fafafa;
         }
-        .grid-item-large {
-            grid-column: span 2;
-            grid-row: span 2;
-            height: calc(200px * 2 + 1.5rem);
+        .search-box input:focus { border-color:var(--bs-primary); background:#fff; }
+        .search-box i { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:#bbb; font-size:.85rem; }
+
+        .filter-chips { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+        .chip {
+            display:inline-flex; align-items:center; gap:5px;
+            padding:6px 14px; border-radius:50px;
+            border:2px solid #eee; background:#f8f9fa; color:#555;
+            font-size:.8rem; font-weight:600; font-family:'Montserrat',sans-serif;
+            cursor:pointer; transition:all .22s; white-space:nowrap; user-select:none;
+        }
+        .chip:hover { border-color:var(--bs-primary); color:var(--bs-primary); background:rgba(77,101,249,.05); }
+        .chip.active { border-color:var(--bs-primary); background:var(--bs-primary); color:#fff; }
+        .chip .count {
+            background:rgba(0,0,0,.12); border-radius:50px;
+            padding:1px 7px; font-size:.72rem;
+        }
+        .chip.active .count { background:rgba(255,255,255,.25); }
+
+        .view-toggle .btn {
+            padding:8px 12px; border-radius:10px;
+            border:2px solid #eee; background:#f8f9fa; color:#bbb;
+            font-size:.9rem; margin:0; transition:all .22s;
+        }
+        .view-toggle .btn.active { background:var(--bs-primary); border-color:var(--bs-primary); color:#fff; }
+
+        /* ── Results Info ── */
+        #results-info {
+            font-family:'Montserrat',sans-serif; font-size:.83rem;
+            color:#999; margin-bottom:16px;
         }
 
-        .gallery-item-dynamic img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s ease, filter 0.4s ease;
+        /* ── Masonry ── */
+        #gallery-masonry { columns:4; column-gap:14px; }
+        #gallery-masonry.hidden { display:none; }
+        @media(max-width:1199px){ #gallery-masonry{ columns:3; } }
+        @media(max-width:767px) { #gallery-masonry{ columns:2; } }
+        @media(max-width:480px) { #gallery-masonry{ columns:1; } }
+
+        /* ── Grid ── */
+        #gallery-grid {
+            display:none;
+            grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+            gap:14px;
+        }
+        #gallery-grid.active { display:grid; }
+        #gallery-grid .gallery-item { margin-bottom:0; }
+        #gallery-grid .gallery-item img { height:185px; object-fit:cover; }
+
+        /* ── Gallery Card ── */
+        .gallery-item {
+            break-inside:avoid; margin-bottom:14px;
+            position:relative; border-radius:14px; overflow:hidden;
+            cursor:pointer; animation:fadeInUp .45s ease both;
+        }
+        @keyframes fadeInUp {
+            from{ opacity:0; transform:translateY(18px); }
+            to  { opacity:1; transform:translateY(0); }
+        }
+        .gallery-item img {
+            width:100%; display:block; border-radius:14px;
+            transition:transform .4s cubic-bezier(.25,.8,.25,1);
+            background:#eee; min-height:80px;
+        }
+        .gallery-item:hover img { transform:scale(1.06); }
+        .gallery-item .overlay {
+            position:absolute; inset:0;
+            background:linear-gradient(to top,rgba(0,0,0,.78) 0%,transparent 58%);
+            border-radius:14px; opacity:0; transition:opacity .3s;
+            display:flex; flex-direction:column; justify-content:flex-end; padding:12px;
+        }
+        .gallery-item:hover .overlay { opacity:1; }
+        .overlay .item-caption {
+            color:#fff; font-size:.78rem; font-weight:600;
+            font-family:'Montserrat',sans-serif; margin-bottom:5px; line-height:1.3;
+        }
+        .overlay .cat-tag {
+            display:inline-block; background:var(--bs-secondary);
+            color:var(--bs-primary); font-size:.68rem; font-weight:700;
+            padding:2px 10px; border-radius:50px;
+            font-family:'Montserrat',sans-serif;
+            white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;
+        }
+        .overlay .zoom-icon {
+            position:absolute; top:10px; right:10px;
+            width:34px; height:34px;
+            background:rgba(255,255,255,.18); backdrop-filter:blur(4px);
+            border-radius:50%; display:flex; align-items:center; justify-content:center;
+            color:#fff; font-size:.85rem;
         }
 
-        .gallery-item-dynamic:hover img {
-            transform: scale(1.1);
-            filter: brightness(0.7);
-        }
-
-        .gallery-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            color: white;
-            padding: 20px 15px 15px;
-            text-align: center;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
-            font-size: 0.9rem;
-        }
-
-        .gallery-item-dynamic:hover .gallery-caption {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .gallery-section {
-            margin-bottom: 4rem;
-        }
-        
-        /* --- Mobile Responsiveness for Grid --- */
-        @media (max-width: 768px) {
-            .gallery-grid {
-                display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            }
-            /* Reset all spans on mobile */
-            .grid-item-wide, .grid-item-tall, .grid-item-large {
-                grid-column: span 1;
-                grid-row: span 1;
-                height: auto; /* Revert to default height */
-            }
-        }
-
-        /* --- Skeleton Loader Styles --- */
+        /* ── Skeleton ── */
         .skeleton {
-            animation: skeleton-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-            background-color: #e2e8f0; /* Light gray */
-            border-radius: 8px;
+            break-inside:avoid; margin-bottom:14px; border-radius:14px;
+            background:linear-gradient(90deg,#e8e8e8 25%,#f5f5f5 50%,#e8e8e8 75%);
+            background-size:400% 100%; animation:shimmer 1.4s infinite;
+        }
+        @keyframes shimmer{ 0%{background-position:-400% 0} 100%{background-position:400% 0} }
+
+        /* ── Load More ── */
+        .load-more-wrap { text-align:center; padding:40px 0 20px; }
+        .load-more-btn {
+            display:inline-flex; align-items:center; gap:10px;
+            padding:13px 38px; background:var(--bs-primary); color:#fff;
+            border:none; border-radius:50px;
+            font-family:'Montserrat',sans-serif; font-weight:700; font-size:.93rem;
+            cursor:pointer; transition:all .3s;
+            box-shadow:0 8px 25px rgba(77,101,249,.35);
+        }
+        .load-more-btn:hover:not(:disabled){ background:#3a56e8; transform:translateY(-3px); box-shadow:0 14px 35px rgba(77,101,249,.4); }
+        .load-more-btn:disabled{ opacity:.65; cursor:not-allowed; }
+        .progress-info { font-family:'Montserrat',sans-serif; font-size:.82rem; color:#999; margin-top:12px; }
+        .progress-bar-track { width:200px; height:4px; background:#eee; border-radius:10px; margin:8px auto 0; overflow:hidden; }
+        .progress-bar-fill  { height:100%; background:linear-gradient(90deg,var(--bs-primary),var(--bs-secondary)); border-radius:10px; transition:width .4s; }
+
+        /* ── Empty State ── */
+        .empty-state { text-align:center; padding:80px 20px; display:none; }
+        .empty-state .empty-icon { font-size:4rem; color:#ddd; margin-bottom:16px; }
+        .empty-state h4 { font-family:'Fredoka',sans-serif; color:#bbb; margin-bottom:8px; }
+        .empty-state p  { font-family:'Montserrat',sans-serif; color:#ccc; font-size:.9rem; }
+
+        /* ── Lightbox ── */
+        #lightbox-overlay {
+            position:fixed; inset:0; background:rgba(5,5,10,.94);
+            z-index:99999; display:none;
+            align-items:center; justify-content:center;
+        }
+        #lightbox-overlay.open { display:flex; animation:lbIn .22s ease; }
+        @keyframes lbIn { from{opacity:0} to{opacity:1} }
+
+        .lb-image-wrap {
+            position:relative; display:flex;
+            align-items:center; justify-content:center;
+            max-width:90vw; max-height:82vh;
+        }
+        #lb-img {
+            max-width:90vw; max-height:80vh; border-radius:12px;
+            object-fit:contain; box-shadow:0 30px 80px rgba(0,0,0,.7);
+            transition:opacity .18s; display:block;
+        }
+        #lb-img.fading { opacity:0; }
+
+        .lb-spinner {
+            position:absolute; width:44px; height:44px;
+            border:3px solid rgba(255,255,255,.15);
+            border-top-color:var(--bs-secondary);
+            border-radius:50%; animation:spin .7s linear infinite; display:none;
+        }
+        #lb-img.fading ~ .lb-spinner { display:block; }
+        @keyframes spin { to{ transform:rotate(360deg); } }
+
+        .lb-ctrl {
+            position:fixed; display:flex; align-items:center; justify-content:center;
+            width:48px; height:48px;
+            background:rgba(255,255,255,.1); backdrop-filter:blur(6px);
+            border:1.5px solid rgba(255,255,255,.18); border-radius:50%;
+            color:#fff; font-size:1rem; cursor:pointer;
+            transition:background .2s,transform .2s; z-index:100001;
+            text-decoration:none;
+        }
+        .lb-ctrl:hover { background:rgba(255,255,255,.22); transform:scale(1.08); color:#fff; }
+
+        #lb-prev { top:50%; left:14px;  transform:translateY(-50%); }
+        #lb-next { top:50%; right:14px; transform:translateY(-50%); }
+        #lb-prev:hover { transform:translateY(-50%) scale(1.08); }
+        #lb-next:hover { transform:translateY(-50%) scale(1.08); }
+        #lb-close    { top:14px; right:14px; }
+        #lb-download { top:14px; right:70px; }
+        #lb-download:hover { color:#fff; }
+
+        .lb-info {
+            position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+            text-align:center; pointer-events:none; width:90vw;
+        }
+        .lb-caption-text {
+            color:rgba(255,255,255,.92); font-family:'Montserrat',sans-serif;
+            font-weight:600; font-size:.92rem; margin-bottom:4px;
+        }
+        .lb-counter-text {
+            color:rgba(255,255,255,.45); font-family:'Montserrat',sans-serif; font-size:.78rem;
         }
 
-        @keyframes skeleton-pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .skeleton-header {
-            height: 40px;
-            width: 250px;
-            margin: 0 auto 2.5rem auto;
+        /* ── Responsive ── */
+        @media(max-width:767px){
+            .filter-bar    { border-radius:14px; padding:14px; position:static; }
+            .gallery-stats { margin-top:-16px; padding:14px 16px; }
+            .stat-number   { font-size:1.5rem; }
+            #lb-prev       { left:6px; }
+            #lb-next       { right:6px; }
+            .lb-ctrl       { width:40px; height:40px; }
         }
     </style>
 </head>
-
 <body>
-    <!-- Spinner Start -->
-    <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
+
+    <!-- Spinner -->
+    <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
         <div class="spinner-grow text-primary" role="status"></div>
     </div>
-    <!-- Spinner End -->
 
-
-    <!-- Navbar start -->
+    <!-- ===== NAVBAR ===== -->
     <div class="container-fluid border-bottom bg-light wow fadeIn" data-wow-delay="0.1s">
-        <div class="container topbar bg-primary d-none d-lg-block py-2" style="border-radius: 0 40px">
+        <div class="container topbar bg-primary d-none d-lg-block py-2" style="border-radius:0 40px">
             <div class="d-flex justify-content-between">
                 <div class="top-info ps-2">
-                    <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="https://maps.app.goo.gl/U5pmjifhstCcZTyA8" class="text-white">Larnoo, Anantnag, Jammu and Kashmir - 192202</a></small>
-                    <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="mailto:hsslarnoo024@gmail.com" class="text-white">hsslarnoo024@gmail.com</a></small>
+                    <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i>
+                        <a href="https://maps.app.goo.gl/U5pmjifhstCcZTyA8" class="text-white">Larnoo, Anantnag, Jammu and Kashmir - 192202</a>
+                    </small>
+                    <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i>
+                        <a href="mailto:ghsslarnoo@gmail.com" class="text-white">ghsslarnoo@gmail.com</a>
+                    </small>
                 </div>
                 <div class="top-link pe-2">
                     <a href="https://www.facebook.com/share/16EyXzNAKb/" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-facebook-f text-secondary"></i></a>
                     <a href="https://x.com/GHssLarnoo41" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-twitter text-secondary"></i></a>
                     <a href="https://www.instagram.com/govt_hss_larnoo?igsh=MTA0c2JwczB3aHVqbg==" class="btn btn-light btn-sm-square rounded-circle"><i class="fab fa-instagram text-secondary"></i></a>
-                    <a href="https://www.linkedin.com/in/work-with-ghss-larnoo-75b91b378?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="btn btn-light btn-sm-square rounded-circle me-0"><i class="fab fa-linkedin-in text-secondary"></i></a>
+                    <a href="https://www.linkedin.com/in/work-with-ghss-larnoo-75b91b378" class="btn btn-light btn-sm-square rounded-circle me-0"><i class="fab fa-linkedin-in text-secondary"></i></a>
                 </div>
             </div>
         </div>
         <div class="container px-0">
             <nav class="navbar navbar-light navbar-expand-xl py-3">
-                <a href="index.html" class="navbar-brand"><h1 class="text-primary display-6"><img src="/img/logo3.png" alt=""></h1></a>
+                <a href="index.html" class="navbar-brand">
+                    <h1 class="text-primary display-6"><img src="/img/logo3.png" alt="HSS Larnoo"></h1>
+                </a>
                 <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                    <span class="fa  text-primary"><img src="img/icons/menu.png" alt="" width="30px"></span>
+                    <span class="fa text-primary"><img src="img/icons/menu.png" alt="" width="30px"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
-                        <a href="index.html" class="nav-item nav-link active">Home</a>
-                        <a href="about.html" class="nav-item nav-link">About</a>
-                        <a href="service.html" class="nav-item nav-link">Services</a>
-                        <a href="program.html" class="nav-item nav-link">Programs</a>
-                        <a href="event.html" class="nav-item nav-link">Events</a>
+                        <a href="index.html"     class="nav-item nav-link">Home</a>
+                        <a href="about.html"     class="nav-item nav-link">About</a>
+                        <a href="service.html"   class="nav-item nav-link">Services</a>
+                        <a href="program.html"   class="nav-item nav-link">Programs</a>
+                        <a href="event.html"     class="nav-item nav-link">Events</a>
                         <a href="admission.html" class="nav-item nav-link">Admission</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                                
-                                <a href="academics.html" class="dropdown-item">Academics</a>
-                                <a href="blog.html" class="dropdown-item">Our Blog</a>
-                                <a href="staff.html" class="dropdown-item">Our Staf</a>
-                                <a href="gallery.html" class="dropdown-item">Gallery</a>
+                                <a href="academics.html"    class="dropdown-item">Academics</a>
+                                <a href="blog.html"         class="dropdown-item">Our Blog</a>
+                                <a href="staff.html"        class="dropdown-item">Our Staff</a>
+                                <a href="gallery.html"      class="dropdown-item active">Gallery</a>
                                 <a href="student-zone.html" class="dropdown-item">Student Zone</a>
-                                <a href="/Card/index.html" class="dropdown-item">ID Card</a>
-                                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                                <a href="404.html" class="dropdown-item">404 Page</a>
+                                <a href="/Card/index.html"  class="dropdown-item">ID Card</a>
+                                <a href="testimonial.html"  class="dropdown-item">Testimonial</a>
+                                <a href="404.html"          class="dropdown-item">404 Page</a>
                             </div>
                         </div>
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
                     </div>
                     <div class="d-flex me-4">
-                        <div id="phone-tada" class="d-flex align-items-center justify-content-center">
-                            <a href="" class="position-relative wow tada" data-wow-delay=".9s" >
-                                <i class="fa  text-primary fa-2x me-4"><img src="img/icons/call.png" alt="" width="30px"></i>
-                                <div class="position-absolute" style="top: -7px; left: 20px;">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <a href="" class="position-relative wow tada" data-wow-delay=".9s">
+                                <i class="fa text-primary fa-2x me-4"><img src="img/icons/call.png" alt="" width="30px"></i>
+                                <div class="position-absolute" style="top:-7px;left:20px;">
                                     <span><i class="fa fa-comment-dots text-secondary"></i></span>
                                 </div>
                             </a>
                         </div>
                         <div class="d-flex flex-column pe-3 border-end border-primary">
-                                <span class="text-primary">Have any questions?</span>
-                                <a href="tel:+917006485144"><span class="text-secondary">Free: +91 70064 85144</span></a>
-                                <a href="tel:+917780830369"><span class="text-secondary">Free: +91 77808 30369</span></a>
+                            <span class="text-primary">Have any questions?</span>
+                            <a href="tel:+917006485144"><span class="text-secondary">Free: +91 70064 85144</span></a>
+                            <a href="tel:+917780830369"><span class="text-secondary">Free: +91 77808 30369</span></a>
                         </div>
                     </div>
-                    <button class="btn-search btn btn-primary btn-md-square rounded-circle" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-white"></i></button>
+                    <button class="btn-search btn btn-primary btn-md-square rounded-circle"
+                            data-bs-toggle="modal" data-bs-target="#searchModal">
+                        <i class="fas fa-search text-white"></i>
+                    </button>
                 </div>
             </nav>
         </div>
     </div>
-    <!-- Navbar End -->
+    <!-- ===== NAVBAR END ===== -->
 
-    <!-- Modal Search Start -->
-    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Search Modal -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content rounded-0">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Search by keyword</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body d-flex align-items-center">
                     <div class="input-group w-75 mx-auto d-flex">
-                        <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
-                        <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                        <input type="search" class="form-control p-3" placeholder="keywords">
+                        <span class="input-group-text p-3"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Modal Search End -->
 
-    <!-- Page Header Start -->
-    <div class="container-fluid page-header py-5 wow fadeIn" data-wow-delay="0.1s">
-        <div class="container text-center py-5">
-            <h1 class="display-2 text-white mb-4">Our Gallery</h1>
+    <!-- ===== PAGE HEADER ===== -->
+    <div class="gallery-page-header">
+        <div class="container text-center">
+            <h1 class="text-white display-4 mb-2" style="font-family:'Fredoka',sans-serif;text-shadow:0 2px 12px rgba(0,0,0,.4);">
+                Our Gallery
+            </h1>
+            <p class="text-white mb-4" style="opacity:.88;font-family:'Montserrat',sans-serif;font-size:1.05rem;">
+                Memories, Moments &amp; Milestones of Govt. HSS Larnoo
+            </p>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb justify-content-center mb-0">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item text-white" aria-current="page">Gallery</li>
+                    <li class="breadcrumb-item active">Gallery</li>
                 </ol>
             </nav>
         </div>
     </div>
-    <!-- Page Header End -->
 
-    <!-- Gallery Start -->
-    <div class="container-fluid py-5">
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="container-fluid py-5 bg-light">
         <div class="container">
-            <div class="text-center mx-auto mb-5 wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
-                <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">School Moments</h4>
-                <p class="mb-4">A visual journey through the life and events at HSS Larnoo, organized by category. Click on any image to view it in full screen.</p>
-                <a href="upload-gallery.html" class="btn btn-primary btn-lg title-border-radius">
-                    <i class="fas fa-upload me-2"></i> Upload Your Photo
-                </a>
-            </div>
-            
-            <div id="gallery-container">
-                <!-- Skeleton Loader Structure -->
-                <div id="skeleton-loader" class="gallery-section">
-                    <div class="skeleton skeleton-header"></div>
-                    <div class="gallery-grid">
-                        <div class="skeleton gallery-item-dynamic"></div>
-                        <div class="skeleton gallery-item-dynamic grid-item-large"></div>
-                        <div class="skeleton gallery-item-dynamic"></div>
-                        <div class="skeleton gallery-item-dynamic"></div>
-                        <div class="skeleton gallery-item-dynamic"></div>
-                        <div class="skeleton gallery-item-dynamic grid-item-wide"></div>
+
+            <!-- Stats Bar -->
+            <div class="gallery-stats mb-5 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="row g-3">
+                    <div class="col-4 stat-item">
+                        <div class="stat-number" id="stat-total">—</div>
+                        <div class="stat-label">Total Photos</div>
                     </div>
+                    <div class="col-4 stat-item">
+                        <div class="stat-number" id="stat-cats">—</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                    <div class="col-4 stat-item">
+                        <div class="stat-number">2025</div>
+                        <div class="stat-label">Since</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar mb-4 wow fadeInUp" data-wow-delay="0.15s">
+                <div class="d-flex flex-wrap gap-3 align-items-center">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="gallery-search"
+                               placeholder="Search photos by name or category…"
+                               autocomplete="off">
+                    </div>
+                    <div class="view-toggle d-flex gap-1 ms-auto">
+                        <button class="btn active" id="btn-masonry" title="Masonry View"><i class="fas fa-th-large"></i></button>
+                        <button class="btn"        id="btn-grid"    title="Grid View"><i class="fas fa-th"></i></button>
+                    </div>
+                </div>
+                <div class="filter-chips mt-3" id="category-chips">
+                    <div class="chip active" data-cat="all">
+                        <i class="fas fa-images" style="font-size:.72rem;"></i>
+                        All Photos
+                        <span class="count" id="chip-count-all">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Info -->
+            <div id="results-info" class="d-flex justify-content-between align-items-center">
+                <span id="results-text">Loading gallery…</span>
+            </div>
+
+            <!-- Masonry Container -->
+            <div id="gallery-masonry">
+                <div class="skeleton" style="height:220px;"></div>
+                <div class="skeleton" style="height:160px;"></div>
+                <div class="skeleton" style="height:300px;"></div>
+                <div class="skeleton" style="height:195px;"></div>
+                <div class="skeleton" style="height:255px;"></div>
+                <div class="skeleton" style="height:175px;"></div>
+                <div class="skeleton" style="height:240px;"></div>
+                <div class="skeleton" style="height:165px;"></div>
+            </div>
+
+            <!-- Grid Container -->
+            <div id="gallery-grid"></div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="empty-state">
+                <div class="empty-icon"><i class="fas fa-image"></i></div>
+                <h4>No Photos Found</h4>
+                <p>Try a different category or clear your search.</p>
+            </div>
+
+            <!-- Load More -->
+            <div class="load-more-wrap" id="load-more-wrap" style="display:none;">
+                <button class="load-more-btn" id="load-more-btn">
+                    <i class="fas fa-arrow-down"></i>
+                    <span id="load-more-label">Load More Photos</span>
+                </button>
+                <div class="progress-info" id="progress-info"></div>
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===== LIGHTBOX ===== -->
+    <div id="lightbox-overlay">
+        <button class="lb-ctrl" id="lb-close"><i class="fas fa-times"></i></button>
+        <a class="lb-ctrl" id="lb-download" href="#" download title="Download Photo">
+            <i class="fas fa-download"></i>
+        </a>
+        <button class="lb-ctrl" id="lb-prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="lb-ctrl" id="lb-next"><i class="fas fa-chevron-right"></i></button>
+        <div class="lb-image-wrap">
+            <img id="lb-img" src="" alt="">
+            <div class="lb-spinner"></div>
+        </div>
+        <div class="lb-info">
+            <div class="lb-caption-text" id="lb-caption"></div>
+            <div class="lb-counter-text"  id="lb-counter"></div>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <div class="container-fluid footer py-5 wow fadeIn" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="row g-5">
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="footer-item">
+                        <div class="footer-logo mb-3">
+                            <img src="/img/logo3.png" alt="HSS Larnoo Logo">
+                            <h3 class="text-primary mt-2">HSS Larnoo</h3>
+                        </div>
+                        <p class="text-body">Government Higher Secondary School, Larnoo — Nurturing excellence since 1935.</p>
+                        <div class="d-flex gap-2 mt-3">
+                            <a href="https://www.facebook.com/share/16EyXzNAKb/" class="btn btn-primary btn-sm-square rounded-circle"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://x.com/GHssLarnoo41" class="btn btn-primary btn-sm-square rounded-circle"><i class="fab fa-twitter"></i></a>
+                            <a href="https://www.instagram.com/govt_hss_larnoo?igsh=MTA0c2JwczB3aHVqbg==" class="btn btn-primary btn-sm-square rounded-circle"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.linkedin.com/in/work-with-ghss-larnoo-75b91b378" class="btn btn-primary btn-sm-square rounded-circle"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="footer-item">
+                        <h4 class="text-primary mb-4">Quick Links</h4>
+                        <div class="d-flex flex-column">
+                            <a href="index.html"   class="text-body mb-2"><i class="fas fa-angle-right text-primary me-2"></i>Home</a>
+                            <a href="about.html"   class="text-body mb-2"><i class="fas fa-angle-right text-primary me-2"></i>About Us</a>
+                            <a href="program.html" class="text-body mb-2"><i class="fas fa-angle-right text-primary me-2"></i>Programs</a>
+                            <a href="event.html"   class="text-body mb-2"><i class="fas fa-angle-right text-primary me-2"></i>Events</a>
+                            <a href="gallery.html" class="text-body mb-2"><i class="fas fa-angle-right text-primary me-2"></i>Gallery</a>
+                            <a href="contact.html" class="text-body mb-2"><i class="fas fa-angle-right text-primary me-2"></i>Contact</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="footer-item">
+                        <h4 class="text-primary mb-4">Contact Info</h4>
+                        <div class="d-flex flex-column gap-3">
+                            <p class="text-body mb-0"><i class="fas fa-map-marker-alt text-primary me-2"></i>Larnoo, Anantnag, J&amp;K - 192202</p>
+                            <a href="tel:+917006485144" class="text-body"><i class="fas fa-phone text-primary me-2"></i>+91 70064 85144</a>
+                            <a href="tel:+917780830369" class="text-body"><i class="fas fa-phone text-primary me-2"></i>+91 77808 30369</a>
+                            <a href="mailto:ghsslarnoo@gmail.com" class="text-body"><i class="fas fa-envelope text-primary me-2"></i>ghsslarnoo@gmail.com</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="footer-item">
+                        <h4 class="text-primary mb-4">Gallery Preview</h4>
+                        <div class="row g-2" id="footer-gallery-preview">
+                            <p class="text-muted" style="font-family:'Montserrat',sans-serif;font-size:.82rem;">Loading…</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="container border-top pt-4">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <span class="text-body">&copy; <span id="footer-year"></span>
+                        <a href="index.html" class="text-primary fw-bold">Govt. HSS Larnoo</a>. All Rights Reserved.
+                    </span>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <span class="text-body">Designed by <span class="text-primary fw-bold">HSS Larnoo Tech Team</span></span>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Gallery End -->
+    <!-- ===== FOOTER END ===== -->
 
-    <!-- Footer Start -->
-        <div class="container-fluid footer py-5 wow fadeIn" data-wow-delay="0.1s">
-            <div class="container py-5">
-                <div class="row g-5">
-                    <div class="col-md-6 col-lg-4 col-xl-3">
-                        <div class="footer-item">
-                            <div class="footer-logo">
-                            <img src="/img/logo3.png" alt="">
-                            <h2 class="fw-bold mb-3"><span class="text-primary mb-0">HSS </span><span class="text-secondary">Larnoo</span></h2>
-                        </div>
-                            <p class="mb-4">There Faculty of every thing.</p>
-                            <div class="border border-primary p-3 rounded bg-light">
-                                <h5 class="mb-3">Newsletter</h5>
-                                <div class="position-relative mx-auto border border-primary rounded" style="max-width: 400px;">
-                                    <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
-                                    <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2 text-white">SignUp</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4 col-xl-3">
-                        <div class="footer-item">
-                            <div class="d-flex flex-column p-4 ps-5 text-dark border border-primary" 
-                            style="border-radius: 50% 20% / 10% 40%;">
-                                <p>Monday: 9am to 3pm</p>
-                                <p>Tuesday: 9am to 3pm</p>
-                                <p>Wednes: 9am to 3pm</p>
-                                <p>Thursday: 9am to 3pm</p>
-                                <p>Friday: 9am to 3pm</p>
-                                <p>Saturday: 9am to 3pm</p>
-                                <p class="mb-0">Sunday: Closed</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4 col-xl-3">
-                        <div class="footer-item">
-                            <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">LOCATION</h4>
-                            <div class="d-flex flex-column align-items-start">
-                                <a href="https://maps.app.goo.gl/U5pmjifhstCcZTyA8" target="_blank" class="text-body mb-4"><img src="img/icons/location.png" alt="" >Larnoo, Kokarnag, Anantnag, J&K, India</a>
-                                <a href="tel:+917006485144" class="text-start rounded-0 text-body mb-4"><i class=" text-primary me-2"><img src="img/icons/call.png" alt=""  ></i> +91 70064 85144</a>
-                                <a href="mailto:workwithhsslarnoo@gmail.com" class="text-start rounded-0 text-body mb-4"><i class=" text-primary me-2"><img src="img/icons/mail.png"></i> workwithhsslarnoo@gmail.com</a>
-                                <a class="text-start rounded-0 text-body mb-4"><i class=" text-primary me-2"><img src="img/icons/clock.png" alt=""></i> 24/6 Hours Service</a>
-                                <div class="footer-icon d-flex">
-                                    <a class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" href="https://www.facebook.com/share/16EyXzNAKb/"><i class="fab fa-facebook-f"></i></a>
-                                    <a class="btn btn-primary btn-sm-square me-3 rounded-circle text-white" href="https://x.com/GHssLarnoo41"><i class="fab fa-twitter"></i></a>
-                                    <a href="https://www.instagram.com/govt_hss_larnoo?igsh=MTA0c2JwczB3aHVqbg==" class="btn btn-primary btn-sm-square me-3 rounded-circle text-white"><i class="fab fa-instagram"></i></a>
-                                    <a href="https://www.linkedin.com/in/work-with-ghss-larnoo-75b91b378?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="btn btn-primary btn-sm-square rounded-circle text-white"><i class="fab fa-linkedin-in"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4 col-xl-3">
-                        <div class="footer-item">
-                            <h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">OUR GALLARY</h4>
-                            <div class="row g-3">
-                                <div class="col-4">
-                                    <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="school/galery 1.jpg" class="img-fluid rounded-circle p-2" alt="">
-                                    </div>
-                               </div>
-                               <div class="col-4">
-                                    <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="school/galery 2.jpg" class="img-fluid rounded-circle p-2" alt="">
-                                    </div>
-                               </div>
-                                <div class="col-4">
-                                    <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="school/galery 3.jpg" class="img-fluid rounded-circle p-2" alt="">
-                                    </div>
-                               </div>
-                                <div class="col-4">
-                                    <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="school/galery 4.jpg" class="img-fluid rounded-circle p-2" alt="">
-                                    </div>
-                               </div>
-                                <div class="col-4">
-                                    <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="school/galery 5.jpg" class="img-fluid rounded-circle p-2" alt="">
-                                    </div>
-                               </div>
-                                <div class="col-4">
-                                    <div class="footer-galary-img rounded-circle border border-primary">
-                                        <img src="school/galery 6.jpg" class="img-fluid rounded-circle p-2" alt="">
-                                    </div>
-                               </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Copyright Start -->
-        <div class="container-fluid copyright bg-dark py-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        <span class="text-light"><a href="#">2025 <i class="fas fa-copyright text-light me-2"></i>Govt. HSS Larnoo</a>, All right reserved.</span>
-                    </div>
-                    <div class="col-md-6 my-auto text-center text-md-end text-white">
-                        Designed By <a class="border-bottom" href="https://mujtabaalam.vercel.app">Mujtaba Alam</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Copyright End -->
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 
-         <!-- Back to Top -->
-    <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
-
-    
-    <!-- JavaScript Libraries -->
+    <!-- ===== SCRIPTS ===== -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/wow/wow.min.js"></script>
-    <script src="lib/lightbox/js/lightbox.min.js"></script>
     <script src="js/main.js"></script>
-    <script type="module" src="js/newsletter.js"></script>
-    
-    <!-- Firebase and Dynamic Gallery Logic -->
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs }
+                                 from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
 
+        /* ─── Firebase Config ─── */
         const firebaseConfig = {
-            apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU",
-            authDomain: "hss-larnoo-teachers.firebaseapp.com",
-            projectId: "hss-larnoo-teachers",
-            storageBucket: "hss-larnoo-teachers.appspot.com",
+            apiKey:            "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU",
+            authDomain:        "hss-larnoo-teachers.firebaseapp.com",
+            projectId:         "hss-larnoo-teachers",
+            storageBucket:     "hss-larnoo-teachers.appspot.com",
             messagingSenderId: "143363278401",
-            appId: "1:143363278401:web:49d7fffbdf31ce073e68c0",
-            measurementId: "G-GHQLMME6PJ"
+            appId:             "1:143363278401:web:49d7fffbdf31ce073e68c0",
+            measurementId:     "G-GHQLMME6PJ"
         };
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const db  = getFirestore(app);
 
-        async function displayGallery() {
-            const galleryContainer = document.getElementById('gallery-container');
-            const skeletonLoader = document.getElementById('skeleton-loader');
+        /* ─── State ─── */
+        let allImages    = [];
+        let filtered     = [];
+        let displayed    = 0;
+        let isGridView   = false;
+        let currentCat   = 'all';
+        let currentSearch = '';
+        let lbIndex      = 0;
+        const PAGE_SIZE  = 24;
 
+        /* ─── DOM Refs ─── */
+        const masonryEl    = document.getElementById('gallery-masonry');
+        const gridEl       = document.getElementById('gallery-grid');
+        const emptyEl      = document.getElementById('empty-state');
+        const lmWrap       = document.getElementById('load-more-wrap');
+        const lmBtn        = document.getElementById('load-more-btn');
+        const lmLabel      = document.getElementById('load-more-label');
+        const progInfo     = document.getElementById('progress-info');
+        const progFill     = document.getElementById('progress-fill');
+        const resText      = document.getElementById('results-text');
+        const chipBox      = document.getElementById('category-chips');
+        const searchInput  = document.getElementById('gallery-search');
+        const lbOverlay    = document.getElementById('lightbox-overlay');
+        const lbImg        = document.getElementById('lb-img');
+        const lbCaption    = document.getElementById('lb-caption');
+        const lbCounter    = document.getElementById('lb-counter');
+        const lbDownload   = document.getElementById('lb-download');
+
+        /* ═══ LOAD FIRESTORE ═══ */
+        async function loadGallery() {
             try {
-                const q = query(collection(db, "galleryImages"), orderBy("timestamp", "desc"));
-                const querySnapshot = await getDocs(q);
+                /* No orderBy — prevents silent empty result when timestamp missing */
+                const snap = await getDocs(collection(db, "galleryImages"));
+                allImages  = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-                if (querySnapshot.empty) {
-                    galleryContainer.innerHTML = '<p class="col-12 text-center">The gallery is empty. Be the first to upload a photo!</p>';
-                    return;
-                }
-                
-                // Group images by category
-                const groupedImages = {};
-                querySnapshot.forEach(doc => {
-                    const data = doc.data();
-                    const category = data.category || 'Uncategorized';
-                    if (!groupedImages[category]) groupedImages[category] = [];
-                    groupedImages[category].push(data);
-                });
-                
-                // Clear container for new content
-                galleryContainer.innerHTML = '';
-                const sortedCategories = Object.keys(groupedImages).sort((a, b) => a.localeCompare(b));
-                let itemCounter = 0; // To apply varied grid classes
+                /* Client-side sort newest first; missing timestamp → end */
+                allImages.sort((a, b) => (b.timestamp?.seconds ?? 0) - (a.timestamp?.seconds ?? 0));
 
-                sortedCategories.forEach(category => {
-                    const sectionDiv = document.createElement('div');
-                    sectionDiv.className = 'gallery-section';
-
-                    const header = `<div class="text-center mx-auto mb-5"><h4 class="text-primary mb-4 border-bottom border-primary border-2 d-inline-block p-2 title-border-radius">${category}</h4></div>`;
-                    
-                    const gridDiv = document.createElement('div');
-                    gridDiv.className = 'gallery-grid';
-                    
-                    groupedImages[category].forEach(imageData => {
-                        gridDiv.appendChild(createGalleryItem(imageData, category, itemCounter));
-                        itemCounter++;
-                    });
-
-                    sectionDiv.innerHTML = header;
-                    sectionDiv.appendChild(gridDiv);
-                    galleryContainer.appendChild(sectionDiv);
+                /* Build category counts */
+                const catMap = {};
+                allImages.forEach(img => {
+                    const c = img.category?.trim() || 'Uncategorised';
+                    catMap[c] = (catMap[c] || 0) + 1;
                 });
 
-                // Re-initialize WOW.js if needed after dynamic content is added
-                if (typeof WOW === 'function') new WOW().init();
+                initStats(allImages.length, Object.keys(catMap).length);
+                buildChips(catMap);
+                buildFooterPreview();
+                applyFilter();
 
-            } catch (error) {
-                console.error("Error fetching gallery images:", error);
-                galleryContainer.innerHTML = '<p class="col-12 text-center text-danger">Could not load the gallery. Please try again.</p>';
-            } finally {
-                if (skeletonLoader) skeletonLoader.remove();
+            } catch (err) {
+                console.error("Gallery load error:", err);
+                clearSkeletons();
+                resText.textContent = 'Could not load gallery. Please refresh and try again.';
             }
         }
 
-        function createGalleryItem(data, category, index) {
-            const { caption, imageBase64 } = data;
-            
-            // Determine grid classes for varied layout
-            let gridClasses = '';
-            if (index % 7 === 1) gridClasses = 'grid-item-large';
-            else if (index % 5 === 2) gridClasses = 'grid-item-wide';
-            else if (index % 9 === 3) gridClasses = 'grid-item-tall';
-
-            const itemWrapper = document.createElement('div');
-            if(gridClasses) itemWrapper.className = gridClasses;
-
-            itemWrapper.innerHTML = `
-                <a href="${imageBase64}" data-lightbox="${category.replace(/\s+/g, '-')}" data-title="${caption}">
-                    <div class="gallery-item-dynamic">
-                        <img src="${imageBase64}" alt="${caption}" loading="lazy">
-                        <div class="gallery-caption">${caption}</div>
-                    </div>
-                </a>`;
-            return itemWrapper;
+        /* ─── Animated counter ─── */
+        function initStats(total, cats) {
+            animCount('stat-total', total);
+            animCount('stat-cats',  cats);
+            document.getElementById('chip-count-all').textContent = total;
+        }
+        function animCount(id, target) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            let v = 0, step = Math.max(1, Math.ceil(target / 50));
+            const t = setInterval(() => {
+                v = Math.min(v + step, target);
+                el.textContent = v;
+                if (v >= target) clearInterval(t);
+            }, 28);
         }
 
-        document.addEventListener('DOMContentLoaded', displayGallery);
+        /* ─── Category chips ─── */
+        function buildChips(catMap) {
+            Object.entries(catMap)
+                .sort((a, b) => b[1] - a[1])
+                .forEach(([cat, count]) => {
+                    const chip = document.createElement('div');
+                    chip.className  = 'chip';
+                    chip.dataset.cat = cat;
+                    chip.innerHTML  = `<i class="fas fa-tag" style="font-size:.68rem;"></i>${esc(cat)}<span class="count">${count}</span>`;
+                    chip.addEventListener('click', () => selectCat(cat));
+                    chipBox.appendChild(chip);
+                });
+        }
+        function selectCat(cat) {
+            currentCat = cat;
+            document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.cat === cat));
+            applyFilter();
+        }
+
+        /* ─── Search ─── */
+        searchInput.addEventListener('input', e => {
+            currentSearch = e.target.value.toLowerCase().trim();
+            applyFilter();
+        });
+
+        /* ─── Filter + reset ─── */
+        function applyFilter() {
+            filtered = allImages.filter(img => {
+                const cat  = img.category?.trim() || 'Uncategorised';
+                const ok1  = currentCat === 'all' || cat === currentCat;
+                const ok2  = !currentSearch
+                    || (img.caption  || '').toLowerCase().includes(currentSearch)
+                    || (img.category || '').toLowerCase().includes(currentSearch);
+                return ok1 && ok2;
+            });
+            displayed = 0;
+            resetContainers();
+            renderBatch();
+            updateResText();
+        }
+
+        function resetContainers() {
+            clearSkeletons();
+            masonryEl.innerHTML     = '';
+            gridEl.innerHTML        = '';
+            emptyEl.style.display   = 'none';
+            lmWrap.style.display    = 'none';
+        }
+        function clearSkeletons() {
+            document.querySelectorAll('.skeleton').forEach(s => s.remove());
+        }
+
+        /* ═══ RENDER BATCH ═══ */
+        function renderBatch() {
+            if (filtered.length === 0) { emptyEl.style.display = 'block'; return; }
+
+            const batch = filtered.slice(displayed, displayed + PAGE_SIZE);
+            const frag  = document.createDocumentFragment();
+            batch.forEach((img, i) => frag.appendChild(createCard(img, displayed + i)));
+
+            isGridView ? gridEl.appendChild(frag) : masonryEl.appendChild(frag);
+            displayed += batch.length;
+            updateLoadMore();
+        }
+
+        /* ─── Single card ─── */
+        function createCard(img, idx) {
+            const thumb   = img.thumbnailBase64 || img.imageBase64 || '';
+            const caption = img.caption?.trim()  || 'School Moment';
+            const cat     = img.category?.trim() || '';
+
+            const div = document.createElement('div');
+            div.className = 'gallery-item';
+            div.style.animationDelay = `${(idx % PAGE_SIZE) * 0.025}s`;
+            div.innerHTML = `
+                <img src="${thumb}" alt="${esc(caption)}" loading="lazy" decoding="async">
+                <div class="overlay">
+                    <div class="zoom-icon"><i class="fas fa-expand-alt"></i></div>
+                    <div class="cat-tag">${esc(cat)}</div>
+                    <div class="item-caption">${esc(caption)}</div>
+                </div>`;
+            div.addEventListener('click', () => openLb(idx));
+            return div;
+        }
+
+        function esc(s) {
+            return String(s)
+                .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+                .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        /* ─── Load More ─── */
+        function updateLoadMore() {
+            const rem = filtered.length - displayed;
+            const pct = filtered.length > 0 ? Math.round((displayed / filtered.length) * 100) : 100;
+            progFill.style.width  = pct + '%';
+            progInfo.textContent  = `Showing ${displayed} of ${filtered.length} photos`;
+
+            if (rem > 0) {
+                lmWrap.style.display = 'block';
+                lmBtn.disabled       = false;
+                lmBtn.innerHTML      = `<i class="fas fa-arrow-down"></i> Load ${Math.min(rem, PAGE_SIZE)} More Photos`;
+            } else {
+                lmWrap.style.display = filtered.length > PAGE_SIZE ? 'block' : 'none';
+                lmBtn.disabled       = true;
+                lmBtn.innerHTML      = `<i class="fas fa-check-circle"></i> All ${filtered.length} Photos Loaded`;
+            }
+        }
+        lmBtn.addEventListener('click', renderBatch);
+
+        /* ─── Results text ─── */
+        function updateResText() {
+            if (filtered.length === allImages.length) {
+                resText.textContent = `Showing all ${allImages.length} photos`;
+            } else {
+                let t = `Found ${filtered.length} photo${filtered.length !== 1 ? 's' : ''}`;
+                if (currentCat !== 'all')  t += ` in "${currentCat}"`;
+                if (currentSearch)         t += ` matching "${currentSearch}"`;
+                resText.textContent = t;
+            }
+        }
+
+        /* ═══ VIEW TOGGLE ═══ */
+        document.getElementById('btn-masonry').addEventListener('click', () => {
+            if (!isGridView) return;
+            isGridView = false;
+            document.getElementById('btn-masonry').classList.add('active');
+            document.getElementById('btn-grid').classList.remove('active');
+            masonryEl.classList.remove('hidden');
+            gridEl.classList.remove('active');
+            applyFilter();
+        });
+        document.getElementById('btn-grid').addEventListener('click', () => {
+            if (isGridView) return;
+            isGridView = true;
+            document.getElementById('btn-grid').classList.add('active');
+            document.getElementById('btn-masonry').classList.remove('active');
+            gridEl.classList.add('active');
+            masonryEl.classList.add('hidden');
+            applyFilter();
+        });
+
+        /* ═══ LIGHTBOX ═══ */
+        function openLb(idx) {
+            lbIndex = idx;
+            showLbImg();
+            lbOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeLb() {
+            lbOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+            lbImg.src = '';
+        }
+        function showLbImg() {
+            const item = filtered[lbIndex];
+            if (!item) return;
+            const src = item.imageBase64 || item.thumbnailBase64 || '';
+
+            lbImg.classList.add('fading');
+            const tmp   = new Image();
+            tmp.onload  = () => { lbImg.src = src; lbImg.classList.remove('fading'); };
+            tmp.onerror = () => { lbImg.src = src; lbImg.classList.remove('fading'); };
+            tmp.src     = src;
+
+            lbCaption.textContent = item.caption?.trim() || 'School Moment';
+            lbCounter.textContent = `${lbIndex + 1} / ${filtered.length}${item.category ? '  ·  ' + item.category : ''}`;
+            lbDownload.href       = src;
+            lbDownload.setAttribute('download', (item.caption || 'photo') + '.jpg');
+        }
+        function lbPrev() { lbIndex = (lbIndex - 1 + filtered.length) % filtered.length; showLbImg(); }
+        function lbNext() { lbIndex = (lbIndex + 1) % filtered.length; showLbImg(); }
+
+        document.getElementById('lb-close').addEventListener('click', closeLb);
+        document.getElementById('lb-prev').addEventListener('click', e => { e.stopPropagation(); lbPrev(); });
+        document.getElementById('lb-next').addEventListener('click', e => { e.stopPropagation(); lbNext(); });
+        lbOverlay.addEventListener('click', e => { if (e.target === lbOverlay) closeLb(); });
+
+        /* Keyboard */
+        document.addEventListener('keydown', e => {
+            if (!lbOverlay.classList.contains('open')) return;
+            if (e.key === 'ArrowRight' || e.key === 'd') lbNext();
+            if (e.key === 'ArrowLeft'  || e.key === 'a') lbPrev();
+            if (e.key === 'Escape')                       closeLb();
+        });
+
+        /* Touch swipe */
+        let swipeX = 0;
+        lbOverlay.addEventListener('touchstart', e => { swipeX = e.changedTouches[0].screenX; }, { passive: true });
+        lbOverlay.addEventListener('touchend',   e => {
+            const d = swipeX - e.changedTouches[0].screenX;
+            if (Math.abs(d) > 45) d > 0 ? lbNext() : lbPrev();
+        });
+
+        /* ─── Footer preview ─── */
+        function buildFooterPreview() {
+            const el = document.getElementById('footer-gallery-preview');
+            if (!el) return;
+            const sample = allImages.slice(0, 9);
+            if (!sample.length) { el.innerHTML = ''; return; }
+            el.innerHTML = sample.map(img => `
+                <div class="col-4 footer-galary-img">
+                    <img src="${img.thumbnailBase64 || img.imageBase64 || ''}"
+                         alt="${esc(img.caption || '')}"
+                         style="height:65px;object-fit:cover;border-radius:6px;width:100%;"
+                         loading="lazy">
+                </div>`).join('');
+        }
+
+        /* ─── Footer year ─── */
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+        /* ─── Init ─── */
+        loadGallery();
+
     </script>
 </body>
 </html>
