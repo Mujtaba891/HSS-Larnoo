@@ -3,11 +3,11 @@ import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/fir
 
 const COLLECTION_NAME = 'galleryImages';
 const DEFAULT_CATEGORIES = [
-    "Campus Views", "Debates & School Events", "Campus Beautification", "Morning Assembly & Prayer", 
-    "Environmental Activities", "International Day Against Drug Abuse", "Campus Gardening", "ICT Lab", 
-    "Tourism Lab", "Industrial Visits", "Sports & Athletics", "Picnics & Excursions", 
-    "Plantation Drives", "Run For Unity", "Student Life", "Nurturing Nature", "International Yoga Day"
-];
+                        "2025 Batch Picnic at Aaru Valley", "Morning Assembly & Prayer", "79th day of independence (15/08/2025)", "National Unity Day Celebration","ICT Lab", "Industrial Visits",
+                        "Picnics & Excursions", "Visit to Polytechnique College", "Campus Views", "150th anniversary celebration of Sardar Vallabhbhai Patel", "Campus Beautification", "Environmental Activities","Nurturing Nature",
+                        "Sports & Athletics", "Wall painting 2025", "Cleanliness drive 2025", "Our goals Quality, Equality and access", "Run For Unity", "Plantation Drives", "International Yoga Day", "Debates & School Events","Tourism Lab",
+                        "Campus Gardening", "International Day Against Drug Abuse","Healthcare", "Chemistry Lab"
+                            ];
 
 export const GalleryView = {
     async render(container) {
