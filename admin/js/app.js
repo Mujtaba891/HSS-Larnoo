@@ -100,6 +100,8 @@ const App = {
                         <a href="/Card/index.html#attendance" class="more-menu-item" id="more-link-attendance"><i class="fas fa-id-badge"></i> Attendance</a>
                         <a href="#messages" class="more-menu-item" id="more-link-messages"><i class="fas fa-envelope-open-text"></i> Messages</a>
                         <a href="#newsletter" class="more-menu-item" id="more-link-newsletter"><i class="fas fa-paper-plane"></i> Newsletter</a>
+                        <a href="#gallery" class="more-menu-item" id="more-link-gallery"><i class="fas fa-images"></i> Gallery</a>
+                        
                     </div>
 
                     <nav class="gov-bottom-nav">
