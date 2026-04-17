@@ -49,16 +49,32 @@ export function initAdminModule() {
     onAuthStateChanged(auth, user => {
         const isAdmin = !!user;
 
-        loginContainer.style.display = isAdmin ? 'none' : 'block';
-        adminContainer.style.display = isAdmin ? 'block' : 'none';
+        // If embedded in the School Admin SPA, we might want to hide the Card system's login 
+        // if the main SPA already handles auth. But since they share the same Firebase Auth 
+        // instance, if you're logged in to one, you're logged in to both.
+        
+        if (loginContainer) loginContainer.style.display = isAdmin ? 'none' : 'block';
+        if (adminContainer) adminContainer.style.display = isAdmin ? 'block' : 'none';
 
-        document.getElementById('attendance-login-prompt').style.display = isAdmin ? 'none' : 'block';
-        document.getElementById('attendance-content').style.display      = isAdmin ? 'block' : 'none';
-        document.getElementById('reports-login-prompt').style.display    = isAdmin ? 'none' : 'block';
-        document.getElementById('reports-content').style.display         = isAdmin ? 'block' : 'none';
+        const attPrompt = document.getElementById('attendance-login-prompt');
+        const attCont   = document.getElementById('attendance-content');
+        const repPrompt = document.getElementById('reports-login-prompt');
+        const repCont   = document.getElementById('reports-content');
+
+        if (attPrompt) attPrompt.style.display = isAdmin ? 'none' : 'block';
+        if (attCont) attCont.style.display      = isAdmin ? 'block' : 'none';
+        if (repPrompt) repPrompt.style.display    = isAdmin ? 'none' : 'block';
+        if (repCont) repCont.style.display         = isAdmin ? 'block' : 'none';
 
         if (isAdmin) {
             listenForDataChanges();
+            // Hide the redundant header if in iframe mode (optional, but cleaner)
+            if (window.self !== window.top) {
+                const header = document.getElementById('app-header');
+                if (header) header.style.display = 'none';
+                const pgContainer = document.querySelector('.page-container');
+                if (pgContainer) pgContainer.style.paddingTop = '10px';
+            }
         } else {
             if (studentDataUnsubscribe) studentDataUnsubscribe();
             state.allStudents = [];
