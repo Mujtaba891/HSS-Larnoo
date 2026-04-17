@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>HSS Larnoo — Newsletter Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --primary-color: #007bff;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --bg-dark: #1a1c23;
+  --bg-med: #252830;
+  --bg-light: #313540;
+  --border-color: #444857;
+  --text-primary: #f0f2f5;
+  --text-secondary: #a0a8b4;
+  --gov-blue: #003366;
+  --gov-orange: #FF9933;
+  --accent: #4f8ef7;
+  --accent2: #FF9933;
+  --radius: 12px;
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── TOP NAV ── */
+.topnav {
+  background: var(--bg-med);
+  border-bottom: 2px solid var(--gov-orange);
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topnav-logo {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--text-primary);
+  letter-spacing: -.5px;
+  flex: 1;
+}
+.topnav-logo span { color: var(--gov-orange); }
+.topnav-tabs {
+  display: flex;
+  gap: 4px;
+}
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: .78rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tab-btn.active, .tab-btn:hover {
+  background: var(--bg-light);
+  color: var(--text-primary);
+}
+.tab-btn.active { color: var(--gov-orange); }
+
+/* ── SCREENS ── */
+.screen { display: none; padding: 16px; max-width: 960px; margin: 0 auto; }
+.screen.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--bg-med);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.card h2 {
+  font-family: var(--font-head);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+.card h2 i { color: var(--gov-orange); font-size: .9rem; }
+
+/* ── FORM ELEMENTS ── */
+.form-group { margin-bottom: 14px; }
+label {
+  display: block;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+input[type="text"], input[type="email"], textarea, select {
+  width: 100%;
+  background: var(--bg-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: .9rem;
+  padding: 10px 14px;
+  transition: border-color .2s;
+  -webkit-appearance: none;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+textarea { resize: vertical; min-height: 80px; }
+select option { background: var(--bg-light); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: .85rem;
+  cursor: pointer;
+  transition: all .2s;
+  text-decoration: none;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #3a7de0; }
+.btn-success { background: var(--success-color); color: #fff; }
+.btn-success:hover { background: #21923c; }
+.btn-danger { background: var(--danger-color); color: #fff; }
+.btn-danger:hover { background: #b82e3a; }
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-orange { background: var(--gov-orange); color: #1a1c23; }
+.btn-orange:hover { background: #e08820; }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn-block { width: 100%; }
+.btn-sm { padding: 6px 12px; font-size: .78rem; }
+
+/* ── ALERT ── */
+.alert {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: .85rem;
+  font-weight: 500;
+  margin-top: 12px;
+  display: none;
+}
+.alert.show { display: block; }
+.alert-success { background: #1a3d27; color: #5ddc8a; border: 1px solid #28a74555; }
+.alert-danger  { background: #3d1a1a; color: #f07070; border: 1px solid #dc354555; }
+.alert-info    { background: #1a2d3d; color: #70b8f0; border: 1px solid #007bff55; }
+
+/* ── BLOCK PALETTE ── */
+.palette {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.palette-item {
+  background: var(--bg-light);
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 10px 6px;
+  text-align: center;
+  cursor: grab;
+  transition: all .2s;
+  font-size: .72rem;
+  color: var(--text-secondary);
+  user-select: none;
+}
+.palette-item:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+.palette-item i { display: block; font-size: 1.3rem; color: var(--gov-orange); margin-bottom: 5px; }
+
+/* ── CANVAS ── */
+#canvas-area {
+  min-height: 400px;
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+}
+#canvas-area.drag-over { outline: 2px dashed var(--accent); }
+
+/* ── EMAIL PREVIEW BLOCKS ── */
+.email-block {
+  position: relative;
+  border: 2px solid transparent;
+  transition: border-color .15s;
+  cursor: default;
+}
+.email-block:hover { border-color: #007bff44; }
+.email-block.selected { border-color: var(--accent) !important; }
+.block-toolbar {
+  display: none;
+  position: absolute;
+  top: -36px;
+  left: 0;
+  background: var(--bg-med);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 4px;
+  gap: 4px;
+  z-index: 10;
+}
+.email-block.selected .block-toolbar { display: flex; }
+.block-toolbar button {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: .75rem;
+  transition: all .15s;
+}
+.block-toolbar button:hover { background: var(--bg-light); color: var(--text-primary); }
+.block-toolbar button.del:hover { color: var(--danger-color); }
+
+/* ── BLOCK PROPS PANEL ── */
+#props-panel {
+  background: var(--bg-med);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+#props-panel h3 {
+  font-family: var(--font-head);
+  font-size: .85rem;
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.prop-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+.prop-row label { min-width: 70px; font-size: .72rem; margin-bottom: 0; }
+.prop-row input, .prop-row select, .prop-row textarea { flex: 1; font-size: .82rem; padding: 7px 10px; }
+.prop-row input[type="color"] { width: 44px; padding: 2px; height: 34px; cursor: pointer; }
+
+/* ── CODE EDITOR ── */
+#code-editor {
+  width: 100%;
+  min-height: 360px;
+  background: #0d1117;
+  color: #e6edf3;
+  font-family: 'Courier New', monospace;
+  font-size: .82rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 16px;
+  resize: vertical;
+  tab-size: 2;
+}
+
+/* ── PREVIEW MODAL ── */
+#preview-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #000a;
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+#preview-modal.show { display: flex; }
+.preview-box {
+  background: var(--bg-med);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-color);
+}
+.preview-header h3 { font-family: var(--font-head); font-size: .95rem; }
+.preview-iframe-wrap { flex: 1; overflow: auto; }
+#preview-iframe { width: 100%; border: none; min-height: 400px; }
+
+/* ── SEND SCREEN ── */
+.subscriber-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-light);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: .85rem;
+  margin-bottom: 16px;
+}
+.subscriber-count .num {
+  font-family: var(--font-head);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--gov-orange);
+}
+
+.send-log {
+  background: #0d1117;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+  max-height: 260px;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+  font-size: .78rem;
+  color: var(--text-secondary);
+  display: none;
+}
+.send-log.show { display: block; }
+.log-line { padding: 2px 0; }
+.log-line.ok  { color: #5ddc8a; }
+.log-line.err { color: #f07070; }
+.log-line.inf { color: #70b8f0; }
+
+/* ── PROGRESS BAR ── */
+.progress-wrap {
+  background: var(--bg-light);
+  border-radius: 4px;
+  height: 8px;
+  margin: 12px 0;
+  overflow: hidden;
+  display: none;
+}
+.progress-wrap.show { display: block; }
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--gov-orange));
+  border-radius: 4px;
+  transition: width .3s;
+  width: 0%;
+}
+
+/* ── TABLE ── */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+thead th {
+  background: var(--bg-light);
+  padding: 10px 12px;
+  text-align: left;
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border-color)30; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--bg-light)44; }
+
+/* ── BADGE ── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.badge-orange { background: #FF993322; color: var(--gov-orange); }
+.badge-blue { background: #007bff22; color: var(--accent); }
+
+/* ── DRAG INDICATOR ── */
+.drag-placeholder {
+  height: 4px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin: 2px 0;
+  display: none;
+}
+.drag-placeholder.show { display: block; }
+
+/* ── BUILDER LAYOUT ── */
+.builder-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 720px) {
+  .builder-grid {
+    grid-template-columns: 260px 1fr;
+    align-items: start;
+  }
+}
+
+/* ── SPINNER ── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.fa-spin { animation: spin 1s linear infinite; }
+
+/* ── HELPERS ── */
+.text-muted { color: var(--text-secondary); font-size: .85rem; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row .btn { flex: 1; min-width: 120px; }
+.section-title {
+  font-family: var(--font-head);
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--gov-orange);
+  margin-bottom: 8px;
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="topnav">
+  <div class="topnav-logo">HSS <span>Larnoo</span> · Newsletter</div>
+  <div class="topnav-tabs">
+    <button class="tab-btn active" onclick="showTab('builder')"><i class="fas fa-layer-group"></i> Build</button>
+    <button class="tab-btn" onclick="showTab('send')"><i class="fas fa-paper-plane"></i> Send</button>
+    <button class="tab-btn" onclick="showTab('subs')"><i class="fas fa-users"></i> Subs</button>
+  </div>
+</nav>
+
+<!-- ═══════════ BUILDER SCREEN ═══════════ -->
+<div class="screen active" id="screen-builder">
+  <!-- Mode toggle -->
+  <div class="card" style="padding:14px 16px; margin-bottom:12px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+      <div>
+        <div class="section-title">Newsletter Subject</div>
+        <input type="text" id="email-subject" placeholder="e.g. Monthly School Bulletin — May 2025" style="min-width:220px; max-width:420px;">
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" id="toggle-mode-btn" onclick="toggleMode()"><i class="fas fa-code"></i> Code Mode</button>
+        <button class="btn btn-outline btn-sm" onclick="openPreview()"><i class="fas fa-eye"></i> Preview</button>
+        <button class="btn btn-orange btn-sm" onclick="saveAndGoSend()"><i class="fas fa-paper-plane"></i> Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRAG & DROP MODE -->
+  <div id="dnd-mode">
+    <div class="builder-grid">
+      <!-- Sidebar -->
+      <div>
+        <div class="card">
+          <h2><i class="fas fa-puzzle-piece"></i> Blocks</h2>
+          <div class="palette">
+            <div class="palette-item" draggable="true" data-block="header">
+              <i class="fas fa-heading"></i> Header
+            </div>
+            <div class="palette-item" draggable="true" data-block="text">
+              <i class="fas fa-align-left"></i> Text
+            </div>
+            <div class="palette-item" draggable="true" data-block="image">
+              <i class="fas fa-image"></i> Image
+            </div>
+            <div class="palette-item" draggable="true" data-block="button">
+              <i class="fas fa-hand-pointer"></i> Button
+            </div>
+            <div class="palette-item" draggable="true" data-block="divider">
+              <i class="fas fa-minus"></i> Divider
+            </div>
+            <div class="palette-item" draggable="true" data-block="spacer">
+              <i class="fas fa-arrows-alt-v"></i> Spacer
+            </div>
+            <div class="palette-item" draggable="true" data-block="footer">
+              <i class="fas fa-shoe-prints"></i> Footer
+            </div>
+            <div class="palette-item" draggable="true" data-block="announcement">
+              <i class="fas fa-bullhorn"></i> Notice
+            </div>
+          </div>
+          <button class="btn btn-danger btn-sm btn-block" onclick="clearCanvas()"><i class="fas fa-trash"></i> Clear All</button>
+        </div>
+
+        <!-- Properties Panel -->
+        <div id="props-panel">
+          <h3><i class="fas fa-sliders-h"></i> Properties</h3>
+          <p class="text-muted" style="font-size:.78rem;">Click a block to edit its properties.</p>
+        </div>
+      </div>
+
+      <!-- Canvas -->
+      <div>
+        <div class="card" style="padding:8px;">
+          <div id="canvas-area" 
+               ondragover="onDragOver(event)" 
+               ondrop="onDrop(event)" 
+               ondragleave="onDragLeave(event)">
+            <div id="canvas-empty" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:380px; color:#555; gap:10px;">
+              <i class="fas fa-layer-group" style="font-size:2.5rem; color:#333;"></i>
+              <p style="font-size:.9rem;">Drag blocks here to build your newsletter</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CODE MODE -->
+  <div id="code-mode" style="display:none;">
+    <div class="card">
+      <h2><i class="fas fa-code"></i> HTML Editor</h2>
+      <p class="text-muted" style="margin-bottom:12px; font-size:.82rem;">Write raw HTML for your newsletter. It will be sent as-is to subscribers.</p>
+      <textarea id="code-editor" spellcheck="false" placeholder="<!-- Paste or write your newsletter HTML here -->"></textarea>
+      <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="insertTemplate()"><i class="fas fa-magic"></i> Load Template</button>
+        <button class="btn btn-outline btn-sm" onclick="openPreview()"><i class="fas fa-eye"></i> Preview</button>
+        <button class="btn btn-orange btn-sm" onclick="saveAndGoSend()"><i class="fas fa-paper-plane"></i> Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SEND SCREEN ═══════════ -->
+<div class="screen" id="screen-send">
+  <div class="card">
+    <h2><i class="fas fa-envelope-open-text"></i> Send Newsletter</h2>
+
+    <div class="subscriber-count">
+      <i class="fas fa-users" style="color:var(--gov-orange)"></i>
+      <span>Sending to </span>
+      <span class="num" id="send-count">—</span>
+      <span> subscribers</span>
+    </div>
+
+    <div class="form-group">
+      <label>From Name</label>
+      <input type="text" id="from-name" placeholder="e.g. Principal, HSS Larnoo" value="HSS Larnoo">
+    </div>
+    <div class="form-group">
+      <label>Reply-To Email</label>
+      <input type="email" id="reply-email" placeholder="school@example.com">
+    </div>
+    <div class="form-group">
+      <label>Subject Preview</label>
+      <input type="text" id="send-subject-preview" readonly style="opacity:.7;">
+    </div>
+
+    <div class="progress-wrap" id="send-progress-wrap">
+      <div class="progress-bar" id="send-progress-bar"></div>
+    </div>
+    <div id="send-status" class="alert"></div>
+
+    <div class="row" style="margin-top:4px;">
+      <button class="btn btn-outline" onclick="showTab('builder')"><i class="fas fa-arrow-left"></i> Edit</button>
+      <button class="btn btn-success" id="send-btn" onclick="sendNewsletter()"><i class="fas fa-paper-plane"></i> Send to All</button>
+    </div>
+
+    <div class="send-log" id="send-log"></div>
+  </div>
+
+  <div class="card">
+    <h2><i class="fas fa-history"></i> Sent History</h2>
+    <div id="history-list">
+      <p class="text-muted">No newsletters sent yet this session.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SUBSCRIBERS SCREEN ═══════════ -->
+<div class="screen" id="screen-subs">
+  <div class="card">
+    <h2><i class="fas fa-user-plus"></i> Add Subscriber</h2>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" id="new-email" placeholder="name@example.com">
+    </div>
+    <button class="btn btn-primary btn-block" onclick="addSubscriber()"><i class="fas fa-plus"></i> Add to List</button>
+    <div id="sub-add-alert" class="alert"></div>
+  </div>
+
+  <div class="card">
+    <h2><i class="fas fa-users"></i> Subscriber List</h2>
+    <div id="subs-table-wrap">
+      <p class="text-muted"><i class="fas fa-spinner fa-spin"></i> Loading…</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PREVIEW MODAL ═══════════ -->
+<div id="preview-modal">
+  <div class="preview-box">
+    <div class="preview-header">
+      <h3><i class="fas fa-eye"></i> Preview</h3>
+      <button class="btn btn-outline btn-sm" onclick="closePreview()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="preview-iframe-wrap">
+      <iframe id="preview-iframe" sandbox="allow-same-origin"></iframe>
+    </div>
+  </div>
+</div>
+
+<script src="canvas.js"></script>
+<!-- ═══════════ FIREBASE + EMAILJS ═══════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, serverTimestamp, query, orderBy }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBAUBnBW_wcY3evdk4ilKVyvufkkYo6rIU",
+  authDomain: "hss-larnoo-teachers.firebaseapp.com",
+  projectId: "hss-larnoo-teachers",
+  storageBucket: "hss-larnoo-teachers.appspot.com",
+  messagingSenderId: "143363278401",
+  appId: "1:143363278401:web:49d7fffbdf31ce073e68c0"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const EMAILJS_SERVICE_ID  = 'service_01cuq2o';
+const EMAILJS_TEMPLATE_ID = 'template_jgdd2wl';
+const EMAILJS_PUBLIC_KEY  = '0Q7acQc7s1VPBgO9_';
+const COLL = 'newsletter_subscribers';
+
+// ── Expose DB + EmailJS helpers globally ──
+window._db = db;
+window._col = (name) => collection(db, name);
+window._getDocs = getDocs;
+window._addDoc  = addDoc;
+window._deleteDoc = deleteDoc;
+window._doc = doc;
+window._serverTimestamp = serverTimestamp;
+window._query = query;
+window._orderBy = orderBy;
+window._COLL = COLL;
+window._EMAILJS_SERVICE_ID  = EMAILJS_SERVICE_ID;
+window._EMAILJS_TEMPLATE_ID = EMAILJS_TEMPLATE_ID;
+window._EMAILJS_PUBLIC_KEY  = EMAILJS_PUBLIC_KEY;
+
+// Load EmailJS SDK
+const ejsScript = document.createElement('script');
+ejsScript.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+ejsScript.onload = () => {
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+  window._ejsReady = true;
+};
+document.head.appendChild(ejsScript);
+
+// Init load
+window.addEventListener('load', () => {
+  loadSubscribers();
+  updateSendCount();
+});
+</script>
+
+<script></script>
+
+</body>
+</html>

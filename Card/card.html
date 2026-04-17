@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSS Larnoo ID System</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="GHSS Larnoo, Govt. HSS Larnoo, Govt HSS, " name="keywords">
+        <meta content="Govt. HSS Larnoo is located in the distric of J&K named Anantnag in Larnoo" name="description">
+        <link rel="Icon" href="/img/logo3.png">
+    <!-- Styles and Libraries -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SCRIPT FOR CHARTS (GRAPH) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet"> 
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="../lib/animate/animate.min.css" rel="stylesheet">
+    <link href="../lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <link href="../lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="../css/style.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0d2c54; --secondary-color: #1a535c; --accent-color: #f7b801;
+            --edit-color: #0077b6; --danger-color: #d90429; --success-color: #28a745;
+            --light-color: #f4f7fe; --dark-color: #333333; --white-color: #ffffff;
+            --card-width: 380px; --card-aspect-ratio: 8.53 / 5.39; /* Standard CR80 size */
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--light-color); color: var(--dark-color); line-height: 1.6; margin: 0; }
+        .page-container { padding: 20px; max-width: 1200px; margin: auto; }
+        .btn { font-weight: 600; transition: all 0.3s ease; padding: 12px 25px; border-radius: 8px; border: none; cursor: pointer; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { background-color: var(--primary-color); color: var(--white-color); }
+        .btn-primary:hover:not(:disabled) { background-color: #123e7a; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn:disabled { background-color: #a9a9a9; cursor: not-allowed; }
+        .section-title { font-family: 'Poppins', sans-serif; font-weight: 700; color: var(--primary-color); margin-top: 0; margin-bottom: 25px; border-bottom: 3px solid var(--accent-color); padding-bottom: 10px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; font-size: 15px; transition: border-color 0.3s, box-shadow 0.3s; background-color: #fff; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(13, 44, 84, 0.1); }
+        .custom-select-wrapper { position: relative; }
+        .custom-select-wrapper::after { content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+        .form-group select { appearance: none; -webkit-appearance: none; padding-right: 40px; }
+
+        #app-header { background-color: var(--white-color); padding: 15px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; flex-wrap: wrap; gap: 10px;}
+        #app-header h1 { font-family: 'Poppins', sans-serif; color: var(--primary-color); font-size: 24px; margin: 0; }
+        #app-header nav { display: flex; flex-wrap: wrap; }
+        #app-header nav a { margin-left: 20px; text-decoration: none; color: var(--primary-color); font-weight: 600; cursor: pointer; padding: 5px 10px; border-radius: 5px; transition: background-color 0.3s; }
+        #app-header nav a:hover { background-color: #f0f0f0; }
+        #app-header nav a.active { color: var(--accent-color); font-weight: 700; }
+        .view { display: none; } .view.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .main-content { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 40px; width: 100%; }
+        .form-section, .card-section { flex: 1; min-width: 350px; max-width: 550px; background: var(--white-color); padding: 30px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); }
+
+        /* --- NEW ID CARD STYLES --- */
+       #idCard { width: var(--card-width); aspect-ratio: var(--card-aspect-ratio); font-family: 'Montserrat', sans-serif; background: #eef2f9; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: flex; flex-direction: column; position: relative; overflow: hidden; margin: 0 auto; }
+        #idCard::before, #idCard::after { content: ''; position: absolute; border-radius: 50%; opacity: 0.08; z-index: 0; background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); }
+        #idCard::before { width: 150%; height: 150%; bottom: -80%; right: -50%; }
+        #idCard::after { width: 120%; height: 120%; top: -60%; left: -40%; opacity: 0.1; }
+        .card-header, .card-body, .card-footer { position: relative; z-index: 1; }
+        .card-header { display: flex; align-items: center; padding: 10px 15px; background-color: rgba(255, 255, 255, 0.3); backdrop-filter: blur(5px); }
+        .logo { width: 40px; height: 40px; margin-right: 12px; }
+        .school-title-group { color: var(--primary-color); line-height: 1.2; }
+        .school-title { font-size: 16px; font-weight: 700; font-family: 'Poppins', sans-serif; margin: 0; }
+        .school-subtitle { font-size: 12px; font-weight: 500; margin: 0; }
+        .udise-code { position: absolute; top: 8px; right: 15px; font-size: 8px; font-weight: 600; opacity: 0.8; }
+        .udise-code span1 { color: red; font-weight: 700; text-decoration: underline;}
+        .udise-code span { color: var(--primary-color); font-size: 10px;}
+        .card-body { flex-grow: 1; display: flex; padding: 5px 10px; gap: 10px; align-items: center; }
+        .card-body .displayPhoto { width: 90px; height: 110px; object-fit: cover; border: 3px solid var(--white-color); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); flex-shrink: 0; background-color: #ddd; }
+        .student-details { font-size: 11px; line-height: 1.45; flex-grow: 1; }
+        .displayName { font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 650; color: var(--primary-color); margin: 0 0 4px 0; }
+        .student-details p { margin: 0; }
+        .student-details .label { font-weight: 600; color: #555; }
+        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+        .card-right-panel { display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%;}
+        .card-qr-code { width: 65px; height: 65px; flex-shrink: 0; background: var(--white-color); padding: 4px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-right: 5px; top: 10px; position: relative; }
+        .card-qr-code canvas, .card-qr-code img { width: 100% !important; height: 100% !important; }
+        .signature-section { text-align: center; margin-top: auto; padding-right: 5px;}
+        .principal-signature { width: 80px; height: auto; margin-bottom: -15px;}
+        .signature-section p { font-size: 8px; font-weight: 600; margin: 0; color: var(--primary-color); border-top: 1px solid var(--primary-color); padding-top: 2px;}
+        .card-footer { background: var(--primary-color); color: var(--white-color); text-align: center; padding: 6px; font-size: 9px; margin-top: auto; line-height: 1.3; }
+        #studentDownloadBtn { display: none; margin-top: 20px; }
+
+        /* Admin & Attendance Styles */
+        .data-section { width: 100%; margin-top: 20px; background: var(--white-color); padding: 30px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.05); }
+        .data-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        #searchInput { padding: 10px 15px; border-radius: 8px; border: 1px solid #ccc; width: 300px; font-size: 15px; }
+        .table-container { overflow-x: auto; margin-top: 20px; }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 14px; white-space: nowrap; }
+        .data-table th, .data-table td { padding: 12px 15px; text-align: left; vertical-align: middle; }
+        .data-table thead { background-color: var(--primary-color); color: var(--white-color); }
+        .data-table th:first-child { border-radius: 8px 0 0 8px; } .data-table th:last-child { border-radius: 0 8px 8px 0; }
+        .data-table tbody tr { border-bottom: 1px solid #e0e0e0; }
+        .data-table tbody tr:last-child { border-bottom: none; }
+        .data-table tbody tr:hover { background-color: #f5f8ff; }
+        .table-photo { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 18px; transition: all 0.3s; padding: 5px; }
+        .view-card-btn { color: #17a2b8; } .edit-card-btn { color: #0077b6; } .delete-card-btn { color: #d90429; }
+        .action-btn:hover { transform: scale(1.2); }
+        #login-container { max-width: 400px; margin: 50px auto; padding: 30px; background: var(--white-color); border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); text-align: center; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+        .class-filter-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .class-filter-buttons .btn { background-color: #e0e0e0; color: var(--dark-color); padding: 8px 15px; font-size: 14px; }
+        .class-filter-buttons .btn.active { background-color: var(--secondary-color); color: var(--white-color); }
+
+        /* NEW: Styles for Dashboard Grid and Chart */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Display one chart per row */
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            position: relative;
+            height: 350px;
+            width: 100%;
+        }
+
+        #attendance-view .main-content { gap: 20px; flex-direction: column; align-items: stretch; }
+        #scanner-section { text-align: center; }
+        #scanner-container { border: 2px dashed #ccc; display: inline-block; max-width: 500px; width: 100%; padding: 10px; border-radius: 10px; background: #f9f9f9; transition: all 0.3s ease; }
+        #scanner-container.scanner-success { border-color: var(--success-color); box-shadow: 0 0 15px rgba(40, 167, 69, 0.5);}
+        #scanner-container.scanner-error { border-color: var(--danger-color); box-shadow: 0 0 15px rgba(217, 4, 41, 0.5);}
+        #qr-reader { width: 100%; border-radius: 8px; }
+        #scan-result { margin-top: 15px; font-size: 1.1em; font-weight: bold; min-height: 50px; padding: 10px; border-radius: 8px; transition: all 0.3s ease;}
+        .result-success { color: #fff; background-color: var(--success-color); }
+        .result-error { color: #fff; background-color: var(--danger-color); }
+        .result-info { color: var(--dark-color); background-color: #e0e0e0; }
+        .attendance-controls { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .date-nav { display: flex; align-items: center; gap: 15px; }
+        .date-nav button { background: none; border: 1px solid #ccc; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: all 0.2s; }
+        .date-nav button:hover { background: #f0f0f0; border-color: var(--primary-color); }
+        .date-nav h3 { margin: 0; font-size: 1.2em; color: var(--primary-color); }
+        #attendance-percentage { font-size: 1.2em; font-weight: 700; color: var(--primary-color); }
+        .attendance-class-section { margin-bottom: 25px; }
+        .attendance-class-section h3 { font-family: 'Poppins', sans-serif; color: var(--secondary-color); border-bottom: 2px solid #e8edef; padding-bottom: 8px;}
+
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1010; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+        .modal-content { background-color: #fefefe; margin: 5% auto; padding: 30px; border-radius: 12px; border: 1px solid #888; width: 90%; max-width: 550px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
+        .close-btn { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .modal-actions { margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;}
+
+        /* Specific styles for edit modal photo */
+        #editForm .current-photo-preview { margin-bottom: 15px; text-align: center; }
+        #editForm .current-photo-preview img { max-width: 120px; height: auto; border-radius: 8px; border: 1px solid #eee; }
+
+
+        @media (max-width: 768px) {
+            #app-header { flex-direction: column; gap: 15px; }
+            .main-content { gap: 20px; }
+            .card-section { order: -1; }
+            .form-section { order: 0; }
+            .attendance-controls { flex-direction: column; gap: 15px; }
+            #searchInput { width: 100%; }
+        }
+        @media (max-width: 420px) {
+            #idCard { transform: scale(0.9); margin-left: -19px; }
+            .page-container { padding: 10px; }
+            .form-section, .card-section, .data-section { padding: 20px; }
+            .date-nav h3 { font-size: 1em; }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="app-header">
+        <h1><i class="fa-solid fa-id-card"></i> HSS Larnoo ID System</h1>
+        <nav>
+            <a href="" id="nav-student" class="nav-link active">Student Portal</a>
+            <a href="#nav-admin" id="nav-admin" class="nav-link">Admin Panel</a>
+            <a href="#nav-attendance" id="nav-attendance" class="nav-link">Attendance</a>
+        </nav>
+    </header>
+
+    <div class="page-container">
+        <!-- Student View -->
+        <div id="student-view" class="view active">
+            <div class="main-content">
+                <div class="form-section">
+                    <h1 class="section-title">Create Your Student ID</h1>
+                    <form id="studentForm">
+                        <div class="form-group"><label for="studentName">Full Name</label><input type="text" id="studentName" required></div>
+                        <div class="form-group"><label for="studentParentage">Parentage</label><input type="text" id="studentParentage" required></div>
+                        <div class="form-group custom-select-wrapper">
+                            <label for="studentClass">Class</label>
+                            <select id="studentClass" required> <option value="">-- Select Class --</option> <option value="9">9th</option> <option value="10">10th</option> <option value="11">11th</option> <option value="12">12th</option> </select>
+                        </div>
+                        <div class="form-group" id="dynamic-group" style="display: none;">
+                            <label id="dynamic-label"></label>
+                            <div class="custom-select-wrapper"><select id="dynamic-select"></select></div>
+                        </div>
+                        <div class="form-group"><label for="studentRoll">Roll Number</label><input type="number" id="studentRoll" required></div>
+                        <div class="form-group"><label for="studentPhone">Phone Number</label><input type="number" id="studentPhone" required></div>
+                        <div class="form-group"><label for="studentAddress">Address</label><textarea id="studentAddress" rows="1" required></textarea></div>
+                        <div class="form-group"><label for="studentPhoto">Upload Photo</label><input type="file" id="studentPhoto" accept="image/jpeg, image/png" required></div>
+                        <button type="submit" id="submitBtn" class="btn btn-primary"><i class="fa-solid fa-cogs"></i> Generate & Submit</button>
+                    </form>
+                </div>
+                <div class="card-section">
+                    <h1 class="section-title">Live Preview</h1>
+                    <div id="student-card-preview">
+                        <div id="idCard">
+                            <div class="card-header">
+                                <img src="logo3.png" alt="School Logo" class="logo">
+                                <div class="school-title-group"> <h2 class="school-title">GOVT HSS LARNOO</h2> <p class="school-subtitle">Student Identity Card</p> </div>
+                                <div class="udise-code"> <span>UDISE:</span> <span1>01061601505</span1></div>
+                            </div>
+                            <div class="card-body">
+                                <img class="displayPhoto" src="profile.png" alt="Student Photo" onerror="this.onerror=null; this.src='profile.png';">
+                                <div class="student-details">
+                                    <h3 class="displayName">Student Name</h3>
+                                    <p><span class="label">Parentage:</span> <span class="displayParentage"></span></p>
+                                    <p><span class="label">Phone:</span> <span class="displayPhone"></span></p>
+                                    <div class="detail-grid">
+                                        <p><span class="label">Roll No:</span> <span class="displayRoll"></span></p>
+                                        <p><span class="label">ID:</span> <span class="displayId"></span></p>
+                                    </div>
+                                    <p><span class="label">Class:</span> <span class="displayClass"></span></p>
+                                    <p><span class="label">Address:</span> <span class="displayAddress"></span></p>
+                                </div>
+                                <div class="card-right-panel">
+                                    <div class="card-qr-code"></div>
+                                    <div class="signature-section">
+                                        <img src="sign2.png" alt="Principal's Signature" class="principal-signature">
+                                        <p>Principal</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer"> <span>Tel: +91 7006485144 | Email: hsslarnoo024@gmail.com |  Larnoo, Kokarnag, Anantnag, J&K</span> </div>
+                        </div>
+                    </div>
+                    <button id="studentDownloadBtn" class="btn btn-primary"><i class="fa-solid fa-download"></i> Download Your Card</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin View -->
+        <div id="admin-view" class="view">
+            <div id="admin-login-container"> <div id="login-container"> <h1 class="section-title">Admin Login</h1> <form id="loginForm"><div class="form-group"><label for="adminEmail">Email</label><input type="email" id="adminEmail" required></div><div class="form-group"><label for="adminPassword">Password</label><input type="password" id="adminPassword" required></div><button type="submit" id="loginBtn" class="btn btn-primary">Login</button></form> </div> </div>
+            <div id="admin-container" style="display: none;">
+                <div class="admin-header"><h1 class="section-title" style="margin:0; border:none;">Admin Dashboard</h1><button id="logoutBtn" class="btn btn-primary" style="background-color: #6c757d;">Logout <i class="fa-solid fa-sign-out-alt"></i></button></div>
+                
+                <!-- NEW: Dashboard Grid for Charts -->
+                <div class="dashboard-grid">
+                    <div class="data-section">
+                        <h2 class="section-title" style="border:none; padding:0; margin-bottom: 15px;">Students by Class</h2>
+                        <div class="chart-container">
+                           <canvas id="classDistributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-section">
+                    <div class="data-header"><h2 class="section-title" style="border:none; padding:0; margin:0;">Student Records</h2><input type="text" id="searchInput" placeholder="Search records..."></div>
+                    <div id="class-filter-buttons" class="class-filter-buttons"></div>
+                    <div class="table-container"> <p id="loading-indicator">Loading data...</p> <table id="studentDataTable" class="data-table"> <thead><tr><th>ID</th><th>Photo</th><th>Name</th><th>Parentage</th><th>Class</th><th>Stream/Gender</th><th>Roll No</th><th>Actions</th></tr></thead> <tbody></tbody> </table> </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance View -->
+        <div id="attendance-view" class="view">
+             <div id="attendance-login-prompt" style="display: none;"> <div id="login-container"> <h1 class="section-title">Admin Login Required</h1> <p>You must be logged in to view attendance.</p> </div> </div>
+            <div id="attendance-content" style="display: none;">
+                <div class="main-content">
+                    <div class="data-section" id="scanner-section">
+                        <h1 class="section-title" style="text-align:center;">Scan Student QR Code</h1>
+                        <div id="scanner-container"> <div id="qr-reader"></div> </div>
+                        <div id="scan-result" class="result-info">Awaiting Scan...</div>
+                    </div>
+                    <div class="data-section">
+                        <div class="attendance-controls">
+                            <div class="date-nav"> <button id="prev-day-btn"><i class="fa-solid fa-chevron-left"></i></button> <h3 id="attendance-date"></h3> <button id="next-day-btn"><i class="fa-solid fa-chevron-right"></i></button> </div>
+                            <div id="attendance-percentage">--% Attended</div>
+                        </div>
+                        <div id="attendance-lists-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="view-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2 class="section-title" style="border:none;padding:0;margin:0;">Student Card Preview</h2><span class="close-btn">×</span></div><div id="modal-card-container"></div><div class="modal-actions"><button id="editFromViewBtn" class="btn btn-primary" style="background-color:var(--edit-color);"><i class="fa-solid fa-pencil"></i> Edit</button><button id="downloadFromViewBtn" class="btn btn-primary"><i class="fa-solid fa-download"></i> Download</button><button id="shareFromViewBtn" class="btn btn-primary" style="background-color:#17a2b8;"><i class="fa-solid fa-share-alt"></i> Share</button></div></div></div>
+    <div id="edit-modal" class="modal"><div class="modal-content"><div class="modal-header"><h2 class="section-title" style="border:none;padding:0;margin:0;">Edit Student Record</h2><span class="close-btn">×</span></div><form id="editForm"></form></div></div>
+    
+   <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, doc, deleteDoc, updateDoc, query, orderBy, addDoc, runTransaction, serverTimestamp, where, getDocs, limit, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDgibN6D0v5LYueImGQw1oU7Kao4fZY1OA",
+        authDomain: "hss-id-card.firebaseapp.com",
+        projectId: "hss-id-card",
+        storageBucket: "hss-id-card.appspot.com",
+        messagingSenderId: "22345350913",
+        appId: "1:22345350913:web:b07509eef5a3cfeec9e500",
+        measurementId: "G-MT8GW71R49"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const state = {
+        allStudents: [], currentlyEditingId: null, newCompressedPhoto: null,
+        compressedPhotoBase64: '', currentView: 'student', qrScanner: null,
+        lastScannedId: null, scanTimeout: null, attendanceListener: null,
+        selectedDate: new Date(),
+        editModalPhotoData: null,
+        classChart: null // NEW: State to hold the chart instance
+    };
+
+    const allViews = document.querySelectorAll('.view');
+    const allNavLinks = document.querySelectorAll('.nav-link');
+    
+    function switchView(viewToShow) {
+        if (state.currentView === 'attendance' && state.qrScanner) {
+            if (state.qrScanner.isScanning) {
+                state.qrScanner.stop().catch(err => console.log("Scanner already stopped."));
+            }
+        }
+        if (state.attendanceListener) { state.attendanceListener(); state.attendanceListener = null; }
+        
+        allViews.forEach(v => v.classList.remove('active'));
+        allNavLinks.forEach(l => l.classList.remove('active'));
+        
+        document.getElementById(`${viewToShow}-view`)?.classList.add('active');
+        document.getElementById(`nav-${viewToShow}`)?.classList.add('active');
+        state.currentView = viewToShow;
+        
+        if (viewToShow === 'attendance' && auth.currentUser) {
+            state.selectedDate = new Date();
+            setupAttendanceView();
+        }
+    }
+    allNavLinks.forEach(link => link.addEventListener('click', (e) => switchView(e.target.id.replace('nav-', ''))));
+    
+    const compressImage = (file, maxWidth, callback) => {
+        const reader = new FileReader(); reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image(); img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas'); const scale = maxWidth / img.width;
+                canvas.width = (img.width > maxWidth) ? maxWidth : img.width;
+                canvas.height = (img.width > maxWidth) ? (img.height * scale) : img.height;
+                const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                callback(canvas.toDataURL('image/jpeg', 0.9));
+            };
+        };
+    };
+
+    const generateQrCode = (element, text) => {
+        if(!element) return;
+        element.innerHTML = "";
+        new QRCode(element, { text: String(text), width: 70, height: 70, correctLevel: QRCode.CorrectLevel.M });
+    };
+    
+    (function StudentViewModule() {
+        const form = document.getElementById('studentForm');
+        const classSelect = document.getElementById('studentClass');
+        const dynamicGroup = document.getElementById('dynamic-group');
+        const dynamicLabel = document.getElementById('dynamic-label');
+        const dynamicSelect = document.getElementById('dynamic-select');
+        const downloadBtn = document.getElementById('studentDownloadBtn');
+
+        const cardPreview = {
+            photo: document.querySelector('#student-card-preview .displayPhoto'),
+            name: document.querySelector('#student-card-preview .displayName'),
+            parentage: document.querySelector('#student-card-preview .displayParentage'),
+            phone: document.querySelector('#student-card-preview .displayPhone'),
+            id: document.querySelector('#student-card-preview .displayId'),
+            roll: document.querySelector('#student-card-preview .displayRoll'),
+            class: document.querySelector('#student-card-preview .displayClass'),
+            address: document.querySelector('#student-card-preview .displayAddress'),
+            qrCode: document.querySelector('#student-card-preview .card-qr-code'),
+        };
+
+        function updateCardPreview() {
+            const name = form.studentName.value || 'Student Name';
+            const parentage = form.studentParentage.value || '';
+            const phone = form.studentPhone.value || '';
+            const studentId = cardPreview.id.textContent || 'Not Assigned';
+            const roll = form.studentRoll.value || '';
+            const className = classSelect.options[classSelect.selectedIndex]?.text || '';
+            const dynamicValue = dynamicSelect.options[dynamicSelect.selectedIndex]?.text || '';
+            const address = form.studentAddress.value || '';
+
+            cardPreview.name.textContent = name;
+            cardPreview.parentage.textContent = `: ${parentage}`;
+            cardPreview.phone.textContent = phone;
+            cardPreview.roll.textContent = roll;
+            cardPreview.address.textContent = address;
+            cardPreview.photo.src = state.compressedPhotoBase64 || "profile.png"; 
+
+            if (['9', '10'].includes(classSelect.value) && dynamicValue && dynamicValue !== '-- Select Gender --') {
+                cardPreview.class.textContent = `${className} (${dynamicValue})`;
+            } else if (['11', '12'].includes(classSelect.value) && dynamicValue && dynamicValue !== '-- Select Stream --') {
+                cardPreview.class.textContent = `${className} (${dynamicValue})`;
+            } else {
+                cardPreview.class.textContent = className;
+            }
+            
+            generateQrCode(cardPreview.qrCode, studentId);
+        }
+
+        classSelect.addEventListener('change', () => {
+            const selectedClass = classSelect.value;
+            dynamicSelect.innerHTML = '';
+            if (['9', '10'].includes(selectedClass)) {
+                dynamicLabel.textContent = 'Gender';
+                dynamicSelect.innerHTML = `<option value="">-- Select Gender --</option><option value="Boys">Boys</option><option value="Girls">Girls</option>`;
+                dynamicGroup.style.display = 'block';
+            } else if (['11', '12'].includes(selectedClass)) {
+                dynamicLabel.textContent = 'Stream';
+                dynamicSelect.innerHTML = `<option value="">-- Select Stream --</option><option value="Arts">Arts</option><option value="Medical">Medical</option><option value="Non-Medical">Non-Medical</option>`;
+                dynamicGroup.style.display = 'block';
+            } else {
+                dynamicGroup.style.display = 'none';
+            }
+            updateCardPreview();
+        });
+
+        form.addEventListener('input', updateCardPreview);
+        document.getElementById('studentPhoto').addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                compressImage(e.target.files[0], 400, (res) => {
+                    state.compressedPhotoBase64 = res;
+                    updateCardPreview();
+                });
+            } else {
+                state.compressedPhotoBase64 = ''; 
+                updateCardPreview();
+            }
+        });
+        
+        function resetStudentFormAndPreview() {
+            form.reset();
+            dynamicGroup.style.display = 'none';
+            state.compressedPhotoBase64 = '';
+            cardPreview.id.textContent = 'Not Assigned';
+            cardPreview.photo.src = 'profile.png';
+            cardPreview.qrCode.innerHTML = '';
+            updateCardPreview(); 
+            downloadBtn.style.display = 'none'; 
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            if (!dynamicSelect.value && dynamicGroup.style.display === 'block') {
+                alert(`Please select a ${dynamicLabel.textContent.toLowerCase()}.`); return;
+            }
+            if (!state.compressedPhotoBase64) { alert('Please upload a photo.'); return; }
+
+            submitBtn.disabled = true; submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Submitting...`;
+
+            const studentData = {
+                name: form.studentName.value, parentage: form.studentParentage.value,
+                class: form.studentClass.value, roll: form.studentRoll.value,
+                phone: form.studentPhone.value, address: form.studentAddress.value,
+                photo: state.compressedPhotoBase64, createdAt: serverTimestamp(),
+                stream: ['11', '12'].includes(form.studentClass.value) ? dynamicSelect.value : null,
+                gender: ['9', '10'].includes(form.studentClass.value) ? dynamicSelect.value : null,
+            };
+
+            try {
+                // **FIXED**: The client-side duplicate check which required read permissions has been removed.
+                
+                const newId = await runTransaction(db, async (transaction) => {
+                    const year = new Date().getFullYear().toString().slice(-2);
+                    const classCounterId = `${year}-${studentData.class}`;
+                    const counterRef = doc(db, "id_counters", classCounterId);
+                    const counterDoc = await transaction.get(counterRef);
+                    const newSerial = (counterDoc.exists() ? counterDoc.data().lastSerial : 0) + 1;
+                    transaction.set(counterRef, { lastSerial: newSerial });
+                    return `${year}${studentData.class.padStart(2,'0')}${newSerial.toString().padStart(3,'0')}`;
+                });
+                studentData.customId = newId;
+                await addDoc(collection(db, "students"), studentData);
+                
+                cardPreview.id.textContent = newId; 
+                updateCardPreview();
+                alert(`Success! Student registered with ID: ${newId}.`);
+                downloadBtn.style.display = 'inline-flex';
+                
+                resetStudentFormAndPreview();
+
+            } catch (error) { console.error("Error:", error); alert(`Error: ${error.message}`);
+            } finally { submitBtn.disabled = false; submitBtn.innerHTML = `<i class="fa-solid fa-cogs"></i> Generate & Submit`; }
+        });
+        downloadBtn.addEventListener('click', () => {
+            html2canvas(document.querySelector('#student-card-preview #idCard'), { scale: 4, useCORS: true, backgroundColor: null })
+                .then(canvas => {
+                    const studentName = document.querySelector('#studentForm #studentName').value || 'student';
+                    const link = document.createElement('a');
+                    link.download = `ID-Card_${studentName.replace(/\s+/g, '_')}.png`;
+                    link.href = canvas.toDataURL('image/png'); link.click();
+                });
+        });
+        updateCardPreview();
+    })();
+
+    (function AdminViewModule() {
+        const loginForm = document.getElementById('loginForm');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const adminContainer = document.getElementById('admin-container');
+        const loginContainer = document.getElementById('admin-login-container');
+        const tableBody = document.querySelector('#studentDataTable tbody');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const searchInput = document.getElementById('searchInput');
+        const classFilterContainer = document.getElementById('class-filter-buttons');
+        
+        const viewModal = document.getElementById('view-modal');
+        const editModal = document.getElementById('edit-modal');
+        const modalCardContainer = document.getElementById('modal-card-container');
+        const editFormContainer = document.getElementById('editForm');
+        
+        onAuthStateChanged(auth, user => {
+            const isAdmin = !!user;
+            loginContainer.style.display = isAdmin ? 'none' : 'block';
+            adminContainer.style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('attendance-login-prompt').style.display = isAdmin ? 'none' : 'block';
+            document.getElementById('attendance-content').style.display = isAdmin ? 'block' : 'none';
+            if (isAdmin) { listenForDataChanges(); if(state.currentView === 'attendance') setupAttendanceView(); } 
+            else { state.allStudents = []; renderTable([]); }
+        });
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.disabled = true; loginBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+            signInWithEmailAndPassword(auth, loginForm.adminEmail.value, loginForm.adminPassword.value)
+                .catch(err => alert(`Login Failed: ${err.message}`))
+                .finally(() => { loginBtn.disabled = false; loginBtn.textContent = 'Login'; });
+        });
+        logoutBtn.addEventListener('click', () => signOut(auth));
+
+        // NEW: Function to render the student distribution chart
+        function renderDashboardChart() {
+            if (!state.allStudents || state.allStudents.length === 0) return;
+
+            // Process data to count students per class
+            const classCounts = state.allStudents.reduce((acc, student) => {
+                const className = `${student.class}th`;
+                acc[className] = (acc[className] || 0) + 1;
+                return acc;
+            }, {});
+
+            const labels = Object.keys(classCounts).sort((a,b) => parseInt(a) - parseInt(b));
+            const data = labels.map(label => classCounts[label]);
+
+            const ctx = document.getElementById('classDistributionChart')?.getContext('2d');
+            if (!ctx) return;
+
+            // Destroy the old chart instance before creating a new one to prevent conflicts
+            if (state.classChart) {
+                state.classChart.destroy();
+            }
+
+            state.classChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '# of Students',
+                        data: data,
+                        backgroundColor: 'rgba(26, 83, 92, 0.7)',
+                        borderColor: 'rgba(26, 83, 92, 1)',
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                // Ensure y-axis shows whole numbers for student counts
+                                stepSize: 1 
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // The label in the dataset is enough
+                        }
+                    }
+                }
+            });
+        }
+
+        let studentDataUnsubscribe = null;
+        function listenForDataChanges() {
+            if (studentDataUnsubscribe) studentDataUnsubscribe();
+            const q = query(collection(db, "students"), orderBy("createdAt", "desc"));
+            studentDataUnsubscribe = onSnapshot(q, snapshot => {
+                loadingIndicator.style.display = 'block';
+                state.allStudents = snapshot.docs.map(doc => ({ firestoreId: doc.id, ...doc.data() }));
+                renderClassFilterButtons();
+                const activeFilter = document.querySelector('.class-filter-buttons .btn.active')?.dataset.class || 'All';
+                filterAndRenderTable(activeFilter);
+                
+                // NEW: Call the chart rendering function whenever data changes
+                renderDashboardChart();
+
+                loadingIndicator.style.display = 'none';
+            }, error => { console.error(error); loadingIndicator.textContent = `Error loading data.`; });
+        }
+        
+        function renderClassFilterButtons() {
+            const classes = [...new Set(state.allStudents.map(s => s.class))].sort((a,b) => a-b);
+            classFilterContainer.innerHTML = '<button class="btn active" data-class="All">All</button>';
+            classes.forEach(c => {
+                classFilterContainer.innerHTML += `<button class="btn" data-class="${c}">${c}th</button>`;
+            });
+        }
+
+        classFilterContainer.addEventListener('click', (e) => {
+            if(e.target.tagName === 'BUTTON') {
+                document.querySelectorAll('.class-filter-buttons .btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                searchInput.value = '';
+                filterAndRenderTable(e.target.dataset.class);
+            }
+        });
+
+        searchInput.addEventListener('keyup', () => {
+            const activeFilterButton = document.querySelector('.class-filter-buttons .btn.active');
+            if (activeFilterButton) activeFilterButton.classList.remove('active');
+            const allButton = document.querySelector('.class-filter-buttons .btn[data-class="All"]');
+            if (allButton) allButton.classList.add('active');
+
+            const searchTerm = searchInput.value.toLowerCase().trim();
+
+            if (!searchTerm) { renderTable(state.allStudents); return; }
+
+            const filteredStudents = state.allStudents.filter(student => 
+                Object.values(student).some(val => 
+                    String(val).toLowerCase().includes(searchTerm)
+                )
+            );
+            renderTable(filteredStudents);
+        });
+        
+        function filterAndRenderTable(selectedClass) {
+             const filteredData = selectedClass === 'All' ? state.allStudents : state.allStudents.filter(s => s.class === selectedClass);
+             renderTable(filteredData);
+        }
+
+        function renderTable(dataToRender) {
+            tableBody.innerHTML = '';
+            if (dataToRender.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center;">No records found.</td></tr>`;
+                return;
+            }
+            dataToRender.forEach(student => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                    <td>${student.customId || 'N/A'}</td> <td><img src="${student.photo || ''}" class="table-photo" onerror="this.onerror=null; this.src='profile.png';"></td>
+                    <td>${student.name}</td> <td>${student.parentage}</td> <td>${student.class}th</td>
+                    <td>${student.stream || student.gender || '--'}</td> <td>${student.roll}</td>
+                    <td>
+                        <button class="action-btn view-card-btn" data-id="${student.firestoreId}" title="View"><i class="fa-solid fa-eye"></i></button>
+                        <button class="action-btn edit-card-btn" data-id="${student.firestoreId}" title="Edit"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="action-btn delete-card-btn" data-id="${student.firestoreId}" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>`;
+            });
+        }
+        
+        function openModal(modal) { modal.style.display = 'block'; }
+        function closeModal(modal) { modal.style.display = 'none'; }
+        [...document.querySelectorAll('.close-btn')].forEach(btn => btn.addEventListener('click', (e) => closeModal(e.target.closest('.modal'))));
+        
+        function populateCardInModal(student) {
+            modalCardContainer.innerHTML = document.getElementById('student-card-preview').innerHTML;
+            const card = modalCardContainer.querySelector('#idCard');
+            card.querySelector('.displayPhoto').src = student.photo;
+            card.querySelector('.displayName').textContent = student.name;
+            card.querySelector('.displayParentage').textContent = `: ${student.parentage}`;
+            card.querySelector('.displayPhone').textContent = student.phone;
+            card.querySelector('.displayId').textContent = student.customId;
+            card.querySelector('.displayRoll').textContent = student.roll;
+            const classText = student.stream ? `${student.class}th (${student.stream})` : (student.gender ? `${student.class}th (${student.gender})` : `${student.class}th`);
+            card.querySelector('.displayClass').textContent = classText;
+            card.querySelector('.displayAddress').textContent = student.address;
+            generateQrCode(card.querySelector('.card-qr-code'), student.customId);
+            openModal(viewModal);
+        }
+        
+        function openEditModal(student) {
+            state.currentlyEditingId = student.firestoreId;
+            state.editModalPhotoData = student.photo;
+            
+            editFormContainer.innerHTML = `
+                <input type="hidden" name="firestoreId" value="${student.firestoreId}">
+                <div class="form-group"><label>Full Name</label><input type="text" name="name" value="${student.name || ''}" required></div>
+                <div class="form-group"><label>Parentage</label><input type="text" name="parentage" value="${student.parentage || ''}" required></div>
+                
+                <div class="form-group custom-select-wrapper">
+                    <label for="editClass">Class</label>
+                    <select id="editClass" name="class" required> 
+                        <option value="">-- Select Class --</option> <option value="9">9th</option> <option value="10">10th</option> 
+                        <option value="11">11th</option> <option value="12">12th</option> 
+                    </select>
+                </div>
+                <div class="form-group" id="edit-dynamic-group" style="display: none;">
+                    <label id="edit-dynamic-label"></label>
+                    <div class="custom-select-wrapper"><select id="edit-dynamic-select" name="dynamicField"></select></div>
+                </div>
+
+                <div class="form-group"><label>Roll No</label><input type="number" name="roll" value="${student.roll || ''}" required></div>
+                <div class="form-group"><label>Phone</label><input type="number" name="phone" value="${student.phone || ''}" required></div>
+                <div class="form-group"><label>Address</label><textarea name="address" rows="2" required>${student.address || ''}</textarea></div>
+                
+                <div class="form-group">
+                    <label>Current Photo</label>
+                    <div class="current-photo-preview"><img id="editPhotoPreview" src="${student.photo || 'profile.png'}" alt="Current Student Photo"></div>
+                    <label for="editPhoto">Upload New Photo (Optional)</label>
+                    <input type="file" id="editPhoto" name="newPhoto" accept="image/jpeg, image/png">
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Save Changes</button>
+            `;
+            
+            const editClassSelect = editFormContainer.querySelector('#editClass');
+            const editDynamicGroup = editFormContainer.querySelector('#edit-dynamic-group');
+            const editDynamicLabel = editFormContainer.querySelector('#edit-dynamic-label');
+            const editDynamicSelect = editFormContainer.querySelector('#edit-dynamic-select');
+            const editPhotoInput = editFormContainer.querySelector('#editPhoto');
+            const editPhotoPreview = editFormContainer.querySelector('#editPhotoPreview');
+
+            editFormContainer.querySelector('input[name="name"]').value = student.name || '';
+            editFormContainer.querySelector('input[name="parentage"]').value = student.parentage || '';
+            editFormContainer.querySelector('input[name="roll"]').value = student.roll || '';
+            editFormContainer.querySelector('input[name="phone"]').value = student.phone || '';
+            editFormContainer.querySelector('textarea[name="address"]').value = student.address || '';
+            editClassSelect.value = student.class || '';
+
+            const updateEditDynamicFields = () => {
+                const selectedClass = editClassSelect.value;
+                editDynamicSelect.innerHTML = '';
+                editDynamicGroup.style.display = 'none';
+
+                if (['9', '10'].includes(selectedClass)) {
+                    editDynamicLabel.textContent = 'Gender';
+                    editDynamicSelect.innerHTML = `<option value="">-- Select Gender --</option><option value="Boys">Boys</option><option value="Girls">Girls</option>`;
+                    if (student.gender) editDynamicSelect.value = student.gender;
+                    editDynamicGroup.style.display = 'block';
+                } else if (['11', '12'].includes(selectedClass)) {
+                    editDynamicLabel.textContent = 'Stream';
+                    editDynamicSelect.innerHTML = `<option value="">-- Select Stream --</option><option value="Arts">Arts</option><option value="Medical">Medical</option><option value="Non-Medical">Non-Medical</option>`;
+                    if (student.stream) editDynamicSelect.value = student.stream;
+                    editDynamicGroup.style.display = 'block';
+                }
+            };
+            
+            editClassSelect.addEventListener('change', updateEditDynamicFields);
+            updateEditDynamicFields(); 
+
+            editPhotoInput.addEventListener('change', (e) => {
+                if (e.target.files[0]) {
+                    compressImage(e.target.files[0], 400, (res) => {
+                        state.editModalPhotoData = res; 
+                        editPhotoPreview.src = res; 
+                    });
+                } else {
+                    state.editModalPhotoData = student.photo;
+                    editPhotoPreview.src = student.photo || 'profile.png';
+                }
+            });
+
+            openModal(editModal);
+        }
+
+        editFormContainer.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const updateBtn = e.target.querySelector('button');
+            updateBtn.disabled = true;
+            updateBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
+
+            const formData = new FormData(e.target);
+            const updatedData = {};
+            updatedData.name = formData.get('name');
+            updatedData.parentage = formData.get('parentage');
+            updatedData.class = formData.get('class');
+            updatedData.roll = formData.get('roll');
+            updatedData.phone = formData.get('phone');
+            updatedData.address = formData.get('address');
+
+            const selectedClass = updatedData.class;
+            if (['9', '10'].includes(selectedClass)) {
+                updatedData.gender = formData.get('dynamicField');
+                updatedData.stream = null; 
+            } else if (['11', '12'].includes(selectedClass)) {
+                updatedData.stream = formData.get('dynamicField');
+                updatedData.gender = null;
+            } else {
+                updatedData.stream = null; updatedData.gender = null;
+            }
+            if (state.editModalPhotoData) updatedData.photo = state.editModalPhotoData;
+            
+            try {
+                await updateDoc(doc(db, "students", formData.get('firestoreId')), updatedData);
+                alert("Record Updated Successfully!");
+                closeModal(editModal);
+            } catch(err) {
+                alert(`Update failed: ${err.message}`);
+                console.error(err);
+            } finally {
+                updateBtn.disabled = false;
+                updateBtn.innerHTML = `<i class="fa-solid fa-save"></i> Save Changes`;
+            }
+        });
+
+        adminContainer.addEventListener('click', (e) => {
+            const button = e.target.closest('button.action-btn');
+            if (!button) return;
+            const docId = button.dataset.id;
+            const student = state.allStudents.find(s => s.firestoreId === docId);
+            if (!student) return;
+
+            if (button.classList.contains('view-card-btn')) {
+                document.getElementById('editFromViewBtn').dataset.id = docId;
+                document.getElementById('downloadFromViewBtn').dataset.id = docId;
+                document.getElementById('shareFromViewBtn').dataset.id = docId;
+                populateCardInModal(student);
+            } else if (button.classList.contains('edit-card-btn')) {
+                openEditModal(student);
+            } else if (button.classList.contains('delete-card-btn')) {
+                if (confirm(`Delete record for ${student.name}? This is permanent.`)) {
+                    deleteDoc(doc(db, "students", docId)).catch(err => alert('Delete failed: ' + err.message));
+                }
+            }
+        });
+
+        document.getElementById('editFromViewBtn').addEventListener('click', (e) => {
+            const student = state.allStudents.find(s => s.firestoreId === e.target.dataset.id);
+            if (student) { closeModal(viewModal); openEditModal(student); }
+        });
+
+         document.getElementById('downloadFromViewBtn').addEventListener('click', (e) => {
+            const student = state.allStudents.find(s => s.firestoreId === e.target.dataset.id);
+            if (student) {
+                html2canvas(document.querySelector('#modal-card-container #idCard'), { scale: 4, useCORS: true, backgroundColor: null })
+                    .then(canvas => {
+                        const link = document.createElement('a');
+                        link.download = `ID-Card_${student.name.replace(/\s+/g, '_')}.png`;
+                        link.href = canvas.toDataURL('image/png'); link.click();
+                    });
+            }
+        });
+
+        document.getElementById('shareFromViewBtn').addEventListener('click', async (e) => {
+            const student = state.allStudents.find(s => s.firestoreId === e.target.dataset.id);
+            if (!student) return;
+
+            if (navigator.share) {
+                try {
+                    const canvas = await html2canvas(document.querySelector('#modal-card-container #idCard'), { scale: 4, useCORS: true, backgroundColor: null });
+                    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                    const file = new File([blob], `ID-Card_${student.name.replace(/\s+/g, '_')}.png`, { type: 'image/png' });
+
+                    await navigator.share({ files: [file], title: `${student.name}'s ID Card`, text: `ID card for ${student.name}.` });
+                } catch (error) {
+                    if (error.name !== 'AbortError') alert('Could not share the ID card.');
+                }
+            } else {
+                alert('Web Share is not supported. Please use the "Download" button.');
+                document.getElementById('downloadFromViewBtn').click(); 
+            }
+        });
+    })();
+    
+    (function AttendanceViewModule() {
+        const attendanceDateEl = document.getElementById('attendance-date');
+        const attendancePercentageEl = document.getElementById('attendance-percentage');
+        const listsContainer = document.getElementById('attendance-lists-container');
+        const scannerContainer = document.getElementById('scanner-container');
+        const scanResultEl = document.getElementById('scan-result');
+
+        window.setupAttendanceView = function() {
+            startScanner();
+            renderAttendanceForSelectedDate();
+        }
+
+        function changeDate(days) {
+            state.selectedDate.setDate(state.selectedDate.getDate() + days);
+            renderAttendanceForSelectedDate();
+        }
+        document.getElementById('prev-day-btn').addEventListener('click', () => changeDate(-1));
+        document.getElementById('next-day-btn').addEventListener('click', () => changeDate(1));
+        
+        function renderAttendanceForSelectedDate() {
+            if (state.attendanceListener) state.attendanceListener();
+            const dateStr = state.selectedDate.toISOString().split('T')[0];
+            attendanceDateEl.textContent = state.selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+            
+            const q = query(collection(db, "attendance"), where("date", "==", dateStr));
+            state.attendanceListener = onSnapshot(q, (snapshot) => {
+                const totalStudents = state.allStudents.length; 
+                const presentCount = snapshot.size;
+                const percentage = totalStudents > 0 ? ((presentCount / totalStudents) * 100).toFixed(0) : 0;
+                attendancePercentageEl.textContent = `${percentage}% Attended`;
+                renderAttendanceLists(snapshot.docs);
+            }, (error) => {
+                console.error("Attendance listener error:", error);
+                listsContainer.innerHTML = `<p style="text-align:center; color: var(--danger-color); padding: 20px;">Error loading attendance.</p>`;
+            });
+        }
+
+        function renderAttendanceLists(attendanceDocs) {
+            listsContainer.innerHTML = '';
+            const presentStudentMap = new Map(attendanceDocs.map(doc => [doc.data().customId, doc.data()]));
+            const presentStudents = state.allStudents.filter(student => presentStudentMap.has(student.customId));
+
+            if (presentStudents.length === 0) { 
+                listsContainer.innerHTML = '<p style="text-align:center; padding: 20px;">No attendance recorded for this day.</p>'; 
+                return; 
+            }
+
+            const sections = {};
+            presentStudents.forEach(student => {
+                let sectionKey = student.stream ? `${student.class}th ${student.stream}` : (student.gender ? `${student.class}th ${student.gender}`: `${student.class}th`);
+                if (!sections[sectionKey]) sections[sectionKey] = [];
+                sections[sectionKey].push(student);
+            });
+
+            const sortedSections = Object.keys(sections).sort((a,b) => a.localeCompare(b, undefined, {numeric: true}));
+            sortedSections.forEach(sectionKey => {
+                const students = sections[sectionKey].sort((a, b) => a.roll - b.roll);
+                const studentRows = students.map(student => {
+                    const record = presentStudentMap.get(student.customId);
+                    const time = record.timestamp?.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || '';
+                    return `<tr>
+                                <td>${student.customId}</td>
+                                <td><img src="${student.photo}" class="table-photo" onerror="this.onerror=null; this.src='profile.png';"></td>
+                                <td>${student.name}</td>
+                                <td>${student.roll}</td>
+                                <td>${time}</td>
+                            </tr>`;
+                }).join('');
+
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'attendance-class-section';
+                sectionDiv.innerHTML = `<h3>${sectionKey} (${students.length})</h3>
+                        <div class="table-container"><table class="data-table">
+                            <thead><tr><th>ID</th><th>Photo</th><th>Name</th><th>Roll No</th><th>Time</th></tr></thead>
+                            <tbody>${studentRows}</tbody>
+                        </table></div>`;
+                listsContainer.appendChild(sectionDiv);
+            });
+        }
+        
+        async function onScanSuccess(decodedText) {
+            if (decodedText === state.lastScannedId) return;
+            if (state.allStudents.length === 0) {
+                scanResultEl.className = 'result-error'; scanResultEl.textContent = `Student data not loaded. Please wait.`; return;
+            }
+            state.lastScannedId = decodedText;
+            clearTimeout(state.scanTimeout);
+            
+            scannerContainer.classList.remove('scanner-success', 'scanner-error');
+            scanResultEl.className = 'result-info';
+            scanResultEl.textContent = `Processing: ${decodedText}...`;
+
+            const student = state.allStudents.find(s => s.customId === decodedText);
+            let feedbackClass = 'result-error';
+            let feedbackText = `Error: Student ID ${decodedText} not found.`;
+            
+            if (student) {
+                const today = new Date().toISOString().split('T')[0];
+                const q = query(collection(db, "attendance"), where("customId", "==", decodedText), where("date", "==", today), limit(1));
+                const attendanceSnapshot = await getDocs(q);
+                if (!attendanceSnapshot.empty) {
+                    feedbackText = `${student.name} already marked present.`;
+                } else {
+                    try {
+                        await addDoc(collection(db, "attendance"), { 
+                            customId: student.customId, date: today, timestamp: serverTimestamp()
+                        });
+                        feedbackClass = 'result-success';
+                        feedbackText = `Welcome, ${student.name}!`;
+                    } catch (error) { feedbackText = "Error saving attendance."; }
+                }
+            }
+            
+            scannerContainer.classList.add(feedbackClass === 'result-success' ? 'scanner-success' : 'scanner-error');
+            scanResultEl.className = feedbackClass;
+            scanResultEl.textContent = feedbackText;
+
+            state.scanTimeout = setTimeout(() => { 
+                state.lastScannedId = null; 
+                scannerContainer.classList.remove('scanner-success', 'scanner-error');
+                scanResultEl.className = 'result-info';
+                scanResultEl.textContent = 'Awaiting Scan...';
+            }, 2500);
+        }
+
+        function startScanner() {
+            if(state.currentView !== 'attendance' || !auth.currentUser) return;
+            const qrReaderElement = document.getElementById('qr-reader');
+            if (!qrReaderElement) return;
+
+            if (!state.qrScanner) {
+                state.qrScanner = new Html5Qrcode("qr-reader", { formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE] });
+            }
+            
+            if (state.qrScanner.isScanning) return;
+
+            scannerContainer.classList.remove('scanner-success', 'scanner-error');
+            scanResultEl.className = 'result-info';
+            scanResultEl.textContent = 'Awaiting Scan...';
+
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            state.qrScanner.start({ facingMode: "environment" }, config, onScanSuccess, (error) => {})
+            .catch(err => {
+                scanResultEl.className = 'result-error';
+                scanResultEl.textContent = 'Scanner failed. Grant camera permission.';
+            });
+        }
+    })();
+</script>
+</body>
+</html>
